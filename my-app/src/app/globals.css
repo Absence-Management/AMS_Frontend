@@ -1,1 +1,189 @@
 @import "tailwindcss";
+
+/* Simple auth screen styling (Login + Forgot Password) */
+:root {
+  --auth-bg-0: #fff7ed; /* amber-50-ish */
+  --auth-bg-1: #ecfeff; /* cyan-50-ish */
+  --auth-card: rgba(255, 255, 255, 0.86);
+  --auth-border: rgba(15, 23, 42, 0.12); /* slate-900 @ ~12% */
+  --auth-text: #0f172a; /* slate-900 */
+  --auth-muted: rgba(15, 23, 42, 0.68);
+  --auth-shadow: 0 18px 50px rgba(2, 6, 23, 0.12);
+  --auth-focus: rgba(14, 165, 233, 0.38); /* sky-500 */
+}
+
+.auth-layout {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(20px, 4vw, 44px);
+  background:
+    radial-gradient(900px 600px at 20% 15%, var(--auth-bg-1), transparent 60%),
+    radial-gradient(900px 600px at 80% 85%, var(--auth-bg-0), transparent 60%),
+    linear-gradient(180deg, #ffffff, #ffffff);
+  color: var(--auth-text);
+}
+
+.auth-layout > * {
+  width: min(420px, 100%);
+}
+
+.auth-stack {
+  width: min(420px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.login-form,
+.forgot-password-form {
+  width: 100%;
+  border: 1px solid var(--auth-border);
+  border-radius: 16px;
+  padding: 22px;
+  background: var(--auth-card);
+  box-shadow: var(--auth-shadow);
+  backdrop-filter: blur(10px);
+}
+
+.login-form h2,
+.forgot-password-form h2 {
+  margin: 0 0 10px;
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.forgot-password-form p {
+  margin: 0 0 14px;
+  color: var(--auth-muted);
+  line-height: 1.35;
+}
+
+.form-group {
+  margin: 12px 0;
+}
+
+.form-group label {
+  display: block;
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--auth-muted);
+}
+
+.form-group input {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px 12px;
+  outline: none;
+  transition: box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.form-group input::placeholder {
+  color: rgba(15, 23, 42, 0.42);
+}
+
+.form-group input:focus {
+  border-color: rgba(14, 165, 233, 0.6);
+  box-shadow: 0 0 0 4px var(--auth-focus);
+  background: #ffffff;
+}
+
+.login-form button,
+.forgot-password-form button,
+.google-oauth-button {
+  width: 100%;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 160ms ease, background 160ms ease,
+    border-color 160ms ease, opacity 160ms ease;
+}
+
+.login-form button,
+.forgot-password-form button {
+  margin-top: 6px;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: linear-gradient(180deg, #0ea5e9, #0284c7);
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(2, 132, 199, 0.25);
+}
+
+.login-form button:hover,
+.forgot-password-form button:hover {
+  transform: translateY(-1px);
+}
+
+.login-form button:disabled,
+.forgot-password-form button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.google-oauth-button {
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--auth-text);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.08);
+}
+
+.google-oauth-button:hover {
+  transform: translateY(-1px);
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(15, 23, 42, 0.55);
+  font-size: 12px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: rgba(15, 23, 42, 0.14);
+}
+
+.error-message {
+  margin: 10px 0 0;
+  border-radius: 12px;
+  border: 1px solid rgba(239, 68, 68, 0.35); /* red-500 */
+  background: rgba(254, 226, 226, 0.8); /* red-100 */
+  color: rgba(153, 27, 27, 0.95); /* red-800 */
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.success-message {
+  text-align: left;
+}
+
+.success-message p {
+  margin: 8px 0 0;
+}
+
+.forgot-password-link,
+.auth-layout a {
+  display: inline-block;
+  margin-top: 12px;
+  color: rgba(2, 132, 199, 0.95);
+  text-decoration: none;
+  font-weight: 650;
+}
+
+.forgot-password-link:hover,
+.auth-layout a:hover {
+  text-decoration: underline;
+}

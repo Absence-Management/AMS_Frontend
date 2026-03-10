@@ -1,0 +1,79 @@
+// ============================================
+// AMS — ESI Sidi Bel Abbès
+// services/api.js — Axios Instance
+// ============================================
+
+import axios from "axios";
+import { API_ENDPOINTS } from "@/lib/constants";
+import { CONFIG } from "@/lib/constants";
+
+const api = axios.create({
+  baseURL: CONFIG.API_URL, // http://localhost:8000
+  withCredentials: true,                    // send httpOnly cookies automatically
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// ── Response Interceptor ──────────────────────────────
+// If backend returns 401 → try to refresh the token once
+// If refresh fails → redirect to login
+
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve();
+    }
+  });
+  failedQueue = [];
+};
+
+api.interceptors.response.use(
+  (response) => response,
+
+  async (error) => {
+    const originalRequest = error.config;
+
+    // If 401 and not already retried and not the refresh endpoint itself
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes(API_ENDPOINTS.REFRESH_TOKEN)
+    ) {
+      if (isRefreshing) {
+        // Queue requests while refreshing
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(() => api(originalRequest))
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        // Ask backend to refresh — cookie is sent automatically
+        await api.post(API_ENDPOINTS.REFRESH_TOKEN);
+        processQueue(null);
+        return api(originalRequest); // retry original request
+      } catch (refreshError) {
+        processQueue(refreshError);
+        // Refresh failed → force logout → redirect to login
+        window.location.href = "/login";
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export default api;
