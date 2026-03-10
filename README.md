@@ -31,7 +31,7 @@ git clone https://github.com/ay-boutera/Absence-Management-frontend.git
 cd Absence-Management-frontend
 
 # Enter the Next.js app
-cd my-a
+cd my-app
 
 # Install dependencies
 npm install
