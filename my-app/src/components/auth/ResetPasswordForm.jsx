@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { resetPasswordConfirm } from "@/services/authService";
 import Image from "next/image";
+import { Modal } from "@/components/shared/Modal";
 
 export function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -19,6 +20,7 @@ export function ResetPasswordForm() {
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   if (!token) {
     return (
@@ -47,7 +49,7 @@ export function ResetPasswordForm() {
     setLoading(true);
     try {
       await resetPasswordConfirm(token, password, confirm);
-      router.push("/login?reset=success");
+      setShowModal(true);
     } catch (err) {
       const detail = err.response?.data?.detail;
 
@@ -57,7 +59,7 @@ export function ResetPasswordForm() {
         setError(detail);
       } else {
         setError(
-          "This link has expired or is invalid. Please request a new one."
+          "This link has expired or is invalid. Please request a new one.",
         );
       }
     } finally {
@@ -65,56 +67,70 @@ export function ResetPasswordForm() {
     }
   };
 
-  return (
-    <div className="login-form px-20">
-      <a href="/login" className="auth-back">
-        <Image
-          src="/arrow-narrow-left.svg"
-          alt="Back"
-          width={32}
-          height={40}
-        />
-      </a>
+ 
 
-      <div className="mb-8">
-        <h2 className="auth-title">Reset Password</h2>
-        <p className="auth-subtitle">
-          Please enter your new password. Make sure it&apos;s at least 8
-          characters long and matches the confirmation field.
-        </p>
+  
+    return (
+  <div className="login-form px-20">
+    <a href="/login" className="auth-back">
+      <Image src="/arrow-narrow-left.svg" alt="Back" width={32} height={40} />
+    </a>
+
+    <div className="mb-8">
+      <h2 className="auth-title">Reset Password</h2>
+      <p className="auth-subtitle">
+        Please enter your new password. Make sure it&apos;s at least 8
+        characters long and matches the confirmation field.
+      </p>
+    </div>
+
+    <form onSubmit={handleSubmit}>
+      <div className="form-group">
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          disabled={loading}
+          placeholder="New Password"
+          className="mb-8"
+        />
       </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={loading}
-            placeholder="New Password"
-            className="mb-8"
-          />
-        </div>
+      <div className="form-group">
+        <input
+          type="password"
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+          required
+          disabled={loading}
+          placeholder="Confirm password"
+          className="mb-8"
+        />
+      </div>
 
-        <div className="form-group">
-          <input
-            type="password"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            required
-            disabled={loading}
-            placeholder="Confirm password"
-            className="mb-8"
-          />
-        </div>
+      {error && <div className="error-message">{error}</div>}
 
-        {error && <div className="error-message">{error}</div>}
+      <button type="submit" disabled={loading} className="btn-primary">
+        {loading ? "Resetting..." : "Reset Password"}
+      </button>
+    </form>
 
-        <button type="submit" disabled={loading} className="btn-primary">
-          {loading ? "Resetting..." : "Reset Password"}
-        </button>
-      </form>
-    </div>
-  );
+    {/* ✅ CORRECT PLACE */}
+    {showModal && (
+      <Modal
+        title="You have successfully changed your password"
+        message=""
+        buttonText="Back to log in page"
+        iconSrc="/molalIcon.svg"
+        href="/login"
+        onClose={() => {
+          setShowModal(false);
+          router.push("/login");
+        }}
+      />
+    )}
+  </div>
+);
+  
 }

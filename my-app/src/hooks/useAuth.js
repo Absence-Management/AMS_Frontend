@@ -12,23 +12,25 @@ import { getMe } from "@/services/authService";
 import { TOKEN } from "@/lib/constants";
 
 export function useAuth() {
-  const { setUser, clearAuth, isAuthenticated } = useAuthStore();
+  const { setUser, setAuth, clearAuth, isAuthenticated, setAuthLoading } =
+    useAuthStore();
 
   useEffect(() => {
     // ── Rehydrate store on page refresh ──────
     // Cookie is still valid → get current user from backend
     const rehydrate = async () => {
+      setAuthLoading(true);
       try {
         const user = await getMe();
-        setUser(user);
+        // setAuth will set isAuthenticated: true and isAuthLoading: false
+        setAuth(user);
       } catch (err) {
         // Cookie expired or invalid → clear store
         clearAuth();
       }
     };
-
     rehydrate();
-  }, [setUser, clearAuth]);
+  }, [setAuth, clearAuth, setAuthLoading]);
 
   useEffect(() => {
     // ── Auto refresh token every 14 minutes ──
@@ -38,7 +40,7 @@ export function useAuth() {
     const interval = setInterval(async () => {
       try {
         await import("@/services/authService").then(({ refreshToken }) =>
-          refreshToken()
+          refreshToken(),
         );
       } catch (err) {
         // Refresh failed → force logout

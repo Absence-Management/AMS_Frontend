@@ -12,10 +12,19 @@ import { useAuthStore } from "@/store/authStore";
 import { ROLES } from "@/lib/constants";
 
 export function RoleGuard({ children, allowedRoles }) {
-  const router         = useRouter();
-  const { role, isAuthenticated } = useAuthStore();
+  const router = useRouter();
+  const { role, isAuthenticated, isAuthLoading } = useAuthStore();
 
   useEffect(() => {
+    if (isAuthLoading) return;
+    console.log(
+      "[RoleGuard] isAuthenticated:",
+      isAuthenticated,
+      "role:",
+      role,
+      "allowedRoles:",
+      allowedRoles,
+    );
     // Not logged in → redirect to login
     if (!isAuthenticated) {
       router.push("/login");
@@ -32,10 +41,10 @@ export function RoleGuard({ children, allowedRoles }) {
         router.push("/login");
       }
     }
-  }, [isAuthenticated, role, allowedRoles, router]);
+  }, [isAuthenticated, role, allowedRoles, router, isAuthLoading]);
 
-  // While checking → show nothing
-  if (!isAuthenticated || !allowedRoles.includes(role)) {
+  // While checking auth → show nothing
+  if (isAuthLoading || !isAuthenticated || !allowedRoles.includes(role)) {
     return null;
   }
 

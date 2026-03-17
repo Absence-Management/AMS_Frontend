@@ -1,7 +1,25 @@
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/authStore";
+
 export default function Home() {
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-between p-24 bg-amber-50">
-      <h1 className="text-4xl font-bold">Welcome to My App</h1>
-    </div>
-  );
+  const router = useRouter();
+  const { isAuthenticated, role } = useAuthStore();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace("/login");
+    } else {
+      // Redirect to dashboard based on role
+      if (role === "admin") {
+        router.replace("/admin");
+      } else if (role === "teacher") {
+        router.replace("/teacher");
+      }
+    }
+  }, [isAuthenticated, role, router]);
+
+  // Optionally, show nothing or a loading spinner while redirecting
+  return null;
 }
