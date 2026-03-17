@@ -1,17 +1,21 @@
 "use client";
+
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+
 export default function AuthLayout({ children }) {
   const pathname = usePathname();
-  const isForgetPassWord = pathname.includes("forget-password") || pathname.includes("reset-password");
+  const isForgetPassWord =
+    pathname.includes("forget-password") || pathname.includes("reset-password");
+
   return (
     <div
       className={`auth-container ${isForgetPassWord ? "flex-row-reverse" : ""}`}
     >
-      {/* {left-side image or illustration can go here if needed} */}
+      {/* Left side illustration container */}
       <div className="login-img-container h-max">
         <Image
-          className="m-12 my-24"
+          className="mx-12 my-36"
           src={
             isForgetPassWord
               ? "/forgetPassword-illustration.png"
@@ -26,19 +30,20 @@ export default function AuthLayout({ children }) {
           height={isForgetPassWord ? 380 : 480}
         />
         <div className="mb-12">
-          {!isForgetPassWord ? (
-            <>
-              <span className="text-[#143888] font-poppins text-5xl font-semibold">
-                Welcom to{" "}
+          {!isForgetPassWord && (
+            <p className="text-center inline-flex flex-wrap justify-center items-center gap-6">
+              <span className="text-[#143888] font-poppins text-5xl font-semibold whitespace-nowrap">
+                Welcome to{"  "}
               </span>
-              <span className="text-[#143888] font-digital text-5xl font-semibold">
-                ESI ATTEND
+              <span className="text-[#143888] font-digital text-3xl font-semibold whitespace-nowrap">
+                ESI:ATTEND
               </span>
-            </>
-          ) : null}
+            </p>
+          )}
         </div>
       </div>
 
+      {/* Child content (LoginForm, ResetPasswordForm, etc.) */}
       {children}
     </div>
   );

@@ -16,20 +16,14 @@ export function GoogleOAuthButton() {
   };
 
   return (
-    <button
-      onClick={handleGoogleLogin}
-      className="flex items-center justify-center text-lg w-full bg-[#f9f9f9] border border-gray-200 rounded-lg py-2 mt-4 hover:bg-gray-200 h-14 transition"
-    >
+    <button onClick={handleGoogleLogin} className="btn-google">
       <Image
         width={24}
         height={24}
         src="/google.svg"
         alt="Google"
-        className="inline-block mr-2"
       />
-      <span className="text-gray-700 font-semibold">
-        Sign in with Google Auth
-      </span>
+      <span>Sign in with Google Auth</span>
     </button>
   );
 }

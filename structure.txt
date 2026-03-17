@@ -46,7 +46,7 @@ my-app/
 │   │   │   │   └── statistics/
 │   │   │   │       └── page.jsx          # [US-45→54] Analytics + PDF export
 │   │   │   │
-│   │   │   └── enseignant/               🔒 SPRINT 3→6
+│   │   │   └── teacher/               🔒 SPRINT 3→6
 │   │   │       ├── page.jsx              # Teacher home dashboard
 │   │   │       ├── seances/
 │   │   │       │   ├── page.jsx          # [US-18] Today's sessions
