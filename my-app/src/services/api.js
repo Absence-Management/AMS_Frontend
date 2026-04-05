@@ -4,8 +4,7 @@
 // ============================================
 
 import axios from "axios";
-import { API_ENDPOINTS } from "@/lib/constants";
-import { CONFIG } from "@/lib/constants";
+import { CONFIG, API_ENDPOINTS } from "@/lib/constants";
 
 const api = axios.create({
   baseURL: CONFIG.API_URL, // http://localhost:8000
@@ -65,7 +64,9 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError);
         // Refresh failed → force logout → redirect to login
+        if (typeof window !== "undefined") {
         window.location.href = "/login";
+}
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
