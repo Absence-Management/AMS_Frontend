@@ -20,7 +20,20 @@ const api = axios.create({
 
 let isRefreshing = false;
 let failedQueue = [];
+api.interceptors.request.use((config) => {
+  if (typeof document !== "undefined") {
+    const csrfToken = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("csrf_token="))
+      ?.split("=")[1];
 
+    if (csrfToken) {
+      config.headers["X-CSRF-Token"] = csrfToken;
+    }
+  }
+
+  return config;
+});
 const processQueue = (error) => {
   failedQueue.forEach((prom) => {
     if (error) {
