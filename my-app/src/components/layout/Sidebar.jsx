@@ -369,47 +369,24 @@ const ADMIN_SECTIONS = [
     title: "Main",
     links: [
       { label: "Dashboard", href: "/admin", icon: "dashboard" },
-      {
-        label: "Students",
-        href: "/admin/users?view=students",
-        icon: "students",
-      },
-      {
-        label: "Teachers",
-        href: "/admin/users?view=teachers",
-        icon: "teachers",
-      },
-      { label: "Lessons", href: "/admin/lessons", icon: "lessons" },
+      { label: "Students",   href: "/admin/students/",  icon: "students" },
+      { label: "Teachers",   href: "/admin//teachers",  icon: "teachers" },
       { label: "Groups", href: "/admin/groups", icon: "groups" },
-      { label: "Users", href: "/admin/users?view=all", icon: "users" },
     ],
   },
   {
     title: "Attendance",
     links: [
       { label: "Attendance", href: "/admin/absences", icon: "attendance" },
-      {
-        label: "Justifications",
-        href: "/admin/justifications",
-        icon: "justifications",
-      },
-      {
-        label: "Exam Absences",
-        href: "/admin/absences/exam",
-        icon: "examAbsences",
-      },
+      {label: "Justifications",href: "/admin/justifications",icon: "justifications",},
+      {label: "Exam Absences",href: "/admin/absences/exam",icon: "examAbsences",},
       { label: "Rattrapages", href: "/admin/rattrapages", icon: "rattrapages" },
     ],
   },
   {
     title: "System",
     links: [
-      { label: "Statistics", href: "/admin/statistics", icon: "statistics" },
-      {
-        label: "Notifications",
-        href: "/admin/notifications",
-        icon: "notifications",
-      },
+      {label: "Notifications",href: "/admin/notifications",icon: "notifications",},
       { label: "Settings", href: "/admin/settings", icon: "settings" },
       { label: "Audit Log", href: "/admin/audit", icon: "audit" },
       { label: "Import", href: "/admin/import", icon: "import" },
