@@ -85,7 +85,7 @@ Allow the Administrator to import student lists and session planning from Progre
 
 | Endpoint                                | Needed By            | Status |
 | --------------------------------------- | -------------------- | ------ |
-| `POST /api/v1/import/students`          | CsvUploadZone        | To Do  |
+| `POST /api/v1/import/students`          | CsvUploadZone        | DONE   |
 | `POST /api/v1/import/teachers`          | CsvUploadZone        | To Do  |
 | `POST /api/v1/import/planning`          | CsvUploadZone        | To Do  |
 | `POST /api/v1/import/confirm/:importId` | Submit & save button | To Do  |
