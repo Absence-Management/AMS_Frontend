@@ -4,11 +4,194 @@ import { useState, useRef } from "react";
 import ImportButton from "@/components/dashboard/ImportButton";
 import ImportErrorReportModal from "@/components/dashboard/ImportErrorReportModal";
 import CriticalErrorNotification from "@/components/import/CriticalErrorNotification";
+import DataTable from "@/components/shared/DataTable";
+import { Avatar, IconDots } from "@/components/shared/TableShared";
 import * as importService from "@/services/importService";
 
+// ── CSV parser ───────────────────────────────────────────────────────────────
+// Returns { headers: string[], rows: Record<string, string>[] }
+function parseCSV(text) {
+  const lines = text.split(/\r?\n/).filter(Boolean);
+  if (lines.length < 2) return { headers: [], rows: [] };
+
+  const sep = lines[0].includes(";") ? ";" : ",";
+  const headers = lines[0].split(sep).map((h) => h.trim().toLowerCase());
+
+  const rows = lines.slice(1).map((line) => {
+    const cells = line.split(sep);
+    return Object.fromEntries(
+      headers.map((h, i) => [h, cells[i]?.trim() ?? ""]),
+    );
+  });
+
+  return { headers, rows };
+}
+
+// ── Avatar color pool (deterministic by index) ───────────────────────────────
+const AVATAR_COLORS = [
+  "#dbeafe",
+  "#fce7f3",
+  "#dcfce7",
+  "#fef9c3",
+  "#ede9fe",
+  "#fee2e2",
+  "#d1fae5",
+  "#e0f2fe",
+];
+const avatarColor = (i) => AVATAR_COLORS[i % AVATAR_COLORS.length];
+
+// ── Per-import-type config ───────────────────────────────────────────────────
+const PREVIEW_CONFIG = {
+  0: {
+    // Students
+    label: "students",
+    columns: [
+      "Student",
+      "Matricule",
+      "Field",
+      "Level",
+      "Group",
+      "Email",
+      "Action",
+    ],
+    renderRow: (row, i) => (
+      <div key={i} className="import-preview-table__row">
+        <span className="admin-data-table__cell admin-data-table__cell--name">
+          <div className="admin-data-table__name-wrap">
+            <Avatar
+              name={`${row.prenom ?? ""} ${row.nom ?? ""}`}
+              color={avatarColor(i)}
+            />
+            <span className="admin-data-table__name">
+              {row.prenom ?? "—"} {row.nom ?? "—"}
+            </span>
+          </div>
+        </span>
+        <span className="admin-data-table__cell admin-data-table__text-cell">
+          {row.matricule ?? "—"}
+        </span>
+        <span className="admin-data-table__cell admin-data-table__text-cell">
+          {row.filiere ?? "—"}
+        </span>
+        <span className="admin-data-table__cell admin-data-table__text-cell">
+          {row.niveau ?? "—"}
+        </span>
+        <span className="admin-data-table__cell admin-data-table__text-cell">
+          {row.groupe ?? "—"}
+        </span>
+        <span className="admin-data-table__cell admin-data-table__text-cell">
+          {row.email ?? "—"}
+        </span>
+        <span className="admin-data-table__cell admin-data-table__cell--action">
+          <button
+            type="button"
+            className="admin-data-table__action-btn"
+            aria-label="Row actions"
+          >
+            <IconDots />
+          </button>
+        </span>
+      </div>
+    ),
+  },
+  1: {
+    // Teachers
+    label: "teachers",
+    columns: ["Teacher", "ID", "Email", "Grade", "Department", "Action"],
+    renderRow: (row, i) => (
+      <div key={i} className="import-preview-table__row">
+        <span className="admin-data-table__cell admin-data-table__cell--name">
+          <div className="admin-data-table__name-wrap">
+            <Avatar
+              name={`${row.prenom ?? ""} ${row.nom ?? ""}`}
+              color={avatarColor(i)}
+            />
+            <span className="admin-data-table__name">
+              {row.prenom ?? "—"} {row.nom ?? "—"}
+            </span>
+          </div>
+        </span>
+        <span className="admin-data-table__cell admin-data-table__text-cell">
+          {row.id_enseignant ?? "—"}
+        </span>
+        <span className="admin-data-table__cell admin-data-table__text-cell">
+          {row.email ?? "—"}
+        </span>
+        <span className="admin-data-table__cell admin-data-table__text-cell">
+          {row.grade ?? "—"}
+        </span>
+        <span className="admin-data-table__cell admin-data-table__text-cell">
+          {row.departement ?? "—"}
+        </span>
+        <span className="admin-data-table__cell admin-data-table__cell--action">
+          <button
+            type="button"
+            className="admin-data-table__action-btn"
+            aria-label="Row actions"
+          >
+            <IconDots />
+          </button>
+        </span>
+      </div>
+    ),
+  },
+  2: null, // Sessions — no preview
+};
+
+// ── Preview table ────────────────────────────────────────────────────────────
+const PAGE_SIZE = 7;
+
+function PreviewTable({ rows, importType }) {
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const config = PREVIEW_CONFIG[importType];
+  if (!config || !rows.length) return null;
+
+  const filtered = search
+    ? rows.filter((r) =>
+        Object.values(r).some((v) =>
+          String(v).toLowerCase().includes(search.toLowerCase()),
+        ),
+      )
+    : rows;
+
+  const pageRows = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  return (
+    <div style={{ marginTop: 24 }}>
+      <DataTable
+        title={`Preview — ${config.label}`}
+        count={filtered.length}
+        searchQuery={search}
+        onSearch={(v) => {
+          setSearch(v);
+          setPage(1);
+        }}
+        placeholder={`Search ${config.label}…`}
+        columns={config.columns}
+        tableClass={`import-preview-table import-preview-table--${config.label}`}
+        headerClass="import-preview-table__header-row"
+        footerClass="import-preview-table__footer"
+        emptyMessage={`No ${config.label} match your search.`}
+        rowLabel={config.label}
+        page={page}
+        pageSize={PAGE_SIZE}
+        totalCount={filtered.length}
+        onPageChange={setPage}
+      >
+        {pageRows.map((row, i) =>
+          config.renderRow(row, (page - 1) * PAGE_SIZE + i),
+        )}
+      </DataTable>
+    </div>
+  );
+}
+
+// ── Page ─────────────────────────────────────────────────────────────────────
 export default function ImportPage() {
   const [selectedOption, setSelectedOption] = useState(0);
   const [file, setFile] = useState(null);
+  const [previewRows, setPreviewRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -46,7 +229,7 @@ export default function ImportPage() {
       id: 1,
       title: "List of teachers",
       description:
-        "Import from Progres — CSV file with columns: matricule, nom, prenom, email",
+        "Import from Progres — UTF-8 CSV (comma-delimited) with columns: id_enseignant, nom, prenom, email, grade, departement",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -90,15 +273,43 @@ export default function ImportPage() {
     },
   ];
 
-  const handleFileChange = (e) => {
+  // ── helpers ────────────────────────────────────────────────────────────────
+
+  const resetAll = () => {
+    setFile(null);
+    setPreviewRows([]);
+    setError(null);
+    setSuccess(false);
+    setShowErrorModal(false);
+    setCriticalError(false);
+  };
+
+  const handleFileChange = async (e) => {
     const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setError(null);
-      setSuccess(false);
-      setShowErrorModal(false);
-      setCriticalError(false);
+    if (!selectedFile) return;
+
+    setFile(selectedFile);
+    setError(null);
+    setSuccess(false);
+    setShowErrorModal(false);
+    setCriticalError(false);
+
+    // Parse CSV for preview (students & teachers only)
+    if (PREVIEW_CONFIG[selectedOption]) {
+      try {
+        const text = await selectedFile.text();
+        const { rows } = parseCSV(text);
+        setPreviewRows(rows);
+      } catch {
+        setPreviewRows([]);
+      }
+    } else {
+      setPreviewRows([]);
     }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current.click();
   };
 
   const normalizeImportResult = (payload, fallbackFileName) => {
@@ -120,25 +331,46 @@ export default function ImportPage() {
         ? payload.errors_report
         : Array.isArray(payload.report)
           ? payload.report
-          : [];
+          : Array.isArray(payload.errors)
+            ? payload.errors
+            : [];
 
-    const errors = Number(
-      payload.errors ??
-        payload.error_count ??
-        payload.failed ??
-        errorReport.length ??
-        0,
+    const resolveNumeric = (...values) => {
+      for (const value of values) {
+        if (typeof value === "number" && Number.isFinite(value)) return value;
+        if (typeof value === "string" && value.trim() !== "") {
+          const parsed = Number(value);
+          if (Number.isFinite(parsed)) return parsed;
+        }
+      }
+      return null;
+    };
+
+    const numericErrors = resolveNumeric(
+      payload.error_count,
+      payload.failed,
+      Array.isArray(payload.errors) ? payload.errors.length : null,
+      errorReport.length,
     );
 
-    const imported = Number(
-      payload.imported ?? payload.imported_count ?? payload.success ?? 0,
-    );
+    const created = resolveNumeric(payload.created, payload.inserted, 0) ?? 0;
+    const updated = resolveNumeric(payload.updated, 0) ?? 0;
+    const imported =
+      resolveNumeric(
+        payload.imported,
+        payload.imported_count,
+        payload.success,
+        payload.processed,
+      ) ?? created + updated;
+    const errors = numericErrors ?? 0;
 
     return {
       ...payload,
       message: payload.message || payload.detail || "",
       imported,
       errors,
+      created,
+      updated,
       error_report: errorReport,
       history_id: payload.history_id || payload.historyId || null,
       file_name:
@@ -149,10 +381,6 @@ export default function ImportPage() {
         "uploaded_file.csv",
       date: payload.date || new Date().toLocaleDateString("en-GB"),
     };
-  };
-
-  const handleUploadClick = () => {
-    fileInputRef.current.click();
   };
 
   const handleSubmit = async () => {
@@ -190,7 +418,9 @@ export default function ImportPage() {
         setCriticalError(false);
         setError(null);
       }
+
       setFile(null);
+      setPreviewRows([]);
     } catch (err) {
       console.error("Import failed:", err);
       const status = err?.response?.status;
@@ -238,9 +468,11 @@ export default function ImportPage() {
     }
   };
 
+  // ── render ─────────────────────────────────────────────────────────────────
+
   return (
     <div className="main-page">
-      {/* ── Header row ── */}
+      {/* ── Header ── */}
       <div className="main-header">
         <div className="main-header-text">
           <h2 className="main-title">Import / Export</h2>
@@ -281,6 +513,7 @@ export default function ImportPage() {
       </div>
 
       <div className="import-container">
+        {/* ── Type selector ── */}
         <div className="import-options-grid">
           {options.map((opt) => (
             <ImportButton
@@ -289,7 +522,10 @@ export default function ImportPage() {
               title={opt.title}
               description={opt.description}
               isSelected={selectedOption === opt.id}
-              onClick={() => setSelectedOption(opt.id)}
+              onClick={() => {
+                setSelectedOption(opt.id);
+                resetAll();
+              }}
             />
           ))}
         </div>
@@ -302,12 +538,12 @@ export default function ImportPage() {
           style={{ display: "none" }}
         />
 
-        {/* Upload State Toggle */}
+        {/* ── Upload / ready / success area ── */}
         {!file && !success ? (
           <div className="import-upload-area">
             <h3 className="import-upload-title">Upload a CSV file</h3>
             <p className="import-upload-subtitle">
-              Select a .csv file separated by semicolons (;)
+              Select a UTF-8 .csv file separated by commas (,)
             </p>
             <button className="import-upload-btn" onClick={handleUploadClick}>
               Upload
@@ -325,9 +561,7 @@ export default function ImportPage() {
             >
               Import another file
             </button>
-            <div
-              style={{ marginTop: "16px", color: "#10b981", fontSize: "14px" }}
-            >
+            <div style={{ marginTop: 16, color: "#10b981", fontSize: 14 }}>
               Successfully imported <strong>{importResult?.imported}</strong>{" "}
               rows.
             </div>
@@ -346,11 +580,11 @@ export default function ImportPage() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <polyline points="10 9 9 9 8 9"></polyline>
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
               </svg>
               {file.name}
             </p>
@@ -361,15 +595,21 @@ export default function ImportPage() {
         )}
       </div>
 
+      {/* ── CSV preview table (students & teachers only) ── */}
+      {file && previewRows.length > 0 && (
+        <PreviewTable rows={previewRows} importType={selectedOption} />
+      )}
+
+      {/* ── Errors & modals ── */}
       {criticalError && <CriticalErrorNotification />}
 
       {error && !criticalError && (
         <div className="error-message" style={{ margin: "16px 0 0 0" }}>
-          <p style={{ fontWeight: "600", marginBottom: "8px" }}>{error}</p>
+          <p style={{ fontWeight: 600, marginBottom: 8 }}>{error}</p>
           {importResult?.error_report?.length > 0 && (
             <button
               className="import-upload-btn"
-              style={{ marginTop: "2px" }}
+              style={{ marginTop: 2 }}
               onClick={() => setShowErrorModal(true)}
             >
               View error report
@@ -384,23 +624,20 @@ export default function ImportPage() {
         onClose={() => setShowErrorModal(false)}
       />
 
+      {/* ── Footer actions ── */}
       <div className="import-footer">
         {file && (
           <>
-            <p className="import-footer-text">
-              When you submit, an automatic email is going to be sent to the
-              student with their email and the password (their matricule) !
-            </p>
+            {selectedOption === 0 && (
+              <p className="import-footer-text">
+                When you submit, an automatic email is going to be sent to the
+                student with their email and the password (their matricule) !
+              </p>
+            )}
             <div className="import-footer-actions">
               <button
                 className="btn-cancel"
-                onClick={() => {
-                  setFile(null);
-                  setError(null);
-                  setSuccess(false);
-                  setShowErrorModal(false);
-                  setCriticalError(false);
-                }}
+                onClick={resetAll}
                 disabled={loading}
               >
                 Cancel

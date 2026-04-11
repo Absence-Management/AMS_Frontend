@@ -11,6 +11,11 @@ export default function GoogleCallbackPage() {
   const { setAuth } = useAuthStore();
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("access_token") || params.has("refresh_token")) {
+      window.history.replaceState({}, document.title, "/auth/callback");
+    }
+
     getMe()
       .then((user) => {
         setAuth(user);
@@ -20,7 +25,14 @@ export default function GoogleCallbackPage() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div style={{ display:"flex", justifyContent:"center", alignItems:"center", minHeight:"100vh" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+      }}
+    >
       <p>Signing you in…</p>
     </div>
   );

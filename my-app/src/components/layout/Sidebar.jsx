@@ -403,8 +403,12 @@ const ADMIN_SECTIONS = [
         label: "Manage data",
         icon: "manageData",
         children: [
-          { label: "Import / Export", href: "/admin/import" },
-          { label: "Import history", href: "/admin/import/history" },
+          { label: "Import / Export", href: "/admin/import", exact: true },
+          {
+            label: "Import history",
+            href: "/admin/import/history",
+            exact: true,
+          },
           { label: "Salles and Amphis", href: "/admin/salles-amphis" },
         ],
       },
@@ -444,12 +448,16 @@ export function Sidebar() {
   }, []);
 
   const isActive = useCallback(
-    (href) => {
+    (href, exact = false) => {
       const [targetPath, targetQuery] = href.split("?");
       const normalizedPathname = normalizePath(pathname);
       const normalizedTargetPath = normalizePath(targetPath);
 
       if (!targetQuery) {
+        if (exact) {
+          return normalizedPathname === normalizedTargetPath;
+        }
+
         return normalizedTargetPath === "/admin" ||
           normalizedTargetPath === "/teacher"
           ? normalizedPathname === normalizedTargetPath
@@ -478,7 +486,7 @@ export function Sidebar() {
 
           const menuKey = `${section.title}-${link.label}`;
           const hasActiveChild = link.children.some((child) =>
-            isActive(child.href),
+            isActive(child.href, child.exact),
           );
 
           if (typeof next[menuKey] === "undefined") {
@@ -529,7 +537,7 @@ export function Sidebar() {
 
               if (hasChildren) {
                 const hasActiveChild = link.children.some((child) =>
-                  isActive(child.href),
+                  isActive(child.href, child.exact),
                 );
                 const isExpanded = !!expandedMenus[menuKey];
 
@@ -560,15 +568,18 @@ export function Sidebar() {
 
                     {isExpanded && (
                       <div className="sidebar-sublinks">
-                        {link.children.map((child) => (
-                          <Link
-                            key={`${menuKey}-${child.href}`}
-                            href={child.href}
-                            className={`sidebar-sublink${isActive(child.href) ? " active" : ""}`}
-                          >
-                            {child.label}
-                          </Link>
-                        ))}
+                        <div className="sidebar-sublinks-tree" />
+                        <div className="sidebar-sublinks-items">
+                          {link.children.map((child) => (
+                            <Link
+                              key={`${menuKey}-${child.href}`}
+                              href={child.href}
+                              className={`sidebar-sublink${isActive(child.href, child.exact) ? " active" : ""}`}
+                            >
+                              {child.label}
+                            </Link>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>

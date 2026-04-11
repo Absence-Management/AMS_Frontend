@@ -7,10 +7,10 @@ import axios from "axios";
 import { CONFIG, API_ENDPOINTS } from "@/lib/constants";
 
 const api = axios.create({
-  baseURL: "/api",  // ← was CONFIG.API_URL or the env var
+  baseURL: "/api", // ← was CONFIG.API_URL or the env var
   withCredentials: true,
-  headers: { 'Content-Type': 'application/json' },
-})
+  headers: { "Content-Type": "application/json" },
+});
 
 // ── Response Interceptor ──────────────────────────────
 // If backend returns 401 → try to refresh the token once
@@ -76,8 +76,8 @@ api.interceptors.response.use(
         processQueue(refreshError);
         // Refresh failed → force logout → redirect to login
         if (typeof window !== "undefined") {
-        window.location.href = "/login";
-}
+          window.location.href = "/login";
+        }
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
@@ -85,7 +85,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

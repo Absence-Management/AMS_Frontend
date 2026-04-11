@@ -1,5 +1,8 @@
 import { create } from "zustand";
 
+const normalizeRole = (value) =>
+  typeof value === "string" ? value.trim().toLowerCase() : null;
+
 export const useAuthStore = create((set) => ({
   // ── State ──────────────────────────────
   user: null, // { id, first_name, last_name, email, role }
@@ -14,7 +17,7 @@ export const useAuthStore = create((set) => ({
   setAuth: (data) =>
     set({
       user: data,
-      role: data.role,
+      role: normalizeRole(data?.role),
       isAuthenticated: true,
       isAuthLoading: false,
     }),
@@ -23,7 +26,7 @@ export const useAuthStore = create((set) => ({
   setUser: (data) =>
     set({
       user: { ...data },
-      role: data.role,
+      role: normalizeRole(data?.role),
     }),
 
   // Call this on logout

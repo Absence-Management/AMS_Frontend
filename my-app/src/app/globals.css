@@ -599,7 +599,6 @@ button {
   color: #143888;
   margin: 0;
 }
-
 /* ============================================
    SIDEBAR
    ============================================ */
@@ -758,33 +757,79 @@ button {
   transform: rotate(180deg);
 }
 
+/* ── Submenu group ──────────────────────────── */
 .sidebar-submenu-group {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
+/* ── Sublinks: tree line + items ────────────── */
 .sidebar-sublinks {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-left: 32px;
+  align-items: flex-start;
+  margin-top: 2px;
 }
 
+.sidebar-sublinks-tree {
+  flex-shrink: 0;
+  width: 22px;
+  position: relative;
+  align-self: stretch;
+}
+
+.sidebar-sublinks-tree::before {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: 2px;
+  bottom: 26px;
+  width: 1.5px;
+  background-color: #e3e8ef;
+  border-radius: 999px;
+}
+
+.sidebar-sublinks-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+/* ── Each sub-item ──────────────────────────── */
 .sidebar-sublink {
   display: flex;
   align-items: center;
-  min-height: 34px;
-  padding: 0 10px;
+  position: relative;
+  min-height: 32px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid transparent;
   border-radius: 8px;
-  color: #718096;
-  font-size: 1rem;
+  color: #757575;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.24px;
+  line-height: 16px;
   text-decoration: none;
   transition:
     background 0.15s ease,
-    color 0.15s ease;
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
+/* rounded elbow connector */
+.sidebar-sublink::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: calc(50% - 10px);
+  width: 11px;
+  height: 10px;
+  border-left: 2.5px solid #e3e8ef;
+  border-bottom: 2.5px solid #e3e8ef;
+  border-bottom-left-radius: 12px;
+}
 .sidebar-sublink:hover {
   background: #f8faff;
   color: #143888;
@@ -792,10 +837,12 @@ button {
 
 .sidebar-sublink.active {
   background: #f8faff;
+  border-color: #e3e8ef;
   color: #143888;
   font-weight: 500;
 }
 
+/* ── Bottom links ───────────────────────────── */
 .sidebar-bottom-links {
   display: flex;
   flex-direction: column;
@@ -806,6 +853,7 @@ button {
   border-top: 1px solid #f0f4f8;
 }
 
+/* ── Logout ─────────────────────────────────── */
 .sidebar-logout {
   margin-top: 8px;
   flex-shrink: 0;
@@ -831,7 +879,6 @@ button {
 .sidebar-logout .sidebar-link-icon {
   color: #e53e3e;
 }
-
 /* ============================================
    NAVBAR
    ============================================ */
@@ -2332,6 +2379,61 @@ button {
   .import-error-meta-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ============================================
+   IMPORT PREVIEW TABLE (DataTable variant)
+   ============================================ */
+
+.import-preview-table__header-row,
+.import-preview-table__row {
+  display: grid;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.import-preview-table--students .import-preview-table__header-row,
+.import-preview-table--students .import-preview-table__row {
+  grid-template-columns: 2.2fr 1.15fr 1fr 0.9fr 0.9fr 1.3fr 64px;
+}
+
+.import-preview-table--teachers .import-preview-table__header-row,
+.import-preview-table--teachers .import-preview-table__row {
+  grid-template-columns: 2.2fr 1.15fr 1.4fr 1fr 1.2fr 64px;
+}
+
+.import-preview-table__header-row {
+  height: 40px;
+  background: #f8faff;
+  border-bottom: 1px solid #e6ebf0;
+}
+
+.import-preview-table__row {
+  min-height: 60px;
+  border-bottom: 1px solid #e3e8ef;
+  transition: background-color 0.15s ease;
+}
+
+.admin-data-table__body .import-preview-table__row:last-of-type {
+  border-bottom: none;
+}
+
+.import-preview-table__row:hover {
+  background: #fbfcff;
+}
+
+.import-preview-table__footer {
+  background: #ffffff;
+}
+
+.import-preview-table__footer .admin-data-table__footer-info {
+  font-size: 13px;
+  color: #4a5567;
+}
+
+.import-preview-table__footer .admin-data-table__footer-range {
+  color: #030712;
+  font-weight: 500;
 }
 
 /* ============================================

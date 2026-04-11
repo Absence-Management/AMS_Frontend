@@ -33,7 +33,7 @@ export function Modal({
           <Image src={iconSrc} alt="Check" width={172} height={172} />
         </div>
         {/* Button */}
-        <button className="btn-primary" onClick={onClose}>
+        <button className="w-full h-32 py-2 px-6 bg-[#143888] text-white rounded-lg hover:bg-[#0f2d6e]" onClick={onClose}>
           {buttonText}
         </button>
       </div>

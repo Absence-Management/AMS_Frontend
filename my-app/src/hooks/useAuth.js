@@ -12,7 +12,7 @@ import { getMe } from "@/services/authService";
 import { TOKEN } from "@/lib/constants";
 
 export function useAuth() {
-  const { setUser, setAuth, clearAuth, isAuthenticated, setAuthLoading } =
+  const { setAuth, clearAuth, isAuthenticated, setAuthLoading } =
     useAuthStore();
 
   useEffect(() => {
