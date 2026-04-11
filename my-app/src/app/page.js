@@ -2,24 +2,21 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
+import { ROLE_ROUTES } from "@/lib/constants";
 
 export default function Home() {
   const router = useRouter();
-  const { isAuthenticated, role } = useAuthStore();
+  const { isAuthenticated, role, isAuthLoading } = useAuthStore();
 
   useEffect(() => {
+    if (isAuthLoading) return; // wait until rehydration finishes
+
     if (!isAuthenticated) {
       router.replace("/login");
     } else {
-      // Redirect to dashboard based on role
-      if (role === "admin") {
-        router.replace("/admin");
-      } else if (role === "teacher") {
-        router.replace("/teacher");
-      }
+      router.replace(ROLE_ROUTES[role] ?? "/login");
     }
-  }, [isAuthenticated, role, router]);
+  }, [isAuthenticated, role, router, isAuthLoading]);
 
-  // Optionally, show nothing or a loading spinner while redirecting
   return null;
 }

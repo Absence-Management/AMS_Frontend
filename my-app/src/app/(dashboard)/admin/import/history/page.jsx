@@ -5,15 +5,7 @@ import DataTable from "@/components/shared/DataTable";
 import { getImportExportHistory } from "@/services/importService";
 
 const PAGE_SIZE = 7;
-const COLUMNS = [
-  "Date",
-  "File name",
-  "Data type",
-  "Rows",
-  "Success",
-  "Errors",
-  "Status",
-];
+const COLUMNS = ["Date", "File name", "Data type", "Rows", "Status"];
 
 function formatDateTime(value) {
   if (!value) return "—";
@@ -32,7 +24,6 @@ function formatDateTime(value) {
 
 function normalizeHistoryItem(item, index) {
   const errorCount = Number(item?.error_count ?? 0);
-  const successCount = Number(item?.success_count ?? 0);
 
   return {
     id: item?.id || `${item?.file_name || "file"}-${index}`,
@@ -40,7 +31,6 @@ function normalizeHistoryItem(item, index) {
     fileName: item?.file_name || "—",
     dataType: item?.data_type || "—",
     rowCount: Number(item?.row_count ?? 0),
-    successCount,
     errorCount,
     statusLabel: errorCount > 0 ? "With errors" : "Success",
     statusClass:
@@ -64,12 +54,6 @@ function ImportHistoryRow({ row }) {
       </div>
       <div className="admin-data-table__cell admin-data-table__text-cell">
         {row.rowCount}
-      </div>
-      <div className="admin-data-table__cell admin-data-table__text-cell">
-        {row.successCount}
-      </div>
-      <div className="admin-data-table__cell admin-data-table__text-cell">
-        {row.errorCount}
       </div>
       <div className="admin-data-table__cell admin-data-table__text-cell">
         <span className={row.statusClass}>{row.statusLabel}</span>

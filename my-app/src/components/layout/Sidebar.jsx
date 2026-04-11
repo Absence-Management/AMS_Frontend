@@ -376,7 +376,7 @@ const ADMIN_SECTIONS = [
   {
     title: "Attendance",
     links: [
-      { label: "Attendance", href: "/admin/absences", icon: "attendance" },
+      { label: "Attendance", href: "/admin/attendance", icon: "attendance" },
       {
         label: "Justifications",
         href: "/admin/justifications",
@@ -513,6 +513,7 @@ export function Sidebar() {
           height={80}
           src="/sideBarLogo.svg"
           alt="Sidebar Logo"
+          style={{ width: "auto", height: "auto" }}
         />
       </div>
 

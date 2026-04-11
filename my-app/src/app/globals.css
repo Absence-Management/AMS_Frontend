@@ -726,6 +726,21 @@ button {
   font-weight: 500;
 }
 
+.sidebar-link.active .sidebar-link-icon svg path,
+.sidebar-link.active .sidebar-link-icon svg circle,
+.sidebar-link.active .sidebar-link-icon svg rect,
+.sidebar-link.active .sidebar-link-icon svg line,
+.sidebar-link.active .sidebar-link-icon svg polyline {
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-opacity: 1;
+  fill-opacity: 1;
+}
+
+.sidebar-link.active .sidebar-link-icon svg [fill]:not([fill="none"]) {
+  fill: currentColor;
+}
+
 .sidebar-link-chevron {
   display: flex;
   align-items: center;
@@ -1662,7 +1677,7 @@ button {
 .admin-import-history-table__header-row,
 .admin-import-history-table__row {
   display: grid;
-  grid-template-columns: 1.4fr 2fr 1fr 0.7fr 0.8fr 0.8fr 1fr;
+  grid-template-columns: 1.2fr 1.2fr 1fr 1fr 0.5fr;
   align-items: center;
   padding: 0 16px;
 }

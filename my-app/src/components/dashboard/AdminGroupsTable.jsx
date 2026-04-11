@@ -145,7 +145,7 @@ const COLUMNS = [
   "abcence rate",
   "Action",
 ];
-const PAGE_SIZE = 7;
+const PAGE_SIZE = 8;
 function GroupRow({ group }) {
   const theme = getYearTheme(group.year);
 
@@ -400,7 +400,7 @@ export default function AdminGroupsTable({ groups = [] }) {
       showHead={true}
       showColumnHeaders={!isCardView}
       showSearch={false}
-      showDefaultTools={false}
+      showDefaultTools={true}
       columns={COLUMNS}
       tableClass="admin-groups-table"
       headerClass="admin-groups-table__header-row"
