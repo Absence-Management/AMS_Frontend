@@ -1,12 +1,32 @@
 "use client";
 
+import { API_ENDPOINTS } from "@/lib/constants";
 import Image from "next/image";
 
 export function GoogleOAuthButton() {
-  const handleGoogleLogin = () => {
-    const apiBase = process.env.NEXT_PUBLIC_API_URL;
-    const googleAuthUrl = `${apiBase}/v1/auth/google`;
-    window.location.assign(googleAuthUrl);
+  const handleGoogleLogin = async () => {
+    try {
+      const res = await fetch(`/api${API_ENDPOINTS.GOOGLE_AUTH}`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        throw new Error(`OAuth init failed: ${res.status}`);
+      }
+
+      const data = await res.json();
+      const authorizationUrl = data?.authorization_url;
+
+      if (!authorizationUrl) {
+        throw new Error("Missing authorization_url");
+      }
+
+      window.location.assign(authorizationUrl);
+    } catch (error) {
+      console.error("Google OAuth initiation failed:", error);
+      alert("Failed to start Google login. Please try again.");
+    }
   };
 
   return (
