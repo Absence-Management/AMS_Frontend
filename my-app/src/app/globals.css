@@ -15,7 +15,7 @@
 
 /* ── Base ─────────────────────────────────── */
 * {
-  font-family: "Poppins", sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 button {
@@ -290,14 +290,14 @@ button {
 .dashboard-main {
   display: flex;
   flex-direction: column;
-  margin-left: 22rem;
-  width: calc(100% - 22rem);
+  margin-left: 16rem;
+  width: calc(100% - 16rem);
   min-height: 100vh;
 }
 
 .dashboard-content {
   flex: 1;
-  padding: 1rem;
+  padding: 0rem 1rem;
   overflow-y: auto;
 }
 .header-title-table {
@@ -315,7 +315,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 32px;
-  padding: 24px;
+  padding: 12px 24px;
   width: 100%;
 }
 
@@ -343,7 +343,7 @@ button {
 }
 
 .main-title {
-  font-size: 2rem;
+  font-size: 1.7rem;
   font-family: "Inter", sans-serif;
   font-weight: 600;
   color: #143888;
@@ -352,7 +352,7 @@ button {
 }
 
 .main-subtitle {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
   color: #4a5567;
   margin: 0;
@@ -389,7 +389,7 @@ button {
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 8px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 400;
   flex-shrink: 0;
   transition: background 0.15s ease;
 }
@@ -488,13 +488,13 @@ button {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   border-radius: 8px;
 }
 
 .stats-card-label {
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 400;
   color: rgba(0, 0, 0, 0.6);
   line-height: 20px;
@@ -510,7 +510,7 @@ button {
 }
 
 .stats-card-title {
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 400;
   color: #000000;
   line-height: 20px;
@@ -518,7 +518,7 @@ button {
 }
 
 .stats-card-value {
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: #000000;
   line-height: 40px;
@@ -606,9 +606,9 @@ button {
 .sidebar {
   display: flex;
   flex-direction: column;
-  width: 22rem;
+  width: 16rem;
   height: 100vh;
-  padding: 1.5rem 2rem;
+  padding: 1rem;
   background: #ffffff;
   border-right: 1px solid rgba(0, 0, 0, 0.08);
   position: fixed;
@@ -675,8 +675,9 @@ button {
 }
 
 .sidebar-link:hover {
-  background: #f8faff;
   color: #143888;
+  background: #f8faff;
+  border: 1px solid #e3e8ef;
 }
 
 .sidebar-link.active {
@@ -690,14 +691,14 @@ button {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   color: inherit;
 }
 
 .sidebar-link-icon svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
 }
 
 .sidebar-link-icon svg path,
@@ -712,7 +713,7 @@ button {
 
 .sidebar-link-label {
   flex: 1;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 400;
   line-height: 20px;
   color: inherit;
@@ -722,7 +723,7 @@ button {
 }
 
 .sidebar-link.active .sidebar-link-label {
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .sidebar-link.active .sidebar-link-icon svg path,
@@ -858,7 +859,7 @@ button {
   margin-top: 8px;
   flex-shrink: 0;
   background: transparent;
-  color: #e53e3e;
+  color: #d62525;
   cursor: pointer;
   transition:
     background 0.15s ease,
@@ -873,11 +874,11 @@ button {
 .sidebar-logout .sidebar-link-label {
   font-size: 14px;
   font-weight: 500;
-  color: #e53e3e;
+  color: #d62525;
 }
 
 .sidebar-logout .sidebar-link-icon {
-  color: #e53e3e;
+  color: #d62525;
 }
 /* ============================================
    NAVBAR
@@ -887,10 +888,10 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 5rem;
-  padding: 0 4rem;
+  height: 4rem;
+  padding: 0 2rem;
+  margin-top: 1rem;
   background: #ffffff;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   flex-shrink: 0;
   gap: 16px;
 }
@@ -905,10 +906,10 @@ button {
   display: flex;
   align-items: center;
   gap: 12px;
-  width: 32rem;
-  height: 2.5rem;
+  width: 24rem;
+  height: 2.2rem;
   padding: 0 16px;
-  background: #f7f7f7;
+  background-color: #f8faff;
   border: 1px solid #e6ebf0;
   border-radius: 6px;
 }
@@ -931,7 +932,7 @@ button {
 }
 
 .navbar-search-input::placeholder {
-  color: #6b7280;
+  color: #6b72805e;
 }
 
 .navbar-notification {
@@ -954,7 +955,7 @@ button {
 .navbar-user {
   display: flex;
   align-items: center;
-  gap: 3rem;
+  gap: 2rem;
   flex-shrink: 0;
 }
 
@@ -967,7 +968,7 @@ button {
 }
 
 .navbar-name {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #16151c;
   line-height: 1;
@@ -1354,7 +1355,7 @@ button {
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  padding: 12px 16px;
+  padding: 8px 16px;
   background: #f8faff;
   border-bottom: 1px solid #e3e8ef;
 }
@@ -1384,14 +1385,14 @@ button {
 }
 
 .admin-data-table__title {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 500;
   font-family: "Inter", sans-serif;
   color: #4a5567;
 }
 
 .admin-data-table__count {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
   font-family: "Inter", sans-serif;
   color: #030712;
@@ -1411,9 +1412,9 @@ button {
   align-items: center;
   gap: 12px;
   width: 400px;
-  height: 42px;
-  padding: 0 16px;
-  background: #ffffff;
+  height: 36px;
+  padding: 0 12px;
+  background: #f8faff;
   border: 1px solid #e3e8ef;
   border-radius: 8px;
 }
@@ -1423,12 +1424,12 @@ button {
   border: none;
   background: transparent;
   outline: none;
-  font-size: 16px;
+  font-size: 14px;
   color: #111827;
 }
 
 .admin-data-table__search-input::placeholder {
-  color: #6b7280;
+  color: #6b728041;
 }
 
 .admin-data-table__control-btn {
@@ -1436,14 +1437,14 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  height: 42px;
-  min-width: 92px;
+  height: 36px;
+  min-width: 80px;
   padding: 8px 12px;
   border: 1px solid #e3e8ef;
   border-radius: 8px;
   background: #ffffff;
   color: #111827;
-  font-size: 16px;
+  font-size: 14px;
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
@@ -1492,7 +1493,7 @@ button {
 
 .admin-data-table__email,
 .admin-data-table__text-cell {
-  font-size: 12px;
+  font-size: 14px;
   color: #434345;
   white-space: nowrap;
   overflow: hidden;
@@ -1528,12 +1529,16 @@ button {
    ADMIN STUDENTS TABLE (specific)
    ============================================ */
 
-.admin-students-table__header-row,
-.admin-students-table__row {
+.admin-data-table__header-row,
+.admin-data-table__row {
   display: grid;
-  grid-template-columns: 2.2fr 1.15fr 0.9fr 0.9fr 0.9fr 1fr 64px;
   align-items: center;
   padding: 0 16px;
+}
+
+.admin-students-table__header-row,
+.admin-students-table__row {
+  grid-template-columns: 2.2fr 1.15fr 0.9fr 0.9fr 0.9fr 1fr 64px;
 }
 
 .admin-students-table__footer,
@@ -1691,10 +1696,7 @@ button {
 
 .admin-teachers-table__header-row,
 .admin-teachers-table__row {
-  display: grid;
   grid-template-columns: 2.2fr 1fr 1.2fr 1.2fr 64px;
-  align-items: center;
-  padding: 0 16px;
 }
 
 /* ============================================
@@ -1705,8 +1707,6 @@ button {
 .admin-groups-table__row {
   display: grid; /* ✅ FIX */
   grid-template-columns: 1fr 1fr 1fr 2fr 1.2fr 1.2fr 64px;
-  align-items: center;
-  padding: 0 16px;
 }
 
 /* ============================================
@@ -1715,18 +1715,12 @@ button {
 
 .admin-justifications-table__header-row,
 .admin-justifications-table__row {
-  display: grid;
   grid-template-columns: 1.6fr 1fr 1.1fr 1.4fr 1fr 1.2fr;
-  align-items: center;
-  padding: 0 16px;
 }
 
 .admin-import-history-table__header-row,
 .admin-import-history-table__row {
-  display: grid;
   grid-template-columns: 1.2fr 1.2fr 1fr 1fr 0.5fr;
-  align-items: center;
-  padding: 0 16px;
 }
 
 .admin-justifications-table__header-row .admin-data-table__header-cell--action {
@@ -2436,6 +2430,325 @@ button {
   font-weight: 500;
 }
 
+/* ============================================================
+   Timetable import — add to globals.css
+   ============================================================ */
+
+/* Format hint */
+.timetable-format-hint {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid #e3e8ef;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 12px;
+}
+
+.timetable-format-label {
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.timetable-format-cols {
+  color: #6b7280;
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Preview header */
+.timetable-preview-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.timetable-preview-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #111827;
+  margin: 0 0 2px;
+}
+
+.timetable-preview-count {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Filter bar */
+.timetable-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.timetable-filter-select {
+  height: 34px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0 10px;
+  font-size: 13px;
+  color: #111827;
+  background: #fff;
+  cursor: pointer;
+  outline: none;
+  min-width: 130px;
+}
+
+.timetable-filter-select:focus {
+  border-color: #143888;
+  box-shadow: 0 0 0 3px rgba(20, 56, 136, 0.1);
+}
+
+.timetable-filter-reset {
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #6b7280;
+  background: #fff;
+  cursor: pointer;
+}
+
+.timetable-filter-reset:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Grid wrapper (horizontal scroll on small screens) */
+.timetable-grid-wrap {
+  overflow-x: auto;
+  border: 1px solid #e3e8ef;
+  border-radius: 12px;
+  background: #fff;
+}
+
+/* Grid table */
+.timetable-grid {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.timetable-th {
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  background: #f8fafc;
+  border-bottom: 1px solid #e3e8ef;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.timetable-th--time {
+  width: 110px;
+  min-width: 110px;
+  color: #6b7280;
+}
+
+.timetable-td {
+  padding: 8px 10px;
+  vertical-align: top;
+  border-bottom: 1px solid #f1f5f9;
+  border-right: 1px solid #f1f5f9;
+  min-width: 140px;
+  min-height: 56px;
+}
+
+.timetable-td--time {
+  min-width: 110px;
+  background: #f8fafc;
+  border-right: 1px solid #e3e8ef;
+}
+
+.timetable-slot-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.timetable-empty-cell {
+  display: block;
+  min-height: 32px;
+}
+
+/* Legend */
+.timetable-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.timetable-legend-item {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ============================================================
+   Export Modal — add to globals.css
+   ============================================================ */
+
+.export-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  padding: 16px;
+}
+
+.export-modal {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e3e8ef;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 40%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header */
+.export-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 24px 0;
+}
+
+.export-modal-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #143888;
+  margin: 0 0 4px;
+}
+
+.export-modal-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.export-modal-close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  color: #6b7280;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.export-modal-close:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+/* Body */
+.export-modal-body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.export-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.export-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.export-modal-field--full {
+  grid-column: 1 / -1;
+}
+
+.export-modal-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2b313b;
+}
+
+.export-modal-input {
+  height: 38px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 13px;
+  color: #111827;
+  background: #fff;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+  width: 100%;
+}
+
+.export-modal-input:focus {
+  border-color: #143888;
+  box-shadow: 0 0 0 1px rgba(20, 56, 136, 0.1);
+}
+
+/* CSV columns info */
+.export-modal-info {
+  margin-top: 16px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid #e3e8ef;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.export-modal-info-label {
+  font-weight: 600;
+  color: #374151;
+  margin-right: 6px;
+}
+
+/* Footer */
+.export-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 16px 24px 24px;
+  border-top: 1px solid #f1f5f9;
+}
 /* ============================================
    CHANGE PASSWORD
    ============================================ */
@@ -2578,4 +2891,87 @@ button {
   .change-password {
     width: 100%;
   }
+}
+
+/* ============================================
+   EXAM ABSENCES PAGE
+   ============================================ */
+
+
+.exam-abs__schedule-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #143888;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.exam-abs__schedule-btn:hover {
+  background: #0F2D6E;
+}
+
+.exam-abs__charts-row {
+  display: flex;
+  gap: 24px;
+}
+
+.exam-abs__rate-card {
+  display: flex;
+  flex-direction: column;
+  max-width: 25%;
+  height: 20rem;
+}
+.exam-abs__bar-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-width: 50%;
+  height: 20rem;
+}
+
+.exam-abs__gauge-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 20px;
+}
+
+.exam-abs__rate-title {
+  color: #4A5567;
+  font-weight: 500;
+}
+
+.exam-abs__rate-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #27AF5D;
+  font-family: "Inter", sans-serif;
+}
+
+.exam-abs__table-header {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr 80px;
+  background: #F8FAFF;
+  border-bottom: 1px solid #E3E8EF;
+  padding: 12px 24px;
+}
+
+.exam-abs__table-row {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr 80px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #F1F1F1;
+  align-items: center;
+}
+
+.exam-abs__table-row:last-child {
+  border-bottom: none;
 }

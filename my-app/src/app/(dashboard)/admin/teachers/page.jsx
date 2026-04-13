@@ -3,12 +3,17 @@
 import { useState, useEffect } from "react";
 import { getAllTeachers } from "@/services/accountsService";
 import AdminTeachersTable from "@/components/dashboard/AdminTeachersTable";
+import AddTeacherModal from "@/components/dashboard/AddTeacherModal";
+import EditTeacherModal from "@/components/dashboard/EditTeacherModal";
+
 function TeachersPage() {
   // ── State ─────────────────────────────────────
   const [teachers, setTeachers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedTeacher, setSelectedTeacher] = useState(null);
 
   // ── Fetch Teachers ───────────────────────────────
   const fetchTeachers = async () => {
@@ -29,6 +34,24 @@ function TeachersPage() {
     fetchTeachers();
   }, []);
 
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const openEditModal = (teacher) => {
+    setSelectedTeacher(teacher);
+    setShowEditModal(true);
+  };
+
+  const closeEditModal = () => {
+    setShowEditModal(false);
+    setSelectedTeacher(null);
+  };
+
   return (
     <div className="main-page">
       {/* ── Header row ── */}
@@ -39,7 +62,7 @@ function TeachersPage() {
         </div>
 
         <div className="flex gap-4">
-          <button className="main-add-btn" onClick={() => setShowModal(true)}>
+          <button className="main-add-btn" onClick={openModal}>
             Add New Teacher
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -89,8 +112,21 @@ function TeachersPage() {
           Loading teachers...
         </div>
       ) : (
-        <AdminTeachersTable teachers={teachers} />
+        <AdminTeachersTable teachers={teachers} onEditTeacher={openEditModal} />
       )}
+
+      <AddTeacherModal
+        isOpen={showModal}
+        onClose={closeModal}
+        onCreated={fetchTeachers}
+      />
+
+      <EditTeacherModal
+        isOpen={showEditModal}
+        onClose={closeEditModal}
+        onUpdated={fetchTeachers}
+        teacher={selectedTeacher}
+      />
     </div>
   );
 }

@@ -18,7 +18,7 @@ const PAGE_SIZE = 7;
 
 function AttendanceRow({ attendance }) {
   return (
-    <div className="admin-students-table__row">
+    <div className="admin-data-table__row admin-students-table__row">
       <div className="admin-data-table__cell admin-data-table__cell--name">
         <div className="admin-data-table__name-wrap">
           <div className="admin-data-table__name-info">
@@ -122,7 +122,7 @@ export default function AttendanceTable({ attendances = [] }) {
       placeholder="Search name, id, year, group..."
       columns={COLUMNS}
       tableClass="admin-students-table"
-      headerClass="admin-students-table__header-row"
+      headerClass="admin-data-table__header-row admin-students-table__header-row"
       footerClass="admin-students-table__footer"
       emptyMessage="No attendance records found."
       rowLabel="records"

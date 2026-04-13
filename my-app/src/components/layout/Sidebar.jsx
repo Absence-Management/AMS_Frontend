@@ -383,7 +383,7 @@ const ADMIN_SECTIONS = [
         icon: "justifications",
       },
       {
-        label: "Exam Absences",
+        label: "Exam Absence",
         href: "/admin/absences/exam",
         icon: "examAbsences",
       },
@@ -425,6 +425,7 @@ const TEACHER_SECTIONS = [
     title: "Main",
     links: [
       { label: "Dashboard", href: "/teacher", icon: "dashboard" },
+      { label: "Attendance", href: "/teacher/attendance", icon: "attendance" },
       { label: "My Lessons", href: "/teacher/sessions", icon: "lessons" },
     ],
   },
@@ -515,7 +516,7 @@ export function Sidebar() {
   return (
     <aside className="sidebar">
       {/* Logo */}
-      <div className="sidebar-logo flex items-center justify-center">
+      <div className="sidebar-logo flex items-center justify-center py-6">
         <Image
           width={220}
           height={80}
@@ -596,7 +597,6 @@ export function Sidebar() {
                 >
                   <span className="sidebar-link-icon">{icons[link.icon]}</span>
                   <span className="sidebar-link-label">{link.label}</span>
-                  <span className="sidebar-link-chevron">{icons.chevron}</span>
                 </Link>
               );
             })}
@@ -615,7 +615,6 @@ export function Sidebar() {
             >
               <span className="sidebar-link-icon">{icons[link.icon]}</span>
               <span className="sidebar-link-label">{link.label}</span>
-              <span className="sidebar-link-chevron">{icons.chevron}</span>
             </Link>
           ))}
         </div>
@@ -624,7 +623,7 @@ export function Sidebar() {
       {/* Logout */}
       <button onClick={handleLogout} className="sidebar-logout">
         <span className="sidebar-link-icon">{icons.logout}</span>
-        <span className="sidebar-link-label">Logout</span>
+        <span className="sidebar-link-label">Logout Account</span>
       </button>
     </aside>
   );

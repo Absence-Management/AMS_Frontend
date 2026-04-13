@@ -1,17 +1,18 @@
 # Sprint 2 — Import / Export des Données
 
-> **ESI Sidi Bel Abbès** · AMS Frontend · PFA 2025–2026
-> **Duration:** 2 weeks · **8 User Stories** · **39 Story Points**
+> **ESI Sidi Bel Abbès** · AMS Frontend · PFA 2025–2026  
+> **Duration:** 2 weeks · **8 User Stories** · **39 Story Points**  
+> **Last update:** 12 Apr 2026 (based on current codebase snapshot)
 
 ---
 
 ## Sprint Goal
 
-Allow the Administrator to import student lists and session planning from Progres via CSV, preview the data before saving, and export absence reports with advanced filters (CSV + PDF with ESI-SBA header).
+Allow the Administrator to import student lists and session planning from Progres via CSV, preview the data before saving, and export absence reports with filters (CSV + PDF with ESI-SBA header).
 
 ---
 
-## User Stories
+## User Stories (Current Status)
 
 | ID    | Role            | User Story                                                                  | Priority | Points | Status      |
 | ----- | --------------- | --------------------------------------------------------------------------- | -------- | ------ | ----------- |
@@ -19,98 +20,97 @@ Allow the Administrator to import student lists and session planning from Progre
 | US-11 | Admin           | Import a CSV file of session planning (sessions, rooms, teachers)           | High     | 8      | In Progress |
 | US-12 | Admin           | See a detailed error report after each CSV import (line, field, error type) | High     | 5      | Done        |
 | US-13 | Admin           | Consult the history of all imports (date, file, status, rows imported)      | Medium   | 3      | Done        |
-| US-14 | Admin / Teacher | Export absence data as CSV with filters (filière, module, dates, student)   | High     | 5      | To Do       |
+| US-14 | Admin / Teacher | Export absence data as CSV with filters (filière, module, dates, student)   | High     | 5      | Done        |
 | US-15 | Admin           | Export a formatted PDF absence report with ESI-SBA header                   | Medium   | 5      | To Do       |
 | US-16 | Admin           | System validates CSV column format before import to avoid corrupted data    | High     | 3      | In Progress |
-| US-17 | Admin           | Receive a notification in case of a critical error during import            | Medium   | 2      | In Progress |
+| US-17 | Admin           | Receive a notification in case of a critical error during import            | Medium   | 2      | Done        |
 
 ---
 
-## Screens (from Figma)
+## Implemented Screens / Routes
 
-| Screen                         | Node ID     | Description                                                     |
-| ------------------------------ | ----------- | --------------------------------------------------------------- |
-| Import / Export — empty state  | `354:14527` | 3 type cards + upload zone (dashed border)                      |
-| Import / Export — after upload | `361:7005`  | "Uploaded successfully" + preview table + Submit & save buttons |
-| Import / Export — with errors  | `361:8057`  | Error state after validation failure                            |
-| Import History                 | `367:8958`  | Table of past imports with date, file, status, rows             |
-| Export data panel              | `375:12019` | Filter panel (filière, module, dates) + CSV/PDF buttons         |
-
----
-
-## Files to Implement
-
-### Pages
-
-| File                                            | User Story                 | Status      |
-| ----------------------------------------------- | -------------------------- | ----------- |
-| `app/(dashboard)/admin/import/page.jsx`         | US-10, US-11, US-12, US-17 | In Progress |
-| `app/(dashboard)/admin/import/history/page.jsx` | US-13                      | Done        |
-| `app/(dashboard)/admin/import/export/page.jsx`  | US-14, US-15               | To Do       |
-
-### Components
-
-| File                                              | User Story         | Status |
-| ------------------------------------------------- | ------------------ | ------ |
-| `components/dashboard/ImportButton.jsx`           | US-10, US-11       | Done   |
-| `components/dashboard/ImportErrorReportModal.jsx` | US-12              | Done   |
-| `components/import/CriticalErrorNotification.jsx` | US-17              | Done   |
-| `components/dashboard/ImportPreviewTable.jsx`     | US-10, US-11       | To Do  |
-| `components/dashboard/ImportHistoryTable.jsx`     | US-13              | Done   |
-| `components/dashboard/ExportFilterPanel.jsx`      | US-14, US-15       | To Do  |
-| `components/dashboard/ExportButton.jsx`           | US-14, US-15       | To Do  |
-| `components/shared/StatusBadge.jsx`               | US-10 (Safe/Exclu) | To Do  |
-
-- **`ImportButton.jsx`** — import type card selector (`students` | `teachers` | `sessions`) used in `/admin/import`.
-- **CSV upload zone** — currently implemented inline in `app/(dashboard)/admin/import/page.jsx` (same principle as `CsvUploadZone`).
-- **`ImportPreviewTable.jsx`** — planned table for pre-save preview with pagination.
-- **`ImportErrorReportModal.jsx`** — detailed row/field import error report (US-12).
-- **Import history table UI** — currently implemented inline in `app/(dashboard)/admin/import/history/page.jsx`.
-
-### Logic
-
-| File                         | User Story                        | Status                                                    |
-| ---------------------------- | --------------------------------- | --------------------------------------------------------- |
-| `services/importService.js`  | US-10, US-11, US-12, US-13, US-16 | Done                                                      |
-| `services/exportService.js`  | US-14, US-15                      | To Do                                                     |
-| `hooks/useImport.js`         | US-10, US-11, US-12, US-16, US-17 | To Do (logic currently inline in `admin/import/page.jsx`) |
-| `hooks/useExport.js`         | US-14, US-15                      | To Do                                                     |
-| `hooks/useDashboardTable.js` | Shared pagination/filter state    | Done                                                      |
-| `lib/csvValidator.js`        | US-16 — column schema validation  | To Do                                                     |
-| `lib/constants.js`           | Add: CSV_SCHEMAS, STUDENT_STATUS  | To Do                                                     |
+- **Import / Export** — `app/(dashboard)/admin/import/page.jsx`  
+  Status: **In Progress** · Students + teachers + timetable flow present in one page.
+- **Import History** — `app/(dashboard)/admin/import/history/page.jsx`  
+  Status: **Done** · Paginated history table wired to API.
+- **Export data modal** — `components/dashboard/ExportAbsencesButton.jsx` (used in `/admin/import`)  
+  Status: **Done (CSV flow)** · Export is handled via button/modal, no dedicated page needed.
+- **Teacher attendance export page** — `app/(dashboard)/teacher/attendance/page.jsx`  
+  Status: **Done (UI)** · Header + export button page for teacher.
+- **Legacy timetable route** — `app/(dashboard)/admin/import/TimeTable/page.jsx`  
+  Status: **Removed** · Merged into main import page.
 
 ---
 
-## Backend Endpoints
+## Components Status
 
-| Endpoint                                | Needed By            | Status |
-| --------------------------------------- | -------------------- | ------ |
-| `POST /api/v1/import/students`          | CsvUploadZone        | DONE   |
-| `POST /api/v1/import/teachers`          | CsvUploadZone        | To Do  |
-| `POST /api/v1/import/planning`          | CsvUploadZone        | To Do  |
-| `POST /api/v1/import/confirm/:importId` | Submit & save button | To Do  |
-| `GET /api/v1/import-export/history`     | Import history page  | Done   |
-| `GET /api/v1/export/csv`                | ExportFilterPanel    | To Do  |
-| `GET /api/v1/export/pdf`                | ExportFilterPanel    | To Do  |
+- `components/dashboard/ImportButton.jsx` — US-10, US-11 — **Done**
+- `components/dashboard/ImportErrorReportModal.jsx` — US-12 — **Done**
+- `components/import/CriticalErrorNotification.jsx` — US-17 — **Done**
+- `components/dashboard/ImportPreviewTable.jsx` — US-10, US-11 — **To Do**
+- `components/dashboard/ImportHistoryTable.jsx` — US-13 — **To Do**
+- `components/dashboard/ExportAbsencesButton.jsx` — US-14 — **Done (CSV modal + filters)**
+- `components/dashboard/ExportFilterPanel.jsx` — US-14, US-15 — **Not needed** (replaced by modal in `ExportAbsencesButton`)
+- `components/dashboard/ExportButton.jsx` — US-14, US-15 — **Not needed** (replaced by modal in `ExportAbsencesButton`)
+- `components/shared/StatusBadge.jsx` — US-10 (Safe/Exclu) — **To Do**
 
-### CSV Column Schemas
+### Notes
 
-| Import Type      | Expected Columns                                                       |
-| ---------------- | ---------------------------------------------------------------------- |
-| Students         | `matricule`, `name`, `first_name`, `email`, `year`, `group`            |
-| Teachers         | `matricule`, `name`, `first_name`, `email`                             |
-| Session Planning | `date`, `start_time`, `end_time`, `module`, `teacher`, `room`, `group` |
-
-> Separator: semicolon `;` · Encoding: UTF-8
+- CSV upload zone and preview rendering are currently inline in `app/(dashboard)/admin/import/page.jsx`.
+- Import history UI is currently inline in `app/(dashboard)/admin/import/history/page.jsx`.
+- Teacher can access export from `/teacher/attendance` (sidebar link added).
+- No `components/import/options/*` files in the current codebase.
 
 ---
 
-## Blockers
+## Logic / Services / Hooks Status
 
-| Blocker                                | Solution                                              |
-| -------------------------------------- | ----------------------------------------------------- |
-| `POST /import/*` not yet implemented   | Backend teammate needs to implement before preview UI |
-| `GET /export/pdf` requires PDF library | Backend must configure ESI-SBA header template        |
+- `services/importService.js` — US-10, US-11, US-12, US-13, US-16 — **Done**  
+  Students/teachers/timetable + history API methods present.
+- `services/exportService.js` — US-14, US-15 — **In Progress**  
+  JSON preview + CSV download implemented; PDF not implemented.
+- `hooks/useImport.js` — US-10, US-11, US-12, US-16, US-17 — **To Do**  
+  Logic still inline in import page.
+- `hooks/useExport.js` — US-14, US-15 — **In Progress**  
+  Filter + preview + CSV download state exists.
+- `hooks/useDashboardTable.js` — Shared pagination/filter state — **Done**
+- `lib/csvValidator.js` — US-16 column schema validation — **To Do** (file missing)
+- `lib/constants.js` — CSV schemas and student status constants — **In Progress**  
+  API endpoints exist; `CSV_SCHEMAS`/`STUDENT_STATUS` not added.
+
+---
+
+## Backend Endpoints (from frontend integration state)
+
+- `POST /api/v1/import/students` — Needed by import page — **Integrated**
+- `POST /api/v1/import/teachers` — Needed by import page — **Integrated**
+- `POST /api/v1/import/timetable` — Needed by import page — **Integrated**
+- `POST /api/v1/import/confirm/:importId` — Needed by submit & save confirmation — **To Do**
+- `GET /api/v1/import-export/history` — Needed by import history page — **Integrated**
+- `GET /api/v1/export/absences` (JSON) — Needed by export preview — **Integrated**
+- `GET /api/v1/export/absences` (CSV) — Needed by export CSV download — **Integrated**
+- `GET /api/v1/export/pdf` — Needed by export PDF — **To Do**
+
+> **Note:** “Integrated” means frontend code is wired to endpoint paths; backend readiness still needs runtime confirmation.
+
+---
+
+## CSV Validation Snapshot
+
+- **Students:** basic CSV parsing only (no strict schema validator).
+- **Teachers:** basic CSV parsing only (no strict schema validator).
+- **Session planning:** header validation implemented inline in import page.
+
+> Separator support in code: comma `,` and semicolon `;`  
+> Encoding expectation: UTF-8
+
+---
+
+## Blockers / Risks
+
+- Missing `useImport` hook → import page remains large and harder to maintain.
+- Missing `csvValidator.js` → US-16 not fully closed for students/teachers.
+- Missing PDF flow → US-15 still blocked.
 
 ---
 
@@ -118,61 +118,60 @@ Allow the Administrator to import student lists and session planning from Progre
 
 ### Import Flow
 
-- [x] Build import type selector — implemented via `components/dashboard/ImportButton.jsx` in `app/(dashboard)/admin/import/page.jsx`
-- [x] Build CSV upload zone — implemented inline in `app/(dashboard)/admin/import/page.jsx` (file picker + success/error states)
-- [ ] Build `csvValidator.js` — validate columns before sending to backend (US-16)
-- [ ] Build `components/dashboard/ImportPreviewTable.jsx` — preview table with Safe/Exclu badges + pagination
-- [x] Build `components/dashboard/ImportErrorReportModal.jsx` — detailed errors per line/field (US-12)
-- [x] Build `CriticalErrorNotification.jsx` — in-app alert on critical import failure (US-17)
-- [x] Build import history table UI — implemented inline in `app/(dashboard)/admin/import/history/page.jsx` (US-13)
-- [x] Wire `importService.js` — upload endpoints implemented in `services/importService.js`
-- [ ] Wire `useImport.js` — extract upload state/preview/submit/errors from `admin/import/page.jsx`
-- [ ] Complete `/admin/import` page — preview table and schema validation still pending
-- [x] Complete `/admin/import/history` page — import history table (US-13)
+- [x] Import type selector (`ImportButton`)
+- [x] CSV upload zone in `/admin/import`
+- [x] Timetable preview in `/admin/import`
+- [x] Error report modal (`ImportErrorReportModal`)
+- [x] Critical error notification (`CriticalErrorNotification`)
+- [x] Import history page UI (`/admin/import/history`)
+- [x] Import service wiring (`importService.js`)
+- [ ] Build `lib/csvValidator.js` (strict schema validation for all import types)
+- [ ] Build reusable `components/dashboard/ImportPreviewTable.jsx`
+- [ ] Extract `hooks/useImport.js` from inline import page logic
+- [ ] Complete and clean `/admin/import` implementation (decomposition + validator)
 
 ### Export Flow
 
-- [ ] Build `ExportFilterPanel.jsx` — filters: filière, module, date range, student
-- [ ] Build `ExportButton.jsx` — CSV and PDF download triggers
-- [ ] Wire `exportService.js` — call CSV and PDF endpoints with filters
-- [ ] Wire `useExport.js` — manage filter state + download
-- [ ] Complete `/admin/import/export` page — "Export data" flow (US-14, US-15)
+- [x] Create export logic (`services/exportService.js` for preview + CSV)
+- [x] Create export state hook (`hooks/useExport.js`)
+- [x] Implement export modal in `components/dashboard/ExportAbsencesButton.jsx`
+- [x] Add teacher export entry page (`/teacher/attendance`) with export button
+- [ ] Confirm whether `useExport.js` will be used or removed (currently button manages its own state)
+- [ ] Add PDF export service + UI flow
 
-### Testing
+### Testing / Verification
 
-- [x] Test import students CSV — valid file → preview table appears
-- [x] Test import students CSV — invalid columns → error report shown (US-16, US-12)
-- [ ] Test import planning CSV — valid file → preview
-- [x] Test submit & save — students written to DB, credentials
-- [ ] Test critical error notification (US-17)
-- [ ] Test import history page — shows correct entries (US-13)
-- [ ] Test export CSV — filters applied, file downloads (US-14)
-- [ ] Test export PDF — ESI-SBA header present (US-15)
-- [ ] Test teacher can access export CSV (US-14)
-- [ ] Test teacher cannot access export PDF (US-15 — Admin only)
+- [ ] Verify import students CSV end-to-end
+- [ ] Verify import teachers CSV end-to-end
+- [ ] Verify import planning CSV end-to-end
+- [ ] Verify critical error notification in real failure scenario
+- [ ] Verify import history pagination/data accuracy
+- [ ] Verify export preview with filters
+- [x] Verify CSV download with filters
+- [x] Verify teacher/admin access rules for export routes/actions
 
 ### Sprint Review Prep
 
 - [ ] Code cleanup
-- [ ] All PRs reviewed and merged to main
+- [ ] PR review + merge process completed
 - [ ] Demo ready for Sprint Review
 - [ ] Deploy to staging
 
 ---
 
-## Definition of Done
+## Definition of Done (Current Check)
 
 - [x] Admin can select import type (students / teachers / planning)
-- [ ] Admin can upload a CSV file and see a live preview table before saving
-- [ ] System validates CSV columns before import — corrupted files rejected (US-16)
-- [x] Admin sees a detailed error report (line, field, type) on import failure (US-12)
-- [x] Admin receives in-app notification on critical import error (US-17)
-- [ ] On Submit & save, data is written to DB and credentials email sent to each student
-- [x] Admin can consult the full import history (US-13)
-- [ ] Admin and Teacher can export absences as CSV with filters (US-14)
-- [ ] Admin can export a formatted PDF report with ESI-SBA header (US-15)
-- [ ] All routes protected — Teacher cannot access Admin-only export
-- [ ] All PRs reviewed and merged to main
+- [x] Admin can upload CSV and see preview before submit
+- [ ] System validates CSV columns robustly for all import types (US-16)
+- [x] Admin sees detailed import error report (US-12)
+- [x] Admin receives critical import error notification (US-17)
+- [ ] Submit & save flow fully validated against backend for all import types
+- [x] Admin can consult import history (US-13)
+- [x] Admin and Teacher can export absences as CSV with filters
+- [ ] Admin can export formatted PDF report (US-15)
+- [ ] Route-level protection fully verified for export permissions
+- [ ] All PRs reviewed and merged
 - [ ] Demo approved in Sprint Review
 - [ ] Deployed to staging
 

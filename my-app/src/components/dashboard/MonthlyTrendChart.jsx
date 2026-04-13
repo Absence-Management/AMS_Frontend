@@ -75,7 +75,7 @@ export function MonthlyTrendChart({ data = DEFAULT_DATA, year = 2026 }) {
       </div>
 
       {/* Chart */}
-      <ResponsiveContainer width="100%" height={220}>
+      <ResponsiveContainer width="100%" height={260}>
         <LineChart
           data={data}
           margin={{ top: 8, right: 8, left: -18, bottom: 0 }}

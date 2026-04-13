@@ -25,8 +25,8 @@ export const importTeachers = async (file) => {
   return postImportFile(API_ENDPOINTS.IMPORT_TEACHERS, file);
 };
 
-export const importSessions = async (file) => {
-  return postImportFile(API_ENDPOINTS.IMPORT_SESSIONS, file);
+export const importTimetable = async (file) => {
+  return postImportFile(API_ENDPOINTS.IMPORT_TIMETABLE, file);
 };
 
 export const getImportExportHistory = async ({

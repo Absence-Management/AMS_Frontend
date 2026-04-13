@@ -25,9 +25,11 @@ const COLUMNS = [
 ];
 const PAGE_SIZE = 7;
 
-function StudentRow({ student }) {
+function StudentRow({ student, onEditStudent }) {
+  const canEdit = Boolean(student?.id);
+
   return (
-    <div className="admin-students-table__row">
+    <div className="admin-data-table__row admin-students-table__row">
       <div className="admin-data-table__cell admin-data-table__cell--name">
         <div className="admin-data-table__name-wrap">
           <Avatar name={student.name} fallback="Student" />
@@ -62,7 +64,10 @@ function StudentRow({ student }) {
         <button
           type="button"
           className="admin-data-table__action-btn"
+          onClick={() => onEditStudent?.(student)}
           aria-label={`Actions for ${student.name}`}
+          title={canEdit ? "Edit student" : "Unavailable: missing student id"}
+          disabled={!canEdit}
         >
           <IconDots />
         </button>
@@ -81,17 +86,23 @@ function normalizeStudent(raw, index) {
 
   return {
     id: raw?.id || raw?.student_id || raw?.email || index,
+    first_name: raw?.first_name || "",
+    last_name: raw?.last_name || "",
     name: fullName,
     email: raw?.email || "",
+    phone: raw?.phone || "",
     studentId: raw?.student_id || raw?.studentId || fallbackStudentId,
+    student_id: raw?.student_id || raw?.studentId || fallbackStudentId,
     year: raw?.year || raw?.level || "—",
+    level: raw?.level || raw?.year || "",
     group: raw?.group || "",
+    program: raw?.program || "",
     absence: raw?.absence ?? raw?.absences ?? raw?.absence_count ?? 0,
     status: raw?.status || (raw?.is_active ? "active" : "disabled"),
   };
 }
 
-export default function AdminStudentsTable({ students = [] }) {
+export default function AdminStudentsTable({ students = [], onEditStudent }) {
   const {
     searchQuery,
     handleSearch,
@@ -116,7 +127,7 @@ export default function AdminStudentsTable({ students = [] }) {
       placeholder="Search name, id, year, group..."
       columns={COLUMNS}
       tableClass="admin-students-table"
-      headerClass="admin-students-table__header-row"
+      headerClass="admin-data-table__header-row admin-students-table__header-row"
       footerClass="admin-students-table__footer"
       emptyMessage="No students found."
       rowLabel="students"
@@ -126,7 +137,11 @@ export default function AdminStudentsTable({ students = [] }) {
       onPageChange={setPage}
     >
       {pagedStudents.map((student) => (
-        <StudentRow key={student.id} student={student} />
+        <StudentRow
+          key={student.id}
+          student={student}
+          onEditStudent={onEditStudent}
+        />
       ))}
     </DataTable>
   );

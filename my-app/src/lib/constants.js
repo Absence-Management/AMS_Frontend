@@ -28,6 +28,36 @@ export const STATUSES = {
 };
 
 // ----------------------------
+// CSV SCHEMAS (US-16)
+// ----------------------------
+export const CSV_SCHEMAS = {
+  students: [
+    "matricule",
+    "nom",
+    "prenom",
+    "filiere",
+    "niveau",
+    "groupe",
+    "email",
+  ],
+  teachers: ["id_enseignant", "nom", "prenom", "email", "grade", "departement"],
+  timetable: [
+    "year",
+    "section",
+    "speciality",
+    "semester",
+    "day",
+    "time_start",
+    "time_end",
+    "type",
+    "subject",
+    "teacher",
+    "room",
+    "group",
+  ],
+};
+
+// ----------------------------
 // JWT TOKEN CONFIG
 // ----------------------------
 export const TOKEN = {
@@ -65,6 +95,7 @@ export const API_ENDPOINTS = {
   USER_ME: "/v1/accounts/me",
   IMPORT_STUDENTS: "/v1/import/students",
   IMPORT_TEACHERS: "/v1/teachers/import-csv",
-  IMPORT_SESSIONS: "/v1/import/sessions",
+  IMPORT_TIMETABLE: "/v1/import/timetable",
   IMPORT_EXPORT_HISTORY: "/v1/import-export/history",
+  EXPORT_ABSENCES: "/v1/export/absences",
 };

@@ -55,7 +55,7 @@ function JustificationRow({ justification }) {
   const statusKey = getStatusKey(justification.status);
 
   return (
-    <div className="admin-justifications-table__row">
+    <div className="admin-data-table__row admin-justifications-table__row">
       <div className="admin-data-table__cell admin-data-table__cell--name">
         <div className="admin-data-table__name-wrap">
           <div className="admin-data-table__name-info">
@@ -170,7 +170,7 @@ export default function AdminJustificationsTable({ justifications = [] }) {
       placeholder="Search student, email, date, reason, status..."
       columns={COLUMNS}
       tableClass="admin-justifications-table"
-      headerClass="admin-justifications-table__header-row"
+      headerClass="admin-data-table__header-row admin-justifications-table__header-row"
       footerClass="admin-justifications-table__footer"
       rowLabel="Requests"
       page={page}

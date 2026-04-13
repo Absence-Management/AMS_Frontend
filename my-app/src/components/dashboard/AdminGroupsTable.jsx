@@ -150,7 +150,7 @@ function GroupRow({ group }) {
   const theme = getYearTheme(group.year);
 
   return (
-    <div className="admin-groups-table__row">
+    <div className="admin-data-table__row admin-groups-table__row">
       <div className="admin-data-table__cell admin-data-table__text-cell">
         <YearBadge
           value={group.year || "—"}
@@ -403,7 +403,7 @@ export default function AdminGroupsTable({ groups = [] }) {
       showDefaultTools={true}
       columns={COLUMNS}
       tableClass="admin-groups-table"
-      headerClass="admin-groups-table__header-row"
+      headerClass="admin-data-table__header-row admin-groups-table__header-row"
       footerClass="admin-groups-table__footer"
       rowLabel="groups"
       page={!isCardView ? page : undefined}

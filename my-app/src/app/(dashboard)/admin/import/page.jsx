@@ -1,33 +1,246 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import ImportButton from "@/components/dashboard/ImportButton";
 import ImportErrorReportModal from "@/components/dashboard/ImportErrorReportModal";
+import ExportAbsencesButton from "@/components/dashboard/ExportAbsencesButton";
 import CriticalErrorNotification from "@/components/import/CriticalErrorNotification";
 import DataTable from "@/components/shared/DataTable";
 import { Avatar, IconDots } from "@/components/shared/TableShared";
+import { parseAndValidateCsv } from "@/lib/csvValidator";
 import * as importService from "@/services/importService";
 
-// ── CSV parser ───────────────────────────────────────────────────────────────
-// Returns { headers: string[], rows: Record<string, string>[] }
-function parseCSV(text) {
-  const lines = text.split(/\r?\n/).filter(Boolean);
-  if (lines.length < 2) return { headers: [], rows: [] };
+const TIMETABLE_DAYS = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi"];
+const TIMETABLE_TIME_SLOTS = [
+  "08:00–09:30",
+  "09:30–11:00",
+  "11:00–12:30",
+  "14:00–15:30",
+];
+const TIMETABLE_SLOT_STARTS = ["08:00", "09:30", "11:00", "14:00"];
 
-  const sep = lines[0].includes(";") ? ";" : ",";
-  const headers = lines[0].split(sep).map((h) => h.trim().toLowerCase());
+const SESSION_TYPE_COLORS = {
+  Cours: { bg: "#dbeafe", text: "#1e40af", border: "#bfdbfe" },
+  TD: { bg: "#dcfce7", text: "#166534", border: "#bbf7d0" },
+  TP: { bg: "#fef9c3", text: "#854d0e", border: "#fde68a" },
+  "TD/TP": { bg: "#ede9fe", text: "#5b21b6", border: "#ddd6fe" },
+  "Cours/TD/TP": { bg: "#fce7f3", text: "#9d174d", border: "#fbcfe8" },
+};
 
-  const rows = lines.slice(1).map((line) => {
-    const cells = line.split(sep);
-    return Object.fromEntries(
-      headers.map((h, i) => [h, cells[i]?.trim() ?? ""]),
-    );
+const TYPE_FALLBACK = { bg: "#f3f4f6", text: "#374151", border: "#e5e7eb" };
+
+const IMPORT_SCHEMA_BY_OPTION = {
+  0: "students",
+  1: "teachers",
+  2: "timetable",
+};
+
+function buildTimetableGrid(rows) {
+  const grid = {};
+  TIMETABLE_DAYS.forEach((day) => {
+    grid[day] = {};
+    TIMETABLE_SLOT_STARTS.forEach((_, slotIndex) => {
+      grid[day][slotIndex] = [];
+    });
   });
 
-  return { headers, rows };
+  rows.forEach((row) => {
+    const day = TIMETABLE_DAYS.find(
+      (candidate) => candidate.toLowerCase() === row.day?.toLowerCase(),
+    );
+    if (!day) return;
+
+    const slotIndex = TIMETABLE_SLOT_STARTS.findIndex(
+      (slotStart) => slotStart === row.time_start,
+    );
+    if (slotIndex === -1) return;
+
+    grid[day][slotIndex].push(row);
+  });
+
+  return grid;
 }
 
-// ── Avatar color pool (deterministic by index) ───────────────────────────────
+function TimetableSessionChip({ session }) {
+  const colors = SESSION_TYPE_COLORS[session.type] ?? TYPE_FALLBACK;
+  const label = session.group
+    ? `${session.type} · ${session.group}`
+    : session.type;
+
+  return (
+    <div
+      style={{
+        background: colors.bg,
+        border: `1px solid ${colors.border}`,
+        borderRadius: 6,
+        padding: "4px 7px",
+        marginBottom: 4,
+        fontSize: 11,
+        lineHeight: 1.4,
+      }}
+    >
+      <div style={{ fontWeight: 600, color: colors.text, fontSize: 11 }}>
+        {session.subject}
+      </div>
+      <div style={{ color: colors.text, opacity: 0.85 }}>{label}</div>
+      <div style={{ color: colors.text, opacity: 0.7 }}>
+        {session.teacher}
+        {session.room ? ` · ${session.room}` : ""}
+      </div>
+    </div>
+  );
+}
+
+function TimetableFilterBar({ rows, filters, onChange }) {
+  const years = [...new Set(rows.map((r) => r.year).filter(Boolean))].sort();
+  const sections = [
+    ...new Set(rows.map((r) => r.section).filter(Boolean)),
+  ].sort();
+  const specialities = [
+    ...new Set(rows.map((r) => r.speciality).filter(Boolean)),
+  ].sort();
+  const semesters = [
+    ...new Set(rows.map((r) => r.semester).filter(Boolean)),
+  ].sort();
+
+  const select = (key, values, placeholder) => (
+    <select
+      className="timetable-filter-select"
+      value={filters[key]}
+      onChange={(event) => onChange(key, event.target.value)}
+    >
+      <option value="">{placeholder}</option>
+      {values.map((value) => (
+        <option key={value} value={value}>
+          {value}
+        </option>
+      ))}
+    </select>
+  );
+
+  return (
+    <div className="timetable-filter-bar">
+      {select("year", years, "All years")}
+      {select("section", sections, "All sections")}
+      {select("speciality", specialities, "All specialities")}
+      {select("semester", semesters, "All semesters")}
+      <button
+        className="timetable-filter-reset"
+        onClick={() => onChange("__reset__", "")}
+      >
+        Reset
+      </button>
+    </div>
+  );
+}
+
+function TimetablePreviewGrid({ rows }) {
+  const [filters, setFilters] = useState({
+    year: "",
+    section: "",
+    speciality: "",
+    semester: "",
+  });
+
+  const handleFilterChange = useCallback((key, value) => {
+    if (key === "__reset__") {
+      setFilters({ year: "", section: "", speciality: "", semester: "" });
+      return;
+    }
+
+    setFilters((previous) => ({ ...previous, [key]: value }));
+  }, []);
+
+  const filteredRows = rows.filter((row) => {
+    if (filters.year && row.year !== filters.year) return false;
+    if (filters.section && row.section !== filters.section) return false;
+    if (filters.speciality && row.speciality !== filters.speciality)
+      return false;
+    if (filters.semester && row.semester !== filters.semester) return false;
+    return true;
+  });
+
+  const grid = buildTimetableGrid(filteredRows);
+
+  return (
+    <div style={{ marginTop: 24 }}>
+      <div className="timetable-preview-header">
+        <div>
+          <h3 className="timetable-preview-title">Timetable preview</h3>
+          <p className="timetable-preview-count">
+            {filteredRows.length} session{filteredRows.length !== 1 ? "s" : ""}{" "}
+            · {rows.length} total rows
+          </p>
+        </div>
+      </div>
+
+      <TimetableFilterBar
+        rows={rows}
+        filters={filters}
+        onChange={handleFilterChange}
+      />
+
+      <div className="timetable-grid-wrap">
+        <table className="timetable-grid">
+          <thead>
+            <tr>
+              <th className="timetable-th timetable-th--time">Time</th>
+              {TIMETABLE_DAYS.map((day) => (
+                <th key={day} className="timetable-th">
+                  {day}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {TIMETABLE_SLOT_STARTS.map((_, slotIndex) => (
+              <tr key={slotIndex}>
+                <td className="timetable-td timetable-td--time">
+                  <span className="timetable-slot-label">
+                    {TIMETABLE_TIME_SLOTS[slotIndex]}
+                  </span>
+                </td>
+
+                {TIMETABLE_DAYS.map((day) => {
+                  const sessions = grid[day]?.[slotIndex] ?? [];
+                  return (
+                    <td key={day} className="timetable-td">
+                      {sessions.length > 0 ? (
+                        sessions.map((session, index) => (
+                          <TimetableSessionChip key={index} session={session} />
+                        ))
+                      ) : (
+                        <span className="timetable-empty-cell" />
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="timetable-legend">
+        {Object.entries(SESSION_TYPE_COLORS).map(([type, colors]) => (
+          <span
+            key={type}
+            className="timetable-legend-item"
+            style={{
+              background: colors.bg,
+              color: colors.text,
+              border: `1px solid ${colors.border}`,
+            }}
+          >
+            {type}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Avatar color pool ────────────────────────────────────────────────────────
 const AVATAR_COLORS = [
   "#dbeafe",
   "#fce7f3",
@@ -43,7 +256,6 @@ const avatarColor = (i) => AVATAR_COLORS[i % AVATAR_COLORS.length];
 // ── Per-import-type config ───────────────────────────────────────────────────
 const PREVIEW_CONFIG = {
   0: {
-    // Students
     label: "students",
     columns: [
       "Student",
@@ -95,7 +307,6 @@ const PREVIEW_CONFIG = {
     ),
   },
   1: {
-    // Teachers
     label: "teachers",
     columns: ["Teacher", "ID", "Email", "Grade", "Department", "Action"],
     renderRow: (row, i) => (
@@ -135,7 +346,112 @@ const PREVIEW_CONFIG = {
       </div>
     ),
   },
-  2: null, // Sessions — no preview
+  2: {
+    label: "timetable",
+    columns: [
+      "Year",
+      "Section / Speciality",
+      "Semester",
+      "Day",
+      "Time",
+      "Type",
+      "Subject",
+      "Teacher",
+      "Room",
+      "Group",
+      "Action",
+    ],
+    renderRow: (row, i) => {
+      const sectionOrSpeciality =
+        row.speciality && row.speciality.trim()
+          ? row.speciality.trim()
+          : row.section && row.section.trim()
+            ? `Section ${row.section.trim()}`
+            : "—";
+
+      const time =
+        row.time_start && row.time_end
+          ? `${row.time_start} – ${row.time_end}`
+          : row.time_start || "—";
+
+      const TYPE_COLORS = {
+        Cours: { bg: "#dbeafe", color: "#1d4ed8" },
+        TD: { bg: "#dcfce7", color: "#15803d" },
+        TP: { bg: "#fef9c3", color: "#a16207" },
+        "TD/TP": { bg: "#ede9fe", color: "#6d28d9" },
+        "Cours/TP": { bg: "#e0f2fe", color: "#0369a1" },
+        "Cours/TD/TP": { bg: "#fce7f3", color: "#be185d" },
+      };
+      const typeStyle = TYPE_COLORS[row.type] ?? {
+        bg: "#f1f5f9",
+        color: "#475569",
+      };
+
+      return (
+        <div key={i} className="import-preview-table__row">
+          <span className="admin-data-table__cell admin-data-table__text-cell">
+            {row.year ?? "—"}
+          </span>
+          <span className="admin-data-table__cell admin-data-table__text-cell">
+            {sectionOrSpeciality}
+          </span>
+          <span className="admin-data-table__cell admin-data-table__text-cell">
+            {row.semester ?? "—"}
+          </span>
+          <span className="admin-data-table__cell admin-data-table__text-cell">
+            {row.day ?? "—"}
+          </span>
+          <span className="admin-data-table__cell admin-data-table__text-cell">
+            {time}
+          </span>
+          <span className="admin-data-table__cell admin-data-table__text-cell">
+            <span
+              style={{
+                display: "inline-block",
+                padding: "2px 8px",
+                borderRadius: 4,
+                fontSize: 12,
+                fontWeight: 600,
+                background: typeStyle.bg,
+                color: typeStyle.color,
+              }}
+            >
+              {row.type ?? "—"}
+            </span>
+          </span>
+          <span className="admin-data-table__cell admin-data-table__text-cell">
+            {row.subject ?? "—"}
+          </span>
+          <span className="admin-data-table__cell admin-data-table__text-cell">
+            {row.teacher ?? "—"}
+          </span>
+          <span className="admin-data-table__cell admin-data-table__text-cell">
+            {row.room ?? "—"}
+          </span>
+          <span className="admin-data-table__cell admin-data-table__text-cell">
+            {row.group && row.group.trim() ? (
+              row.group.trim()
+            ) : (
+              <span
+                style={{ color: "#94a3b8", fontStyle: "italic", fontSize: 12 }}
+              >
+                All
+              </span>
+            )}
+          </span>
+          <span className="admin-data-table__cell admin-data-table__cell--action">
+            <button
+              type="button"
+              className="admin-data-table__action-btn"
+              aria-label="Row actions"
+            >
+              <IconDots />
+            </button>
+          </span>
+        </div>
+      );
+    },
+  },
 };
 
 // ── Preview table ────────────────────────────────────────────────────────────
@@ -192,6 +508,7 @@ export default function ImportPage() {
   const [selectedOption, setSelectedOption] = useState(0);
   const [file, setFile] = useState(null);
   const [previewRows, setPreviewRows] = useState([]);
+  const [parseErrors, setParseErrors] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -251,7 +568,7 @@ export default function ImportPage() {
       id: 2,
       title: "Session planning",
       description:
-        "Import from Progres — CSV file with columns: date, star_time, fin_time, module, teacher, room, group",
+        "Import timetable — CSV with columns: year, section, speciality, semester, day, time_start, time_end, type, subject, teacher, room, group",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -278,6 +595,7 @@ export default function ImportPage() {
   const resetAll = () => {
     setFile(null);
     setPreviewRows([]);
+    setParseErrors([]);
     setError(null);
     setSuccess(false);
     setShowErrorModal(false);
@@ -293,24 +611,28 @@ export default function ImportPage() {
     setSuccess(false);
     setShowErrorModal(false);
     setCriticalError(false);
+    setParseErrors([]);
 
-    // Parse CSV for preview (students & teachers only)
-    if (PREVIEW_CONFIG[selectedOption]) {
-      try {
-        const text = await selectedFile.text();
-        const { rows } = parseCSV(text);
-        setPreviewRows(rows);
-      } catch {
+    try {
+      const text = await selectedFile.text();
+      const schemaKey = IMPORT_SCHEMA_BY_OPTION[selectedOption];
+
+      if (!schemaKey) {
         setPreviewRows([]);
+        setParseErrors(["Unsupported import type selected."]);
+        return;
       }
-    } else {
+
+      const { rows, errors } = parseAndValidateCsv(text, schemaKey);
+      setParseErrors(errors);
+      setPreviewRows(errors.length > 0 ? [] : rows);
+    } catch {
+      setParseErrors(["Failed to read file."]);
       setPreviewRows([]);
     }
   };
 
-  const handleUploadClick = () => {
-    fileInputRef.current.click();
-  };
+  const handleUploadClick = () => fileInputRef.current.click();
 
   const normalizeImportResult = (payload, fallbackFileName) => {
     if (!payload || typeof payload !== "object") {
@@ -398,7 +720,7 @@ export default function ImportPage() {
           ? await importService.importStudents(file)
           : selectedOption === 1
             ? await importService.importTeachers(file)
-            : await importService.importSessions(file);
+            : await importService.importTimetable(file);
 
       const normalizedResult = normalizeImportResult(result, file.name);
       setImportResult(normalizedResult);
@@ -481,35 +803,7 @@ export default function ImportPage() {
           </p>
         </div>
 
-        <button className="main-export-btn">
-          Export data
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <polyline
-              points="7 10 12 15 17 10"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <line
-              x1="12"
-              y1="15"
-              x2="12"
-              y2="3"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
+        <ExportAbsencesButton />
       </div>
 
       <div className="import-container">
@@ -543,7 +837,9 @@ export default function ImportPage() {
           <div className="import-upload-area">
             <h3 className="import-upload-title">Upload a CSV file</h3>
             <p className="import-upload-subtitle">
-              Select a UTF-8 .csv file separated by commas (,)
+              {selectedOption === 2
+                ? "Select a UTF-8 .csv file — columns: year, section, speciality, semester, day, time_start, time_end, type, subject, teacher, room, group"
+                : "Select a UTF-8 .csv file separated by commas (,)"}
             </p>
             <button className="import-upload-btn" onClick={handleUploadClick}>
               Upload
@@ -595,10 +891,22 @@ export default function ImportPage() {
         )}
       </div>
 
-      {/* ── CSV preview table (students & teachers only) ── */}
-      {file && previewRows.length > 0 && (
+      {parseErrors.length > 0 && (
+        <div className="error-message" style={{ marginTop: 16 }}>
+          {parseErrors.map((message, index) => (
+            <p key={index}>{message}</p>
+          ))}
+        </div>
+      )}
+
+      {/* ── CSV preview table ── */}
+      {file && previewRows.length > 0 && selectedOption !== 2 && (
         <PreviewTable rows={previewRows} importType={selectedOption} />
       )}
+      {file &&
+        previewRows.length > 0 &&
+        parseErrors.length === 0 &&
+        selectedOption === 2 && <TimetablePreviewGrid rows={previewRows} />}
 
       {/* ── Errors & modals ── */}
       {criticalError && <CriticalErrorNotification />}
@@ -626,7 +934,7 @@ export default function ImportPage() {
 
       {/* ── Footer actions ── */}
       <div className="import-footer">
-        {file && (
+        {file && parseErrors.length === 0 && (
           <>
             {selectedOption === 0 && (
               <p className="import-footer-text">

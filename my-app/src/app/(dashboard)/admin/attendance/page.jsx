@@ -1,4 +1,7 @@
+"use client";
+
 import AdminAttendanceTable from "@/components/dashboard/AdminAttendanceTable";
+import ExportAbsencesButton from "@/components/dashboard/ExportAbsencesButton";
 
 const mockAttendances = [
   {
@@ -143,6 +146,8 @@ export default function AttendancePage() {
           <h2 className="main-title">Attendance</h2>
           <p className="main-subtitle">View and monitor student absences</p>
         </div>
+
+        <ExportAbsencesButton />
       </div>
 
       <AdminAttendanceTable attendances={mockAttendances} />

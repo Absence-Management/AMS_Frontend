@@ -3,18 +3,24 @@
 import { useState, useEffect } from "react";
 import { getAllStudents } from "@/services/accountsService";
 import AdminStudentsTable from "@/components/dashboard/AdminStudentsTable";
+import AddStudentModal from "@/components/dashboard/AddStudentModal";
+import EditStudentModal from "@/components/dashboard/EditStudentModal";
+
 function StudentsPage() {
   // ── State ─────────────────────────────────────
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
 
   // ── Fetch Students ───────────────────────────────
   const fetchStudents = async () => {
     try {
       setLoading(true);
       const data = await getAllStudents();
+      console.log("[StudentsPage] getAllStudents response:", data);
       setStudents(data);
       setError("");
     } catch (err) {
@@ -29,6 +35,24 @@ function StudentsPage() {
     fetchStudents();
   }, []);
 
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const openEditModal = (student) => {
+    setSelectedStudent(student);
+    setShowEditModal(true);
+  };
+
+  const closeEditModal = () => {
+    setShowEditModal(false);
+    setSelectedStudent(null);
+  };
+
   return (
     <div className="main-page">
       {/* ── Header row ── */}
@@ -39,7 +63,7 @@ function StudentsPage() {
         </div>
 
         <div className="flex gap-4">
-          <button className="main-add-btn" onClick={() => setShowModal(true)}>
+          <button className="main-add-btn" onClick={openModal}>
             Add New Student
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -89,8 +113,21 @@ function StudentsPage() {
           Loading students...
         </div>
       ) : (
-        <AdminStudentsTable students={students} />
+        <AdminStudentsTable students={students} onEditStudent={openEditModal} />
       )}
+
+      <AddStudentModal
+        isOpen={showModal}
+        onClose={closeModal}
+        onCreated={fetchStudents}
+      />
+
+      <EditStudentModal
+        isOpen={showEditModal}
+        onClose={closeEditModal}
+        onUpdated={fetchStudents}
+        student={selectedStudent}
+      />
     </div>
   );
 }

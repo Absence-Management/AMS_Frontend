@@ -10,11 +10,13 @@ import { Avatar, IconDots } from "@/components/shared/TableShared";
 import useDashboardTable from "@/hooks/useDashboardTable";
 
 const COLUMNS = ["Name", "Role", "Subjects", "Groups", "Action"];
-const PAGE_SIZE = 7;
+const PAGE_SIZE = 8;
 
-function TeacherRow({ teacher }) {
+function TeacherRow({ teacher, onEditTeacher }) {
+  const canEdit = Boolean(teacher?.id);
+
   return (
-    <div className="admin-teachers-table__row">
+    <div className="admin-data-table__row admin-teachers-table__row">
       <div className="admin-data-table__cell admin-data-table__cell--name">
         <div className="admin-data-table__name-wrap">
           <Avatar name={teacher.name} fallback="Teacher" />
@@ -41,7 +43,10 @@ function TeacherRow({ teacher }) {
         <button
           type="button"
           className="admin-data-table__action-btn"
+          onClick={() => onEditTeacher?.(teacher)}
           aria-label={`Actions for ${teacher.name}`}
+          title={canEdit ? "Edit teacher" : "Unavailable: missing teacher id"}
+          disabled={!canEdit}
         >
           <IconDots />
         </button>
@@ -66,15 +71,20 @@ function normalizeTeacher(raw, index) {
 
   return {
     id: raw?.id || raw?.email || index,
+    first_name: raw?.first_name || "",
+    last_name: raw?.last_name || "",
     name: fullName,
     email: raw?.email || "",
+    employee_id: raw?.employee_id || "",
+    phone: raw?.phone || "",
+    specialization: raw?.specialization || "",
     role: raw?.role || "teacher",
     subject,
     groups,
   };
 }
 
-export default function AdminTeachersTable({ teachers = [] }) {
+export default function AdminTeachersTable({ teachers = [], onEditTeacher }) {
   const {
     searchQuery,
     handleSearch,
@@ -99,7 +109,7 @@ export default function AdminTeachersTable({ teachers = [] }) {
       placeholder="Search name, role, subject, groups..."
       columns={COLUMNS}
       tableClass="admin-teachers-table"
-      headerClass="admin-teachers-table__header-row"
+      headerClass="admin-data-table__header-row admin-teachers-table__header-row"
       footerClass="admin-teachers-table__footer"
       emptyMessage="No teachers found."
       rowLabel="teachers"
@@ -109,7 +119,11 @@ export default function AdminTeachersTable({ teachers = [] }) {
       onPageChange={setPage}
     >
       {pagedTeachers.map((teacher) => (
-        <TeacherRow key={teacher.id} teacher={teacher} />
+        <TeacherRow
+          key={teacher.id}
+          teacher={teacher}
+          onEditTeacher={onEditTeacher}
+        />
       ))}
     </DataTable>
   );

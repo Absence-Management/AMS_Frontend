@@ -42,7 +42,7 @@ function normalizeHistoryItem(item, index) {
 
 function ImportHistoryRow({ row }) {
   return (
-    <div className="admin-import-history-table__row">
+    <div className="admin-data-table__row admin-import-history-table__row">
       <div className="admin-data-table__cell admin-data-table__text-cell">
         {row.createdAt}
       </div>
@@ -121,7 +121,7 @@ export default function ImportHistoryPage() {
           showDefaultTools={false}
           columns={COLUMNS}
           tableClass="admin-import-history-table"
-          headerClass="admin-import-history-table__header-row"
+          headerClass="admin-data-table__header-row admin-import-history-table__header-row"
           footerClass="admin-import-history-table__footer"
           emptyMessage="No import/export history found."
           rowLabel="records"
