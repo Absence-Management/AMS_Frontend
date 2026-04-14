@@ -23,47 +23,111 @@ const BAR_DATA = [
   { level: "3CS", rate: 48 },
 ];
 
+const LEVELS = ["All", "1CP", "2CP", "1CS", "2CS", "3CS"];
+
 const TABLE_DATA = [
-  { id: 1, subject: "Algorithms",   date: "21 - 03 - 2026", class: "1CP", absence: "10/126" },
-  { id: 2, subject: "Algorithms",   date: "21 - 03 - 2026", class: "1CP", absence: "10/126" },
-  { id: 3, subject: "Algorithms",   date: "21 - 03 - 2026", class: "1CP", absence: "10/126" },
-  { id: 4, subject: "Algorithms",   date: "21 - 03 - 2026", class: "1CP", absence: "10/126" },
-  { id: 5, subject: "Algorithms",   date: "21 - 03 - 2026", class: "1CP", absence: "10/126" },
-  { id: 6, subject: "Algorithms",   date: "21 - 03 - 2026", class: "1CP", absence: "10/126" },
+  { id:  1, subject: "Algorithms",        date: "21 - 03 - 2026", class: "1CP", absence: "10/128" },
+  { id:  2, subject: "Algorithms",        date: "21 - 03 - 2026", class: "1CP", absence: "12/128" },
+  { id:  3, subject: "Algorithms",        date: "22 - 03 - 2026", class: "1CP", absence: "8/128"  },
+  { id:  4, subject: "Mathematics",       date: "22 - 03 - 2026", class: "1CP", absence: "15/128" },
+  { id:  5, subject: "Mathematics",       date: "23 - 03 - 2026", class: "1CP", absence: "11/128" },
+  { id:  6, subject: "Physics",           date: "23 - 03 - 2026", class: "1CP", absence: "9/128"  },
+  { id:  7, subject: "Physics",           date: "24 - 03 - 2026", class: "1CP", absence: "7/128"  },
+  { id:  8, subject: "English",           date: "24 - 03 - 2026", class: "1CP", absence: "5/128"  },
+  { id:  9, subject: "Algorithms",        date: "21 - 03 - 2026", class: "2CP", absence: "18/132" },
+  { id: 10, subject: "Algorithms",        date: "21 - 03 - 2026", class: "2CP", absence: "20/132" },
+  { id: 11, subject: "Mathematics",       date: "22 - 03 - 2026", class: "2CP", absence: "14/132" },
+  { id: 12, subject: "Mathematics",       date: "22 - 03 - 2026", class: "2CP", absence: "16/132" },
+  { id: 13, subject: "Data Structures",   date: "23 - 03 - 2026", class: "2CP", absence: "22/132" },
+  { id: 14, subject: "Data Structures",   date: "23 - 03 - 2026", class: "2CP", absence: "19/132" },
+  { id: 15, subject: "Physics",           date: "24 - 03 - 2026", class: "2CP", absence: "10/132" },
+  { id: 16, subject: "English",           date: "24 - 03 - 2026", class: "2CP", absence: "6/132"  },
+  { id: 17, subject: "Operating Systems", date: "21 - 03 - 2026", class: "1CS", absence: "13/140" },
+  { id: 18, subject: "Operating Systems", date: "21 - 03 - 2026", class: "1CS", absence: "15/140" },
+  { id: 19, subject: "Databases",         date: "22 - 03 - 2026", class: "1CS", absence: "9/140"  },
+  { id: 20, subject: "Databases",         date: "22 - 03 - 2026", class: "1CS", absence: "11/140" },
+  { id: 21, subject: "Networks",          date: "23 - 03 - 2026", class: "1CS", absence: "7/140"  },
+  { id: 22, subject: "Networks",          date: "23 - 03 - 2026", class: "1CS", absence: "8/140"  },
+  { id: 23, subject: "Algorithms",        date: "24 - 03 - 2026", class: "1CS", absence: "5/140"  },
+  { id: 24, subject: "English",           date: "24 - 03 - 2026", class: "1CS", absence: "4/140"  },
+  { id: 25, subject: "AI Fundamentals",   date: "21 - 03 - 2026", class: "2CS", absence: "3/120"  },
+  { id: 26, subject: "AI Fundamentals",   date: "21 - 03 - 2026", class: "2CS", absence: "4/120"  },
+  { id: 27, subject: "Databases",         date: "22 - 03 - 2026", class: "2CS", absence: "6/120"  },
+  { id: 28, subject: "Databases",         date: "22 - 03 - 2026", class: "2CS", absence: "5/120"  },
+  { id: 29, subject: "Software Eng.",     date: "23 - 03 - 2026", class: "2CS", absence: "8/120"  },
+  { id: 30, subject: "Software Eng.",     date: "23 - 03 - 2026", class: "2CS", absence: "7/120"  },
+  { id: 31, subject: "Networks",          date: "24 - 03 - 2026", class: "2CS", absence: "4/120"  },
+  { id: 32, subject: "English",           date: "24 - 03 - 2026", class: "2CS", absence: "2/120"  },
+  { id: 33, subject: "Machine Learning",  date: "21 - 03 - 2026", class: "3CS", absence: "14/115" },
+  { id: 34, subject: "Machine Learning",  date: "21 - 03 - 2026", class: "3CS", absence: "16/115" },
+  { id: 35, subject: "Distributed Sys.", date: "22 - 03 - 2026", class: "3CS", absence: "11/115" },
+  { id: 36, subject: "Distributed Sys.", date: "22 - 03 - 2026", class: "3CS", absence: "13/115" },
+  { id: 37, subject: "Security",          date: "23 - 03 - 2026", class: "3CS", absence: "9/115"  },
+  { id: 38, subject: "Security",          date: "23 - 03 - 2026", class: "3CS", absence: "10/115" },
+  { id: 39, subject: "Compiler Design",   date: "24 - 03 - 2026", class: "3CS", absence: "7/115"  },
+  { id: 40, subject: "English",           date: "24 - 03 - 2026", class: "3CS", absence: "3/115"  },
 ];
 
-const ABSENCE_RATE = 30;
+const ABSENCE_RATE = 6.966;
 
 // ── Table columns ─────────────────────────────────────────────────────────────
 const COLUMNS = ["Subject", "Date Examen", "Class", "Absence", "Action"];
 
 // ── Gauge chart ───────────────────────────────────────────────────────────────
 function AbsenceGauge({ rate }) {
-  const pct      = Math.min(rate / 100, 1);
-  const R        = 90;
-  const cx       = 110;
-  const cy       = 110;
-  const arcAngle = Math.PI - pct * Math.PI;
+  const pct        = Math.min(Math.max(rate / 100, 0), 1);
+  const R          = 65;
+  const cx         = 90;
+  const cy         = 95;
+  const START_DEG  = 135;   // 7 o'clock
+  const SWEEP_DEG  = 270;   // 3/4 of a circle
 
-  const bgX1       = cx - R;
-  const bgX2       = cx + R;
-  const fillX2     = cx + R * Math.cos(arcAngle);
-  const fillY2     = cy - R * Math.sin(arcAngle);
-  const needleTipX = cx + 70 * Math.cos(arcAngle);
-  const needleTipY = cy - 70 * Math.sin(arcAngle);
+  const toRad = (d) => (d * Math.PI) / 180;
+
+  const startX = cx + R * Math.cos(toRad(START_DEG));
+  const startY = cy + R * Math.sin(toRad(START_DEG));
+  const endX   = cx + R * Math.cos(toRad(START_DEG + SWEEP_DEG));
+  const endY   = cy + R * Math.sin(toRad(START_DEG + SWEEP_DEG));
+
+  const fillDeg  = START_DEG + pct * SWEEP_DEG;
+  const fillX    = cx + R * Math.cos(toRad(fillDeg));
+  const fillY    = cy + R * Math.sin(toRad(fillDeg));
+
+  const fillLarge = pct * SWEEP_DEG > 180 ? 1 : 0;
+
+  const needleLen  = 50;
+  const needleTipX = cx + needleLen * Math.cos(toRad(fillDeg));
+  const needleTipY = cy + needleLen * Math.sin(toRad(fillDeg));
 
   return (
-    <svg width="180" height="180" viewBox="10 10 220 130" fill="none">
+    <svg width="200" height="180" viewBox="0 0 180 170" fill="none">
+      {/* Background track (full 270°) */}
       <path
-        d={`M ${bgX1} ${cy} A ${R} ${R} 0 0 1 ${bgX2} ${cy}`}
-        fill="none" stroke="#e8f0fe" strokeWidth="20" strokeLinecap="round"
+        d={`M ${startX} ${startY} A ${R} ${R} 0 1 1 ${endX} ${endY}`}
+        fill="none"
+        stroke="#E8F0FE"
+        strokeWidth="14"
+        strokeLinecap="round"
       />
-      <path
-        d={`M ${bgX1} ${cy} A ${R} ${R} 0 0 1 ${fillX2} ${fillY2}`}
-        fill="none" stroke="#27AF5D" strokeWidth="20" strokeLinecap="round"
+      {/* Green filled arc */}
+      {pct > 0 && (
+        <path
+          d={`M ${startX} ${startY} A ${R} ${R} 0 ${fillLarge} 1 ${fillX} ${fillY}`}
+          fill="none"
+          stroke="#27AF5D"
+          strokeWidth="14"
+          strokeLinecap="round"
+        />
+      )}
+      {/* Needle */}
+      <line
+        x1={cx} y1={cy}
+        x2={needleTipX} y2={needleTipY}
+        stroke="#27AF5D"
+        strokeWidth="3"
+        strokeLinecap="round"
       />
-      <line x1={cx} y1={cy} x2={needleTipX} y2={needleTipY}
-        stroke="#27AF5D" strokeWidth="3.5" strokeLinecap="round" />
+      {/* Center hub */}
       <circle cx={cx} cy={cy} r="8" fill="#27AF5D" />
       <circle cx={cx} cy={cy} r="4" fill="#fff" />
     </svg>
@@ -96,6 +160,12 @@ function DotsBtn() {
 export default function ExamAbsencesPage() {
   const [activeLevel, setActiveLevel] = useState("All");
 
+  // Filter table data by active level
+  const filteredData =
+    activeLevel === "All"
+      ? TABLE_DATA
+      : TABLE_DATA.filter((r) => r.class === activeLevel);
+
   // ── Table state via shared hook ───────────────────────────────────────────
   const {
     searchQuery,
@@ -105,7 +175,7 @@ export default function ExamAbsencesPage() {
     pagedItems,
     totalCount,
   } = useDashboardTable({
-    items: TABLE_DATA,
+    items: filteredData,
     searchFields: ["subject", "class"],
     pageSize: 7,
   });
@@ -135,8 +205,22 @@ export default function ExamAbsencesPage() {
           </p>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-
+        <div className="exam-abs__header-right">
+          {/* Level filter tabs */}
+          <div className="exam-abs__level-tabs">
+            {LEVELS.map((lvl) => (
+              <button
+                key={lvl}
+                type="button"
+                className={`exam-abs__level-tab${
+                  activeLevel === lvl ? " exam-abs__level-tab--active" : ""
+                }`}
+                onClick={() => setActiveLevel(lvl)}
+              >
+                {lvl}
+              </button>
+            ))}
+          </div>
 
           {/* Schedule exams button */}
           <button className="exam-abs__schedule-btn">
@@ -157,7 +241,7 @@ export default function ExamAbsencesPage() {
       </div>
 
       {/* ── Charts row ── */}
-      <div className="charts-grid">
+      <div className="exam-charts-grid ">
 
         {/* Bar chart card */}
         <div className="chart-card exam-abs__bar-card">
@@ -174,7 +258,7 @@ export default function ExamAbsencesPage() {
             </span>
           </div>
 
-          <ResponsiveContainer width="100%" height={240}>
+          <ResponsiveContainer width="100%" height={200}>
             <BarChart data={BAR_DATA} barCategoryGap="28%" barGap={2}>
               <CartesianGrid vertical={false} strokeDasharray="4 4" stroke="#F1F1F1" />
               <XAxis dataKey="level" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
@@ -208,9 +292,9 @@ export default function ExamAbsencesPage() {
             <span className="chart-title exam-abs__rate-title">
               Absence Rate this session
             </span>
+            <span className="exam-abs__rate-pct">{ABSENCE_RATE.toFixed(3)} %</span>
           </div>
           <div className="exam-abs__gauge-container">
-            <span className="exam-abs__rate-value">{ABSENCE_RATE} %</span>
             <AbsenceGauge rate={ABSENCE_RATE} />
           </div>
         </div>

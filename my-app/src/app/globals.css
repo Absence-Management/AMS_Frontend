@@ -674,6 +674,11 @@ button {
   gap: 25px;
   width: 100%;
 }
+.exam-charts-grid {
+  display: flex;
+  gap:20px  ;
+  width:75%;
+}
 
 @media (max-width: 900px) {
   .charts-grid {
@@ -1701,6 +1706,7 @@ button {
 .admin-teachers-table__footer,
 .admin-groups-table__footer,
 .admin-justifications-table__footer,
+.admin-salles-table__footer,
 .admin-import-history-table__footer {
   background: #ffffff;
 }
@@ -1709,6 +1715,7 @@ button {
 .admin-teachers-table__footer .admin-data-table__footer-info,
 .admin-groups-table__footer .admin-data-table__footer-info,
 .admin-justifications-table__footer .admin-data-table__footer-info,
+.admin-salles-table__footer .admin-data-table__footer-info,
 .admin-import-history-table__footer .admin-data-table__footer-info {
   font-size: 13px;
   color: #4a5567;
@@ -1718,6 +1725,7 @@ button {
 .admin-teachers-table__footer .admin-data-table__footer-range,
 .admin-groups-table__footer .admin-data-table__footer-range,
 .admin-justifications-table__footer .admin-data-table__footer-range,
+.admin-salles-table__footer .admin-data-table__footer-range,
 .admin-import-history-table__footer .admin-data-table__footer-range {
   color: #030712;
   font-weight: 500;
@@ -1874,6 +1882,15 @@ button {
   grid-template-columns: 1.6fr 1fr 1.1fr 1.4fr 1fr 1.2fr;
 }
 
+/* ============================================
+   ADMIN SALLES TABLE (specific)
+   ============================================ */
+
+.admin-salles-table__header-row,
+.admin-salles-table__row {
+  grid-template-columns: 1fr 2fr 1.5fr 1fr 64px;
+}
+
 .admin-import-history-table__header-row,
 .admin-import-history-table__row {
   grid-template-columns: 1.2fr 1.2fr 1fr 1fr 0.5fr;
@@ -1887,6 +1904,7 @@ button {
 .admin-teachers-table__header-row,
 .admin-groups-table__header-row,
 .admin-justifications-table__header-row,
+.admin-salles-table__header-row,
 .admin-import-history-table__header-row {
   height: 40px;
   background: #f8faff;
@@ -1897,6 +1915,7 @@ button {
 .admin-teachers-table__row,
 .admin-groups-table__row,
 .admin-justifications-table__row,
+.admin-salles-table__row,
 .admin-import-history-table__row {
   min-height: 60px;
   border-bottom: 1px solid #e3e8ef;
@@ -1907,6 +1926,7 @@ button {
 .admin-data-table__body .admin-teachers-table__row:last-of-type,
 .admin-data-table__body .admin-groups-table__row:last-of-type,
 .admin-data-table__body .admin-justifications-table__row:last-of-type,
+.admin-data-table__body .admin-salles-table__row:last-of-type,
 .admin-data-table__body .admin-import-history-table__row:last-of-type {
   border-bottom: none;
 }
@@ -1915,6 +1935,7 @@ button {
 .admin-teachers-table__row:hover,
 .admin-groups-table__row:hover,
 .admin-justifications-table__row:hover,
+.admin-salles-table__row:hover,
 .admin-import-history-table__row:hover {
   background: #fbfcff;
 }
