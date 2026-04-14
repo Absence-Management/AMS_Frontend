@@ -48,12 +48,18 @@ api.interceptors.response.use(
 
   async (error) => {
     const originalRequest = error.config;
+    const requestUrl = originalRequest?.url || "";
+    const shouldSkipRefresh =
+      requestUrl.includes(API_ENDPOINTS.LOGIN) ||
+      requestUrl.includes(API_ENDPOINTS.RESET_PASSWORD) ||
+      requestUrl.includes(API_ENDPOINTS.RESET_PASSWORD_CONFIRM);
 
     // If 401 and not already retried and not the refresh endpoint itself
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.url.includes(API_ENDPOINTS.REFRESH_TOKEN)
+      !requestUrl.includes(API_ENDPOINTS.REFRESH_TOKEN) &&
+      !shouldSkipRefresh
     ) {
       if (isRefreshing) {
         // Queue requests while refreshing

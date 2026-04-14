@@ -5,6 +5,7 @@ import { getAllTeachers } from "@/services/accountsService";
 import AdminTeachersTable from "@/components/dashboard/AdminTeachersTable";
 import AddTeacherModal from "@/components/dashboard/AddTeacherModal";
 import EditTeacherModal from "@/components/dashboard/EditTeacherModal";
+import AccountImportPanel from "@/components/dashboard/AccountImportPanel";
 
 function TeachersPage() {
   // ── State ─────────────────────────────────────
@@ -14,6 +15,7 @@ function TeachersPage() {
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
+  const [showImportPanel, setShowImportPanel] = useState(false);
 
   // ── Fetch Teachers ───────────────────────────────
   const fetchTeachers = async () => {
@@ -79,7 +81,10 @@ function TeachersPage() {
               />
             </svg>
           </button>
-          <button className="main-export-btn">
+          <button
+            className="main-export-btn"
+            onClick={() => setShowImportPanel((current) => !current)}
+          >
             Import CSV
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path
@@ -98,6 +103,14 @@ function TeachersPage() {
           </button>
         </div>
       </div>
+
+      {showImportPanel ? (
+        <AccountImportPanel
+          importType={1}
+          entityLabel="Teacher"
+          onImported={fetchTeachers}
+        />
+      ) : null}
 
       {/* Error Message */}
       {error && (

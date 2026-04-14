@@ -5,6 +5,7 @@ import { getAllStudents } from "@/services/accountsService";
 import AdminStudentsTable from "@/components/dashboard/AdminStudentsTable";
 import AddStudentModal from "@/components/dashboard/AddStudentModal";
 import EditStudentModal from "@/components/dashboard/EditStudentModal";
+import AccountImportPanel from "@/components/dashboard/AccountImportPanel";
 
 function StudentsPage() {
   // ── State ─────────────────────────────────────
@@ -14,6 +15,7 @@ function StudentsPage() {
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [showImportPanel, setShowImportPanel] = useState(false);
 
   // ── Fetch Students ───────────────────────────────
   const fetchStudents = async () => {
@@ -80,7 +82,10 @@ function StudentsPage() {
               />
             </svg>
           </button>
-          <button className="main-export-btn">
+          <button
+            className="main-export-btn"
+            onClick={() => setShowImportPanel((current) => !current)}
+          >
             Import CSV
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path
@@ -99,6 +104,15 @@ function StudentsPage() {
           </button>
         </div>
       </div>
+
+      {showImportPanel ? (
+        <AccountImportPanel
+          importType={0}
+          entityLabel="Student"
+          helperText="When you submit, an automatic email is sent to each student with their email and their default password (matricule)."
+          onImported={fetchStudents}
+        />
+      ) : null}
 
       {/* Error Message */}
       {error && (

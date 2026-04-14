@@ -96,8 +96,8 @@ function normalizeImportResult(payload, fallbackFileName) {
 
 // ── Hook ─────────────────────────────────────────────────────────────────────
 
-export function useImport() {
-  const [selectedOption, setSelectedOption] = useState(0);
+export function useImport(initialSelectedOption = 0, onCompleted) {
+  const [selectedOption, setSelectedOption] = useState(initialSelectedOption);
   const [file, setFile] = useState(null);
   const [previewRows, setPreviewRows] = useState([]);
   const [parseErrors, setParseErrors] = useState([]);
@@ -209,6 +209,13 @@ export function useImport() {
         setError(null);
       }
 
+      if (
+        typeof onCompleted === "function" &&
+        normalizedResult.imported > 0
+      ) {
+        onCompleted(normalizedResult);
+      }
+
       setFile(null);
       setPreviewRows([]);
     } catch (err) {
@@ -256,7 +263,7 @@ export function useImport() {
     } finally {
       setLoading(false);
     }
-  }, [file, selectedOption]);
+  }, [file, onCompleted, selectedOption]);
 
   // ── Return ─────────────────────────────────────────────────────────────────
 
