@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { forgetPassword } from "@/services/authService";
 import Image from "next/image";
 import { Modal } from "@/components/shared/Modal";
+import Link from "next/link";
 
 export function ForgetPasswordForm() {
   const router = useRouter();
@@ -37,14 +38,14 @@ export function ForgetPasswordForm() {
   return (
     <div className="login-form px-16">
       {/* Back button */}
-      <a href="/login" className="auth-back">
+      <Link href="/login" className="auth-back">
         <Image
           src="/arrow-narrow-left.svg"
           alt="Back"
           width={32}
           height={40}
         />
-      </a>
+      </Link>
 
       {/* Header */}
       <div className="mb-8">

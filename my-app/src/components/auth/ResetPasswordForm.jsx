@@ -9,7 +9,9 @@ import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { resetPasswordConfirm } from "@/services/authService";
 import Image from "next/image";
+import Link from "next/link";
 import { Modal } from "@/components/shared/Modal";
+import { PasswordField } from "@/components/shared/PasswordField";
 
 export function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -67,69 +69,63 @@ export function ResetPasswordForm() {
     }
   };
 
- 
+  return (
+    <div className="login-form px-20">
+      <Link href="/login" className="auth-back">
+        <Image src="/arrow-narrow-left.svg" alt="Back" width={32} height={40} />
+      </Link>
 
-  
-    return (
-  <div className="login-form px-20">
-    <a href="/login" className="auth-back">
-      <Image src="/arrow-narrow-left.svg" alt="Back" width={32} height={40} />
-    </a>
-
-    <div className="mb-8">
-      <h2 className="auth-title">Reset Password</h2>
-      <p className="auth-subtitle">
-        Please enter your new password. Make sure it&apos;s at least 8
-        characters long and matches the confirmation field.
-      </p>
-    </div>
-
-    <form onSubmit={handleSubmit}>
-      <div className="form-group">
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          disabled={loading}
-          placeholder="New Password"
-          className="mb-8"
-        />
+      <div className="mb-8">
+        <h2 className="auth-title">Reset Password</h2>
+        <p className="auth-subtitle">
+          Please enter your new password. Make sure it&apos;s at least 8
+          characters long and matches the confirmation field.
+        </p>
       </div>
 
-      <div className="form-group">
-        <input
-          type="password"
-          value={confirm}
-          onChange={(e) => setConfirm(e.target.value)}
-          required
-          disabled={loading}
-          placeholder="Confirm password"
-          className="mb-8"
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <PasswordField
+            id="new-password"
+            label="New Password"
+            value={password}
+            onChange={setPassword}
+            disabled={loading}
+            placeholder="New Password"
+          />
+        </div>
+
+        <div className="form-group">
+          <PasswordField
+            id="confirm-password"
+            label="Confirm Password"
+            value={confirm}
+            onChange={setConfirm}
+            disabled={loading}
+            placeholder="Confirm password"
+          />
+        </div>
+
+        {error && <div className="error-message">{error}</div>}
+
+        <button type="submit" disabled={loading} className="btn-primary">
+          {loading ? "Resetting..." : "Reset Password"}
+        </button>
+      </form>
+
+      {showModal && (
+        <Modal
+          title="You have successfully changed your password"
+          message=""
+          buttonText="Back to log in page"
+          iconSrc="/molalIcon.svg"
+          href="/login"
+          onClose={() => {
+            setShowModal(false);
+            router.push("/login");
+          }}
         />
-      </div>
-
-      {error && <div className="error-message">{error}</div>}
-
-      <button type="submit" disabled={loading} className="btn-primary">
-        {loading ? "Resetting..." : "Reset Password"}
-      </button>
-    </form>
-
-    {/* ✅ CORRECT PLACE */}
-    {showModal && (
-      <Modal
-        title="You have successfully changed your password"
-        message=""
-        buttonText="Back to log in page"
-        iconSrc="/molalIcon.svg"
-        href="/login"
-        onClose={() => {
-          setShowModal(false);
-          router.push("/login");
-        }}
-      />
-    )}
+      )}
   </div>
 );
   

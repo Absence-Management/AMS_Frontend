@@ -1,93 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { changePassword } from "@/services/authService";
-
-function EyeOpenIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
-
-function EyeClosedIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
-      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
-      <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
-      <line x1="1" y1="1" x2="23" y2="23" />
-    </svg>
-  );
-}
-
-function PasswordField({
-  id,
-  label,
-  value,
-  onChange,
-  visible,
-  onToggle,
-  disabled,
-}) {
-  return (
-    <div className="change-password__field">
-      <label htmlFor={id} className="change-password__label">
-        {label}
-      </label>
-
-      <div className="change-password__input-wrapper">
-        <input
-          id={id}
-          type={visible ? "text" : "password"}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          disabled={disabled}
-          required
-          className="change-password__input"
-          placeholder="••••••••••••"
-          autoComplete={
-            id === "current-password" ? "current-password" : "new-password"
-          }
-        />
-
-        <button
-          type="button"
-          onClick={onToggle}
-          disabled={disabled}
-          className="change-password__toggle-btn"
-          aria-label={visible ? "Hide password" : "Show password"}
-        >
-          {visible ? <EyeOpenIcon /> : <EyeClosedIcon />}
-        </button>
-      </div>
-    </div>
-  );
-}
+import { PasswordField } from "@/components/shared/PasswordField";
 
 function parseErrorMessage(err) {
   const detail = err?.response?.data?.detail;
@@ -142,22 +57,15 @@ export default function ChangePassword() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [showCurrent, setShowCurrent] = useState(false);
-  const [showNew, setShowNew] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const canSubmit = useMemo(() => {
-    return (
-      currentPassword.trim().length > 0 &&
-      newPassword.trim().length > 0 &&
-      confirmPassword.trim().length > 0 &&
-      !loading
-    );
-  }, [currentPassword, newPassword, confirmPassword, loading]);
+  const canSubmit =
+    currentPassword.trim().length > 0 &&
+    newPassword.trim().length > 0 &&
+    confirmPassword.trim().length > 0 &&
+    !loading;
 
   const clearMessages = () => {
     if (error) setError("");
@@ -190,9 +98,6 @@ export default function ChangePassword() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      setShowCurrent(false);
-      setShowNew(false);
-      setShowConfirm(false);
     } catch (err) {
       setError(parseErrorMessage(err));
     } finally {
@@ -215,9 +120,9 @@ export default function ChangePassword() {
             clearMessages();
             setCurrentPassword(value);
           }}
-          visible={showCurrent}
-          onToggle={() => setShowCurrent((prev) => !prev)}
           disabled={loading}
+          className="change-password__field"
+          inputClass="change-password__input"
         />
 
         <PasswordField
@@ -228,9 +133,9 @@ export default function ChangePassword() {
             clearMessages();
             setNewPassword(value);
           }}
-          visible={showNew}
-          onToggle={() => setShowNew((prev) => !prev)}
           disabled={loading}
+          className="change-password__field"
+          inputClass="change-password__input"
         />
 
         <PasswordField
@@ -241,9 +146,9 @@ export default function ChangePassword() {
             clearMessages();
             setConfirmPassword(value);
           }}
-          visible={showConfirm}
-          onToggle={() => setShowConfirm((prev) => !prev)}
           disabled={loading}
+          className="change-password__field"
+          inputClass="change-password__input"
         />
 
         {error && <div className="change-password__error-box">{error}</div>}

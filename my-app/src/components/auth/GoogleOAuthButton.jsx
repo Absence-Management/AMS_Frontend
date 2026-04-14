@@ -1,9 +1,12 @@
 "use client";
 
 import { API_ENDPOINTS } from "@/lib/constants";
+import { useToast } from "@/components/shared/ToastProvider";
 import Image from "next/image";
 
 export function GoogleOAuthButton() {
+  const { showToast } = useToast();
+
   const handleGoogleLogin = async () => {
     try {
       const res = await fetch(`/api${API_ENDPOINTS.GOOGLE_AUTH}`, {
@@ -25,7 +28,11 @@ export function GoogleOAuthButton() {
       window.location.assign(authorizationUrl);
     } catch (error) {
       console.error("Google OAuth initiation failed:", error);
-      alert("Failed to start Google login. Please try again.");
+      showToast({
+        title: "Google sign-in failed",
+        description: "Failed to start Google login. Please try again.",
+        type: "error",
+      });
     }
   };
 

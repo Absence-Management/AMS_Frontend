@@ -25,15 +25,14 @@ export default function GoogleCallbackPage() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-      }}
-    >
-      <p>Signing you in…</p>
+    <div className="auth-callback-page">
+      <div className="auth-callback-card" role="status" aria-live="polite">
+        <div className="auth-callback-spinner" aria-hidden="true" />
+        <h1 className="auth-callback-title">Signing you in...</h1>
+        <p className="auth-callback-subtitle">
+          Please wait while we finish your Google sign-in.
+        </p>
+      </div>
     </div>
   );
 }

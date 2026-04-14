@@ -1,4 +1,5 @@
 import "./globals.css";
+import { ToastProvider } from "@/components/shared/ToastProvider";
 
 export const metadata = {
   title: "AMS",
@@ -33,7 +34,7 @@ export default function RootLayout({ children }) {
       <body>
         {/* DPI-scale compensation — must run synchronously before paint */}
         <script dangerouslySetInnerHTML={{ __html: dpiScript }} />
-        {children}
+        <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
   );

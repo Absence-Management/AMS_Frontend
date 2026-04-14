@@ -3,7 +3,9 @@
 // components/shared/Modal.jsx
 // ============================================
 "use client";
+
 import Image from "next/image";
+import Link from "next/link";
 
 export function Modal({
   title,
@@ -12,6 +14,7 @@ export function Modal({
   iconSrc,
   buttonText,
   onClose,
+  href,
 }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md">
@@ -32,10 +35,22 @@ export function Modal({
         <div className="flex items-center justify-center mb-6">
           <Image src={iconSrc} alt="Check" width={172} height={172} />
         </div>
-        {/* Button */}
-        <button className="w-full h-32 py-2 px-6 bg-[#143888] text-white rounded-lg hover:bg-[#0f2d6e]" onClick={onClose}>
-          {buttonText}
-        </button>
+        {/* Button or Link */}
+        {href ? (
+          <Link
+            href={href}
+            className="w-full h-32 py-2 px-6 bg-[#143888] text-white rounded-lg hover:bg-[#0f2d6e] flex items-center justify-center"
+          >
+            {buttonText}
+          </Link>
+        ) : (
+          <button
+            className="w-full h-32 py-2 px-6 bg-[#143888] text-white rounded-lg hover:bg-[#0f2d6e]"
+            onClick={onClose}
+          >
+            {buttonText}
+          </button>
+        )}
       </div>
     </div>
   );

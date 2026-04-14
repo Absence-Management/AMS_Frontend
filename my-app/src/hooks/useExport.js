@@ -95,9 +95,11 @@ export function useExport() {
       const filename = `${parts.join("_")}.csv`;
 
       await downloadAbsencesCSV(filters, filename);
+      return true; // success — caller can close modal
     } catch (err) {
       console.error("[useExport] download failed:", err);
       setDownloadError("Failed to download CSV. Please try again.");
+      return false; // failure — caller should keep modal open
     } finally {
       setDownloading(false);
     }

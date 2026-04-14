@@ -94,8 +94,9 @@ export const API_ENDPOINTS = {
   ACOUNTS: "/v1/accounts/",
   USER_ME: "/v1/accounts/me",
   IMPORT_STUDENTS: "/v1/import/students",
-  IMPORT_TEACHERS: "/v1/teachers/import-csv",
-  IMPORT_TIMETABLE: "/v1/import/timetable",
+  IMPORT_TEACHERS: "/v1/import/teachers",
+  IMPORT_TIMETABLE: "/v1/import/planning",
   IMPORT_EXPORT_HISTORY: "/v1/import-export/history",
   EXPORT_ABSENCES: "/v1/export/absences",
+  MY_SCHEDULE: "/v1/planning/my-schedule",
 };

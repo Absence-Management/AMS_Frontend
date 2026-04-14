@@ -5,8 +5,13 @@ import { usePathname } from "next/navigation";
 
 export default function AuthLayout({ children }) {
   const pathname = usePathname();
+  const isCallbackPage = pathname === "/auth/callback";
   const isForgetPassWord =
     pathname.includes("forget-password") || pathname.includes("reset-password");
+
+  if (isCallbackPage) {
+    return children;
+  }
 
   return (
     <div

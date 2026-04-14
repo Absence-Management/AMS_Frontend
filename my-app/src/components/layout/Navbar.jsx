@@ -5,6 +5,7 @@
 
 "use client";
 
+import { useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { ROLES } from "@/lib/constants";
 import Image from "next/image";
@@ -42,6 +43,7 @@ const NotificationIcon = () => (
 // ── Component ─────────────────────────────────────────────────────────────────
 export function Navbar() {
   const { user, role } = useAuthStore();
+  const [imgError, setImgError] = useState(false);
   // console.log("[Navbar] user:", user); // Removed after confirming display
 
   // Derive initials for the avatar fallback
@@ -86,17 +88,19 @@ export function Navbar() {
           </span>
         </div>
         <div className="navbar-avatar ml-2" aria-hidden="true">
-          <Image
-            src="/profile.png"
-            width={48}
-            height={48}
-            alt={fullName || "Profile"}
-            onError={(e) => {
-              e.target.style.display = "none";
-              e.target.nextSibling.style.display = "flex";
-            }}
-          />
-          <span style={{ display: "none" }}>{initials}</span>
+          {!imgError ? (
+            <Image
+              src="/profile.png"
+              width={48}
+              height={48}
+              alt={fullName || "Profile"}
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <span className="navbar-avatar-initials">
+              {initials || "U"}
+            </span>
+          )}
         </div>
       </div>
     </header>

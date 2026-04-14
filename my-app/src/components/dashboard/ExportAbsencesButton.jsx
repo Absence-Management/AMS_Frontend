@@ -1,57 +1,35 @@
 "use client";
 
 import { useState } from "react";
-import { downloadAbsencesCSV } from "@/services/exportService";
-
-const EMPTY_FILTERS = {
-  filiere: "",
-  code_module: "",
-  date_from: "",
-  date_to: "",
-  matricule_etudiant: "",
-};
+import { useExport } from "@/hooks/useExport";
 
 export default function ExportAbsencesButton() {
   const [showModal, setShowModal] = useState(false);
-  const [filters, setFilters] = useState(EMPTY_FILTERS);
-  const [downloading, setDownloading] = useState(false);
-  const [error, setError] = useState("");
 
-  const setFilter = (key, value) =>
-    setFilters((prev) => ({ ...prev, [key]: value }));
+  const {
+    filters,
+    setFilter,
+    resetFilters,
+    downloading,
+    downloadError,
+    handleDownload: downloadCSV,
+  } = useExport();
 
-  const closeModal = () => {
-    setShowModal(false);
-    setError("");
-  };
+  const closeModal = () => setShowModal(false);
 
-  const handleReset = () => {
-    setFilters(EMPTY_FILTERS);
-    setError("");
-  };
+  const handleReset = () => resetFilters();
 
   const handleDownload = async () => {
-    setDownloading(true);
-    setError("");
-    try {
-      const parts = ["absences"];
-      if (filters.filiere) parts.push(filters.filiere);
-      if (filters.code_module) parts.push(filters.code_module);
-      if (filters.date_from) parts.push(`from-${filters.date_from}`);
-      if (filters.date_to) parts.push(`to-${filters.date_to}`);
-      await downloadAbsencesCSV(filters, `${parts.join("_")}.csv`);
-      closeModal();
-    } catch (err) {
-      console.error("[ExportAbsencesButton] download failed:", err);
-      setError("Failed to download CSV. Please try again.");
-    } finally {
-      setDownloading(false);
-    }
+    const success = await downloadCSV();
+    if (success) closeModal();
   };
 
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) closeModal();
   };
+
+  // Alias for template — hook exposes downloadError, button used `error`
+  const error = downloadError;
 
   return (
     <>

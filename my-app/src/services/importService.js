@@ -1,7 +1,7 @@
 import api from "./api";
 import { API_ENDPOINTS } from "@/lib/constants";
 
-const IMPORT_RESPONSE_STATUS = new Set([200, 201, 400, 422]);
+const IMPORT_RESPONSE_STATUS = new Set([200, 201, 400, 409, 422]);
 
 const postImportFile = async (endpoint, file) => {
   const formData = new FormData();

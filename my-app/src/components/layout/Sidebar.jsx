@@ -82,12 +82,44 @@ const icons = {
   lessons: (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
       <path
-        d="M4 4h12a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"
+        d="M5 3.5h8.5A1.5 1.5 0 0 1 15 5v10.5a.5.5 0 0 1-.76.43A4.8 4.8 0 0 0 12 15.4H5.5A1.5 1.5 0 0 1 4 13.9V5A1.5 1.5 0 0 1 5.5 3.5H5Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M6.5 7h6M6.5 9.75h6M6.5 12.5h3.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M15 5.25c.9 0 1.5.68 1.5 1.5v8.75"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  ),
+  timetable: (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <rect
+        x="3"
+        y="4"
+        width="14"
+        height="13"
+        rx="2"
         stroke="currentColor"
         strokeWidth="1.5"
       />
       <path
-        d="M7 8h6M7 11h4"
+        d="M6.5 2.5v3M13.5 2.5v3M3 8h14"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M6.5 11.25h2.25M11.25 11.25h2.25M6.5 14.25h2.25M11.25 14.25h2.25"
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
@@ -371,6 +403,7 @@ const ADMIN_SECTIONS = [
       { label: "Students", href: "/admin/students/", icon: "students" },
       { label: "Teachers", href: "/admin/teachers", icon: "teachers" },
       { label: "Groups", href: "/admin/groups", icon: "groups" },
+      { label: "Timetable", href: "/admin/timetable", icon: "timetable" },
     ],
   },
   {

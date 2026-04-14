@@ -197,6 +197,72 @@ button {
   background-color: #e5e7eb;
 }
 
+.auth-callback-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+  background:
+    radial-gradient(circle at top, rgba(20, 56, 136, 0.08), transparent 35%),
+    linear-gradient(180deg, #f8fbff 0%, #ffffff 55%);
+}
+
+.auth-callback-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(100%, 28rem);
+  padding: 2.5rem 2rem;
+  border: 1px solid rgba(20, 56, 136, 0.08);
+  border-radius: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 24px 60px rgba(20, 56, 136, 0.12);
+  text-align: center;
+}
+
+.auth-callback-spinner {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1.25rem;
+  border: 3px solid rgba(20, 56, 136, 0.15);
+  border-top-color: #143888;
+  border-radius: 999px;
+  animation: auth-callback-spin 0.8s linear infinite;
+}
+
+.auth-callback-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #143888;
+}
+
+.auth-callback-subtitle {
+  margin: 0.85rem 0 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(15, 23, 42, 0.68);
+}
+
+@keyframes auth-callback-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .auth-callback-card {
+    padding: 2rem 1.25rem;
+    border-radius: 1.25rem;
+  }
+
+  .auth-callback-title {
+    font-size: 1.65rem;
+  }
+}
+
 /* ── Remember me + forgot password row ── */
 .auth-row {
   display: flex;
@@ -242,6 +308,69 @@ button {
   font-size: 0.95rem;
   color: #dc2626;
   line-height: 1.4;
+}
+
+.toast-stack {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: min(24rem, calc(100vw - 2rem));
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+  background: #ffffff;
+  animation: toast-slide-in 0.2s ease-out;
+}
+
+.toast-error {
+  border-color: #fecaca;
+  background: #fff7f7;
+}
+
+.toast-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #991b1b;
+}
+
+.toast-description {
+  margin: 0.3rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #7f1d1d;
+}
+
+.toast-close {
+  border: none;
+  background: transparent;
+  color: #7f1d1d;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ── Invalid link card ── */
@@ -995,6 +1124,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 3rem;
+  height: 3rem;
   flex-shrink: 0;
   border-radius: 8px;
   font-size: 14px;
@@ -1002,6 +1133,18 @@ button {
   color: #ffffff;
   letter-spacing: 0.5px;
   user-select: none;
+  overflow: hidden;
+}
+
+.navbar-avatar-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #143888 0%, #2b5fc7 100%);
+  color: #ffffff;
 }
 
 /* ============================================
@@ -2610,6 +2753,24 @@ button {
   font-weight: 500;
 }
 
+.timetable-page-state {
+  padding: 18px 20px;
+  border: 1px solid #e3e8ef;
+  border-radius: 12px;
+  background: #ffffff;
+  font-size: 14px;
+  color: #4a5567;
+}
+
+.timetable-page-note {
+  padding: 14px 16px;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  background: #f8fbff;
+  font-size: 14px;
+  color: #1d4ed8;
+}
+
 /* ============================================================
    Export Modal — add to globals.css
    ============================================================ */
@@ -2901,6 +3062,77 @@ button {
   .change-password {
     width: 100%;
   }
+}
+
+/* ============================================
+   SHARED PASSWORD FIELD
+   (components/shared/PasswordField.jsx)
+   Used by: LoginForm, ResetPasswordForm, ChangePassword
+   ============================================ */
+
+.password-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.password-field__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.password-field__wrapper {
+  position: relative;
+}
+
+.password-field__input {
+  width: 100%;
+  padding-right: 2.75rem;
+}
+
+.password-field__toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  line-height: 1;
+}
+
+.password-field__toggle:hover {
+  color: #374151;
+}
+
+.password-field__toggle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ChangePassword overrides — keep existing BEM look when className is supplied */
+.change-password__field.password-field {
+  gap: 8px;
+}
+
+.change-password__field .password-field__label {
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.change-password__field .password-field__toggle {
+  right: 16px;
+  color: #a3a8b1;
+}
+
+.change-password__field .password-field__toggle:hover {
+  color: #6b7280;
 }
 
 /* ============================================
