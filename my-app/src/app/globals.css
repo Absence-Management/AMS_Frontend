@@ -4,9 +4,10 @@
 
 /* ── DPI / scale normalisation ────────────────────────────────────────────
    Lock the root font-size to exactly 16 px so that rem values stay
-   consistent across Ubuntu (100 % DPI) and Windows (125 % DPI).
-   The JS in layout.js handles the overall zoom compensation; this rule
-   prevents the OS system-font setting from adding a second layer of scaling.
+   consistent across all devices and OS scale settings.
+   The viewport meta tag (initialScale: 1) in layout.js handles the
+   CSS pixel → device pixel mapping correctly on all screens including
+   Mac Retina (2×) and Windows 125 % DPI — no JS zoom hack needed.
    ──────────────────────────────────────────────────────────────────────── */
 html {
   font-size: 16px;
@@ -110,7 +111,7 @@ button {
 }
 
 .form-group label {
-  font-size: 1.6rem;
+  font-size: 1rem;
   font-weight: 500;
   color: #143888;
 }
@@ -610,7 +611,7 @@ button {
   justify-content: space-between;
   flex: 1;
   min-width: 180px;
-  height: 12rem;
+  min-height: 10rem;
   padding: 12px 20px;
   background: #ffffff;
   border: 1px solid #e3e8ef;
@@ -1564,7 +1565,9 @@ button {
   display: flex;
   align-items: center;
   gap: 12px;
-  width: 400px;
+  width: min(400px, 100%);
+  flex: 1;
+  min-width: 0;
   height: 36px;
   padding: 0 12px;
   background: #f8faff;
@@ -2793,7 +2796,7 @@ button {
   border: 1px solid #e3e8ef;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 40%;
+  max-width: min(560px, 95vw);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -3139,13 +3142,12 @@ button {
    EXAM ABSENCES PAGE
    ============================================ */
 
-
 .exam-abs__schedule-btn {
   display: flex;
   align-items: center;
   gap: 8px;
   background: #143888;
-  color: #FFFFFF;
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   padding: 10px 16px;
@@ -3155,26 +3157,28 @@ button {
 }
 
 .exam-abs__schedule-btn:hover {
-  background: #0F2D6E;
+  background: #0f2d6e;
 }
 
 .exam-abs__charts-row {
   display: flex;
   gap: 24px;
+  flex-wrap: wrap;
 }
 
 .exam-abs__rate-card {
   display: flex;
   flex-direction: column;
-  max-width: 25%;
-  height: 20rem;
+  flex: 1;
+  min-width: 220px;
+  min-height: 20rem;
 }
 .exam-abs__bar-card {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  max-width: 50%;
-  height: 20rem;
+  flex: 2;
+  min-width: 300px;
+  min-height: 20rem;
 }
 
 .exam-abs__gauge-container {
@@ -3187,22 +3191,22 @@ button {
 }
 
 .exam-abs__rate-title {
-  color: #4A5567;
+  color: #4a5567;
   font-weight: 500;
 }
 
 .exam-abs__rate-value {
   font-size: 32px;
   font-weight: 700;
-  color: #27AF5D;
+  color: #27af5d;
   font-family: "Inter", sans-serif;
 }
 
 .exam-abs__table-header {
   display: grid;
   grid-template-columns: 2fr 1.5fr 1fr 1fr 80px;
-  background: #F8FAFF;
-  border-bottom: 1px solid #E3E8EF;
+  background: #f8faff;
+  border-bottom: 1px solid #e3e8ef;
   padding: 12px 24px;
 }
 
@@ -3210,10 +3214,108 @@ button {
   display: grid;
   grid-template-columns: 2fr 1.5fr 1fr 1fr 80px;
   padding: 16px 24px;
-  border-bottom: 1px solid #F1F1F1;
+  border-bottom: 1px solid #f1f1f1;
   align-items: center;
 }
 
 .exam-abs__table-row:last-child {
   border-bottom: none;
+}
+
+/* ============================================
+   GLOBAL RESPONSIVE BREAKPOINTS
+   ============================================ */
+
+/* ── Tablet (≤ 1024px) ──────────────────────── */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 14rem;
+  }
+
+  .dashboard-main {
+    margin-left: 14rem;
+    width: calc(100% - 14rem);
+  }
+
+  .navbar-search {
+    width: 16rem;
+  }
+
+  .admin-data-table__search {
+    max-width: 100%;
+  }
+
+  .export-modal {
+    max-width: min(480px, 95vw);
+  }
+
+  .exam-abs__rate-card,
+  .exam-abs__bar-card {
+    flex: 1 1 100%;
+    min-width: unset;
+  }
+}
+
+/* ── Phablet / small tablet (≤ 768px) ──────── */
+@media (max-width: 768px) {
+  .auth-container {
+    flex-direction: column;
+    gap: 2rem;
+    padding-inline: 1.5rem;
+  }
+
+  .login-img-container {
+    display: none;
+  }
+
+  .login-form {
+    width: 100%;
+    max-width: 28rem;
+    margin: 0 auto;
+  }
+
+  .sidebar {
+    width: 12rem;
+  }
+
+  .dashboard-main {
+    margin-left: 12rem;
+    width: calc(100% - 12rem);
+  }
+
+  .stats-cards-grid {
+    gap: 16px;
+  }
+
+  .main-page {
+    gap: 20px;
+    padding: 10px 16px;
+  }
+
+  .navbar {
+    padding: 0 1rem;
+  }
+
+  .navbar-search {
+    width: 12rem;
+  }
+
+  .change-password {
+    width: 100%;
+  }
+}
+
+/* ── Mobile (≤ 480px) ───────────────────────── */
+@media (max-width: 480px) {
+  .auth-container {
+    padding-inline: 1rem;
+  }
+
+  .main-title {
+    font-size: 1.35rem;
+  }
+
+  .stats-card {
+    min-width: 100%;
+  }
 }
