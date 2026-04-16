@@ -2,15 +2,38 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
-/* ── DPI / scale normalisation ────────────────────────────────────────────
-   Lock the root font-size to exactly 16 px so that rem values stay
-   consistent across all devices and OS scale settings.
-   The viewport meta tag (initialScale: 1) in layout.js handles the
-   CSS pixel → device pixel mapping correctly on all screens including
-   Mac Retina (2×) and Windows 125 % DPI — no JS zoom hack needed.
+/* ── Viewport-aware scale normalisation ───────────────────────────────────
+   The design was built at ~1920 px viewport (Ubuntu 100 %).
+   MacBook 14 " default → ~1512 px CSS viewport.
+   MacBook 13 " default → ~1440 px CSS viewport.
+   Windows 125 %        → viewport shrinks by ~20 % (e.g. 1536 px on FHD).
+
+   Strategy: pin html { font-size } AND use css zoom on html so that
+   BOTH rem-based AND px-based values scale together — no JS needed.
+   The viewport meta tag (width=device-width, initialScale:1) in layout.js
+   already handles Retina / HiDPI pixel mapping; do NOT add a JS zoom hack
+   on top of it — it fights the browser and breaks Retina screens.
    ──────────────────────────────────────────────────────────────────────── */
+
+/* Base (>= 1920 px) — design reference */
 html {
   font-size: 16px;
+  zoom: 1;
+}
+
+/* Large laptop / small desktop  1600 – 1919 px */
+@media (max-width: 1919px) and (min-width: 1600px) {
+  html { zoom: 0.93; }
+}
+
+/* MacBook 14 " default, Windows FHD 125 %  1440 – 1599 px */
+@media (max-width: 1599px) and (min-width: 1440px) {
+  html { zoom: 0.85; }
+}
+
+/* MacBook 13 " default  1280 – 1439 px */
+@media (max-width: 1439px) and (min-width: 1280px) {
+  html { zoom: 0.80; }
 }
 
 /* ── Custom fonts ─────────────────────────── */
