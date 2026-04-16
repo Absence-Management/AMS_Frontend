@@ -56,31 +56,22 @@ function TeacherRow({ teacher, onEditTeacher }) {
 }
 
 function normalizeTeacher(raw, index) {
-  const firstName = raw?.first_name || "";
-  const lastName = raw?.last_name || "";
-  const fullName =
-    raw?.name || `${firstName} ${lastName}`.trim() || `Teacher ${index + 1}`;
-
-  const subject = Array.isArray(raw?.subjects)
-    ? raw.subjects.filter(Boolean).join(", ")
-    : (raw?.subject ?? raw?.subjects ?? "");
-
-  const groups = Array.isArray(raw?.groups)
-    ? raw.groups.filter(Boolean).join(", ")
-    : (raw?.groups ?? raw?.group ?? "");
-
   return {
     id: raw?.id || raw?.email || index,
     first_name: raw?.first_name || "",
     last_name: raw?.last_name || "",
-    name: fullName,
+    name:
+      `${raw?.first_name || ""} ${raw?.last_name || ""}`.trim() ||
+      raw?.email ||
+      `Teacher ${index + 1}`,
     email: raw?.email || "",
-    employee_id: raw?.employee_id || "",
     phone: raw?.phone || "",
-    specialization: raw?.specialization || "",
     role: raw?.role || "teacher",
-    subject,
-    groups,
+    group: raw?.group || "",
+    is_active: raw?.is_active ?? true,
+    student_id: raw?.student_id || "",
+    program: raw?.program || "",
+    level: raw?.level || "",
   };
 }
 

@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { TimetableGrid } from "@/components/timetable/TimetableGrid";
 import { getTimetable } from "@/services/timetableService";
 
-const DAY_OPTIONS = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi"];
-const SEMESTER_OPTIONS = ["S1", "S2"];
+  const DAY_OPTIONS = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi"];
+  const SEMESTER_OPTIONS = ["S1", "S2"];
 
 export default function TimetablePage() {
   const [rows, setRows] = useState([]);

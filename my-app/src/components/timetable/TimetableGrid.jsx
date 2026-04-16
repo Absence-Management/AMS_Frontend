@@ -11,15 +11,30 @@ const TIMETABLE_TIME_SLOTS = [
 ];
 const TIMETABLE_SLOT_STARTS = ["08:00", "09:30", "11:00", "14:00"];
 
-const SESSION_TYPE_COLORS = {
-  Cours: { bg: "#dbeafe", text: "#1e40af", border: "#bfdbfe" },
-  TD: { bg: "#dcfce7", text: "#166534", border: "#bbf7d0" },
-  TP: { bg: "#fef9c3", text: "#854d0e", border: "#fde68a" },
-  "TD/TP": { bg: "#ede9fe", text: "#5b21b6", border: "#ddd6fe" },
-  "Cours/TD/TP": { bg: "#fce7f3", text: "#9d174d", border: "#fbcfe8" },
-};
+// Subject color palette (extend as needed)
+const SUBJECT_COLORS = [
+  { bg: "#dbeafe", text: "#1e40af", border: "#bfdbfe" },
+  { bg: "#dcfce7", text: "#166534", border: "#bbf7d0" },
+  { bg: "#fef9c3", text: "#854d0e", border: "#fde68a" },
+  { bg: "#ede9fe", text: "#5b21b6", border: "#ddd6fe" },
+  { bg: "#fce7f3", text: "#9d174d", border: "#fbcfe8" },
+  { bg: "#fee2e2", text: "#991b1b", border: "#fecaca" },
+  { bg: "#cffafe", text: "#0e7490", border: "#a5f3fc" },
+  { bg: "#fef3c7", text: "#92400e", border: "#fde68a" },
+  { bg: "#e0e7ff", text: "#3730a3", border: "#c7d2fe" },
+  { bg: "#f1f5f9", text: "#334155", border: "#e2e8f0" },
+];
+const SUBJECT_FALLBACK = { bg: "#f3f4f6", text: "#374151", border: "#e5e7eb" };
 
-const TYPE_FALLBACK = { bg: "#f3f4f6", text: "#374151", border: "#e5e7eb" };
+// Build subject-to-color mapping
+function getSubjectColorMap(rows) {
+  const subjects = [...new Set(rows.map((row) => row.subject).filter(Boolean))];
+  const map = {};
+  subjects.forEach((subject, i) => {
+    map[subject] = SUBJECT_COLORS[i % SUBJECT_COLORS.length];
+  });
+  return map;
+}
 
 function buildTimetableGrid(rows) {
   const grid = {};
@@ -48,11 +63,23 @@ function buildTimetableGrid(rows) {
   return grid;
 }
 
-function TimetableSessionChip({ session }) {
-  const colors = SESSION_TYPE_COLORS[session.type] ?? TYPE_FALLBACK;
+function TimetableSessionChip({ session, subjectColorMap }) {
+  const colors = subjectColorMap?.[session.subject] ?? SUBJECT_FALLBACK;
   const label = session.group
     ? `${session.type} · ${session.group}`
     : session.type;
+
+  // Support both old 'teacher' and new 'teachers' array
+  let teacherNames = "";
+  if (Array.isArray(session.teachers) && session.teachers.length > 0) {
+    teacherNames = session.teachers
+      .map((t) =>
+        `${t.first_name ? t.first_name + " " : ""}${t.last_name || ""}`.trim(),
+      )
+      .join(" / ");
+  } else if (session.teacher) {
+    teacherNames = session.teacher;
+  }
 
   return (
     <div
@@ -66,59 +93,15 @@ function TimetableSessionChip({ session }) {
         lineHeight: 1.4,
       }}
     >
-      <div>{ session.year}</div>
+      <div>{session.year}</div>
       <div style={{ fontWeight: 600, color: colors.text, fontSize: 11 }}>
         {session.subject}
       </div>
       <div style={{ color: colors.text, opacity: 0.85 }}>{label}</div>
       <div style={{ color: colors.text, opacity: 0.7 }}>
-        {session.teacher}
+        {teacherNames}
         {session.room ? ` · ${session.room}` : ""}
       </div>
-    </div>
-  );
-}
-
-function TimetableFilterBar({ rows, filters, onChange }) {
-  const years = [...new Set(rows.map((row) => row.year).filter(Boolean))].sort();
-  const sections = [
-    ...new Set(rows.map((row) => row.section).filter(Boolean)),
-  ].sort();
-  const specialities = [
-    ...new Set(rows.map((row) => row.speciality).filter(Boolean)),
-  ].sort();
-  const semesters = [
-    ...new Set(rows.map((row) => row.semester).filter(Boolean)),
-  ].sort();
-
-  const select = (key, values, placeholder) => (
-    <select
-      className="timetable-filter-select"
-      value={filters[key]}
-      onChange={(event) => onChange(key, event.target.value)}
-    >
-      <option value="">{placeholder}</option>
-      {values.map((value) => (
-        <option key={value} value={value}>
-          {value}
-        </option>
-      ))}
-    </select>
-  );
-
-  return (
-    <div className="timetable-filter-bar">
-      {select("year", years, "All years")}
-      {select("section", sections, "All sections")}
-      {select("speciality", specialities, "All specialities")}
-      {select("semester", semesters, "All semesters")}
-      <button
-        type="button"
-        className="timetable-filter-reset"
-        onClick={() => onChange("__reset__", "")}
-      >
-        Reset
-      </button>
     </div>
   );
 }
@@ -129,38 +112,9 @@ export function TimetableGrid({
   countLabel = "sessions",
   totalCount,
   showHeader = true,
-  showFilters = true,
 }) {
-  const [filters, setFilters] = useState({
-    year: "",
-    section: "",
-    speciality: "",
-    semester: "",
-  });
-
-  const handleFilterChange = useCallback((key, value) => {
-    if (key === "__reset__") {
-      setFilters({ year: "", section: "", speciality: "", semester: "" });
-      return;
-    }
-
-    setFilters((previous) => ({ ...previous, [key]: value }));
-  }, []);
-
-  const filteredRows = useMemo(
-    () =>
-      rows.filter((row) => {
-        if (filters.year && row.year !== filters.year) return false;
-        if (filters.section && row.section !== filters.section) return false;
-        if (filters.speciality && row.speciality !== filters.speciality)
-          return false;
-        if (filters.semester && row.semester !== filters.semester) return false;
-        return true;
-      }),
-    [filters, rows],
-  );
-
-  const grid = useMemo(() => buildTimetableGrid(filteredRows), [filteredRows]);
+  const grid = useMemo(() => buildTimetableGrid(rows), [rows]);
+  const subjectColorMap = useMemo(() => getSubjectColorMap(rows), [rows]);
 
   return (
     <div>
@@ -169,19 +123,12 @@ export function TimetableGrid({
           <div>
             <h3 className="timetable-preview-title">{title}</h3>
             <p className="timetable-preview-count">
-              {filteredRows.length} {countLabel} ·{" "}
-              {typeof totalCount === "number" ? totalCount : rows.length} total rows
+              {rows.length} {countLabel} ·{" "}
+              {typeof totalCount === "number" ? totalCount : rows.length} total
+              rows
             </p>
           </div>
         </div>
-      ) : null}
-
-      {showFilters ? (
-        <TimetableFilterBar
-          rows={rows}
-          filters={filters}
-          onChange={handleFilterChange}
-        />
       ) : null}
 
       <div className="timetable-grid-wrap">
@@ -215,6 +162,7 @@ export function TimetableGrid({
                           <TimetableSessionChip
                             key={`${day}-${slotIndex}-${index}`}
                             session={session}
+                            subjectColorMap={subjectColorMap}
                           />
                         ))
                       ) : (
@@ -230,9 +178,9 @@ export function TimetableGrid({
       </div>
 
       <div className="timetable-legend">
-        {Object.entries(SESSION_TYPE_COLORS).map(([type, colors]) => (
+        {Object.entries(subjectColorMap).map(([subject, colors]) => (
           <span
-            key={type}
+            key={subject}
             className="timetable-legend-item"
             style={{
               background: colors.bg,
@@ -240,7 +188,7 @@ export function TimetableGrid({
               border: `1px solid ${colors.border}`,
             }}
           >
-            {type}
+            {subject}
           </span>
         ))}
       </div>

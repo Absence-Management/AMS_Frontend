@@ -23,7 +23,7 @@ const COLUMNS = [
   "Status",
   "Action",
 ];
-const PAGE_SIZE = 7;
+const PAGE_SIZE = 10;
 
 function StudentRow({ student, onEditStudent }) {
   const canEdit = Boolean(student?.id);
@@ -76,29 +76,17 @@ function StudentRow({ student, onEditStudent }) {
   );
 }
 
-function normalizeStudent(raw, index) {
-  const firstName = raw?.first_name || "";
-  const lastName = raw?.last_name || "";
-  const fullName =
-    raw?.name || `${firstName} ${lastName}`.trim() || `Student ${index + 1}`;
-
-  const fallbackStudentId = raw?.id ? String(raw.id).slice(0, 8) : "";
-
+function normalizeStudent(raw) {
   return {
-    id: raw?.id || raw?.student_id || raw?.email || index,
-    first_name: raw?.first_name || "",
-    last_name: raw?.last_name || "",
-    name: fullName,
-    email: raw?.email || "",
-    phone: raw?.phone || "",
-    studentId: raw?.student_id || raw?.studentId || fallbackStudentId,
-    student_id: raw?.student_id || raw?.studentId || fallbackStudentId,
-    year: raw?.year || raw?.level || "—",
-    level: raw?.level || raw?.year || "",
-    group: raw?.group || "",
-    program: raw?.program || "",
-    absence: raw?.absence ?? raw?.absences ?? raw?.absence_count ?? 0,
-    status: raw?.status || (raw?.is_active ? "active" : "disabled"),
+    id: raw.id,
+    name: `${raw.first_name || ""} ${raw.last_name || ""}`.trim(),
+    email: raw.email || "",
+    studentId: raw.student_id,
+    year: `${raw.level}`,
+    group: raw.group,
+    program: raw.program,
+    absence: raw.absence_count ?? 0,
+    status: raw.is_active ? "active" : "disabled",
   };
 }
 

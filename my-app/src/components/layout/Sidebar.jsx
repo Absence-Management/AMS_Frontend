@@ -460,6 +460,7 @@ const TEACHER_SECTIONS = [
       { label: "Dashboard", href: "/teacher", icon: "dashboard" },
       { label: "Attendance", href: "/teacher/attendance", icon: "attendance" },
       { label: "My Lessons", href: "/teacher/sessions", icon: "lessons" },
+      { label: "Timetable", href: "/teacher/timetable", icon: "timetable" },
     ],
   },
 ];
