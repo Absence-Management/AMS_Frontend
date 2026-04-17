@@ -478,7 +478,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 32px;
-  padding: 12px 24px;
+  padding: 24px;
   width: 100%;
 }
 

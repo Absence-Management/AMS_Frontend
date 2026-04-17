@@ -5,7 +5,38 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+function DigitalClock() {
+  const [time, setTime] = useState(() => {
+    const now = new Date();
+    return now.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  });
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      setTime(
+        now.toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      );
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+  return (
+    <div className="flex justify-center items-center">
+      <div
+        className="bg-[#f8faff] border border-[#e3e8ef] rounded-xl shadow-sm px-6 py-2 font-digital text-[1.7rem] text-[#143888] tracking-widest select-none"
+        style={{ letterSpacing: "0.12em", minWidth: 90, textAlign: "center" }}
+      >
+        {time}
+      </div>
+    </div>
+  );
+}
 import { useAuthStore } from "@/store/authStore";
 import { ROLES } from "@/lib/constants";
 import Image from "next/image";
@@ -58,9 +89,9 @@ export function Navbar() {
     .toUpperCase();
 
   return (
-    <header className="navbar">
+    <header className="navbar flex items-center justify-between">
       {/* ── Left: Search + Notification ── */}
-      <div className="navbar-left">
+      <div className="navbar-left flex items-center">
         <div className="navbar-search">
           <span className="navbar-search-icon">
             <SearchIcon />
@@ -71,11 +102,13 @@ export function Navbar() {
             placeholder="Search anything..."
           />
         </div>
-
         <button className="navbar-notification" aria-label="Notifications">
           <NotificationIcon />
         </button>
       </div>
+
+      {/* ── Center: Digital Clock ── */}
+      <DigitalClock />
 
       {/* ── Right: User info + Avatar ── */}
       <div className="navbar-user">
@@ -97,9 +130,7 @@ export function Navbar() {
               onError={() => setImgError(true)}
             />
           ) : (
-            <span className="navbar-avatar-initials">
-              {initials || "U"}
-            </span>
+            <span className="navbar-avatar-initials">{initials || "U"}</span>
           )}
         </div>
       </div>

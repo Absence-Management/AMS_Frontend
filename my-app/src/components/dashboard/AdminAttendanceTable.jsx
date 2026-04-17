@@ -14,7 +14,7 @@ const COLUMNS = [
   "Action",
 ];
 
-const PAGE_SIZE = 7;
+const PAGE_SIZE = 9;
 
 function AttendanceRow({ attendance }) {
   return (

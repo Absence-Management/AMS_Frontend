@@ -140,12 +140,12 @@ function CardDropdown({ onClose, onReschedule, onCancel }) {
 
 export default function SessionCard({
   id,
-  title = "Data Structures",
-  type = "TD",
-  time = "08:00 — 09:30",
-  room = "Salle A2 — Sup",
-  group = "CP1 — group",
-  groupNumber = "3",
+  title,
+  type,
+  time,
+  room,
+  group,
+  groupNumber,
   onStartSession,
   onReschedule,
   onCancel,
@@ -158,9 +158,7 @@ export default function SessionCard({
       <div className="session-card__header">
         <div className="session-card__header-info">
           <h3 className="session-card__title">{title}</h3>
-          <span className="session-card__type">
-            {type} • ID {id}
-          </span>
+          <span className="session-card__type">{type}</span>
         </div>
         <button
           className="session-card__dots-btn"
