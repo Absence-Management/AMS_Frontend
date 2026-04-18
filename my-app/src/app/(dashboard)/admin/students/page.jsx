@@ -139,6 +139,7 @@ function StudentsPage() {
       <EditStudentModal
         isOpen={showEditModal}
         onClose={closeEditModal}
+
         onUpdated={fetchStudents}
         student={selectedStudent}
       />

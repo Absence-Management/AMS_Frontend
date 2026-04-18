@@ -13,18 +13,18 @@ const TIMETABLE_SLOT_STARTS = ["08:00", "09:30", "11:00", "14:00"];
 
 // Subject color palette (extend as needed)
 const SUBJECT_COLORS = [
-  { bg: "#dbeafe", text: "#1e40af", border: "#bfdbfe" },
-  { bg: "#dcfce7", text: "#166534", border: "#bbf7d0" },
-  { bg: "#fef9c3", text: "#854d0e", border: "#fde68a" },
-  { bg: "#ede9fe", text: "#5b21b6", border: "#ddd6fe" },
-  { bg: "#fce7f3", text: "#9d174d", border: "#fbcfe8" },
-  { bg: "#fee2e2", text: "#991b1b", border: "#fecaca" },
-  { bg: "#cffafe", text: "#0e7490", border: "#a5f3fc" },
-  { bg: "#fef3c7", text: "#92400e", border: "#fde68a" },
-  { bg: "#e0e7ff", text: "#3730a3", border: "#c7d2fe" },
-  { bg: "#f1f5f9", text: "#334155", border: "#e2e8f0" },
+  { bg: "rgba(219, 234, 254, 0.4)", text: "#1e40af", border: "#bfdbfe" }, // #dbeafe
+  { bg: "rgba(220, 252, 231, 0.4)", text: "#166534", border: "#bbf7d0" }, // #dcfce7
+  { bg: "rgba(254, 249, 195, 0.4)", text: "#854d0e", border: "#fde68a" }, // #fef9c3
+  { bg: "rgba(237, 233, 254, 0.4)", text: "#5b21b6", border: "#ddd6fe" }, // #ede9fe
+  { bg: "rgba(252, 231, 243, 0.4)", text: "#9d174d", border: "#fbcfe8" }, // #fce7f3
+  { bg: "rgba(254, 226, 226, 0.4)", text: "#991b1b", border: "#fecaca" }, // #fee2e2
+  { bg: "rgba(207, 250, 254, 0.4)", text: "#0e7490", border: "#a5f3fc" }, // #cffafe
+  { bg: "rgba(254, 243, 199, 0.4)", text: "#92400e", border: "#fde68a" }, // #fef3c7
+  { bg: "rgba(224, 231, 255, 0.4)", text: "#3730a3", border: "#c7d2fe" }, // #e0e7ff
+  { bg: "rgba(241, 245, 249, 0.4)", text: "#334155", border: "#e2e8f0" }, // #f1f5f9
 ];
-const SUBJECT_FALLBACK = { bg: "#f3f4f6", text: "#374151", border: "#e5e7eb" };
+const SUBJECT_FALLBACK = { bg: "rgba(243, 244, 246, 0.4)", text: "#374151", border: "#e5e7eb" }; // #f3f4f6
 
 // Build subject-to-color mapping
 function getSubjectColorMap(rows) {
@@ -89,15 +89,15 @@ function TimetableSessionChip({ session, subjectColorMap }) {
         borderRadius: 6,
         padding: "4px 7px",
         marginBottom: 4,
-        fontSize: 11,
+        fontSize: 12,
         lineHeight: 1.4,
       }}
-    >
-      <div>{session.year}</div>
+      >
+      <div className="px-2 py-1 bg-neutral-100 w-fit rounded-full">{session.year}</div>
+      <div style={{ color: colors.text, opacity: 1 }}>{label}</div>
       <div style={{ fontWeight: 600, color: colors.text, fontSize: 11 }}>
         {session.subject}
       </div>
-      <div style={{ color: colors.text, opacity: 0.85 }}>{label}</div>
       <div style={{ color: colors.text, opacity: 0.7 }}>
         {teacherNames}
         {session.room ? ` · ${session.room}` : ""}

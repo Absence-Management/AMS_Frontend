@@ -82,7 +82,7 @@ function normalizeStudent(raw) {
     name: `${raw.first_name || ""} ${raw.last_name || ""}`.trim(),
     email: raw.email || "",
     studentId: raw.student_id,
-    year: `${raw.level}`,
+    year: `${raw.level}${raw.program}`,
     group: raw.group,
     program: raw.program,
     absence: raw.absence_count ?? 0,
