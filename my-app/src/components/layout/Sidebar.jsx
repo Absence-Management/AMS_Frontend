@@ -465,9 +465,7 @@ const TEACHER_SECTIONS = [
   },
   {
     title: "System",
-    links: [
-      { label: "Settings", href: "/teacher/settings", icon: "settings" },
-    ],
+    links: [{ label: "Settings", href: "/teacher/settings", icon: "settings" }],
   },
 ];
 
@@ -644,27 +642,23 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Bottom links (Help, etc.) */}
-      {bottomLinks.length > 0 && (
-        <div className="sidebar-bottom-links">
-          {bottomLinks.map((link) => (
-            <Link
-              key={`bottom-${link.href}-${link.label}`}
-              href={link.href}
-              className={`sidebar-link${isActive(link.href) ? " active" : ""}`}
-            >
-              <span className="sidebar-link-icon">{icons[link.icon]}</span>
-              <span className="sidebar-link-label">{link.label}</span>
-            </Link>
-          ))}
-        </div>
-      )}
-
-      {/* Logout */}
-      <button onClick={handleLogout} className="sidebar-logout">
-        <span className="sidebar-link-icon">{icons.logout}</span>
-        <span className="sidebar-link-label">Logout Account</span>
-      </button>
+      {/* Bottom links (Help, etc.) and Logout at bottom */}
+      <div className="sidebar-bottom-links">
+        {bottomLinks.map((link) => (
+          <Link
+            key={`bottom-${link.href}-${link.label}`}
+            href={link.href}
+            className={`sidebar-link${isActive(link.href) ? " active" : ""}`}
+          >
+            <span className="sidebar-link-icon">{icons[link.icon]}</span>
+            <span className="sidebar-link-label">{link.label}</span>
+          </Link>
+        ))}
+        <button onClick={handleLogout} className="sidebar-link sidebar-logout">
+          <span className="sidebar-link-icon">{icons.logout}</span>
+          <span className="sidebar-link-label">Logout Account</span>
+        </button>
+      </div>
     </aside>
   );
 }

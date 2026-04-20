@@ -23,17 +23,23 @@ html {
 
 /* Large laptop / small desktop  1600 – 1919 px */
 @media (max-width: 1919px) and (min-width: 1600px) {
-  html { zoom: 0.93; }
+  html {
+    zoom: 0.93;
+  }
 }
 
 /* MacBook 14 " default, Windows FHD 125 %  1440 – 1599 px */
 @media (max-width: 1599px) and (min-width: 1440px) {
-  html { zoom: 0.85; }
+  html {
+    zoom: 0.85;
+  }
 }
 
 /* MacBook 13 " default  1280 – 1439 px */
 @media (max-width: 1439px) and (min-width: 1280px) {
-  html { zoom: 0.80; }
+  html {
+    zoom: 0.8;
+  }
 }
 
 /* ── Custom fonts ─────────────────────────── */
@@ -699,8 +705,8 @@ button {
 }
 .exam-charts-grid {
   display: flex;
-  gap:20px  ;
-  width:75%;
+  gap: 20px;
+  width: 75%;
 }
 
 @media (max-width: 900px) {
@@ -775,7 +781,9 @@ button {
   display: flex;
   flex-direction: column;
   width: 16rem;
-  height: 100vh;
+  min-height: 0;
+  height: auto;
+  inset: 0 0 0 0;
   padding: 1rem;
   background: #ffffff;
   border-right: 1px solid rgba(0, 0, 0, 0.08);
@@ -824,6 +832,13 @@ button {
   width: 100%;
   border: 1px solid transparent;
   border-radius: 8px;
+}
+/* Stick bottom links to bottom of sidebar */
+.sidebar-bottom-links {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .sidebar-link {

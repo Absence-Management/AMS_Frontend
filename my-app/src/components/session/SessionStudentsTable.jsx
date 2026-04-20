@@ -6,7 +6,7 @@
 // ============================================
 
 import { useMemo, useState } from "react";
-import { Avatar, IconDots, IconSearch, IconGroup } from "@/components/shared/TableShared";
+import { Avatar, IconSearch, IconGroup } from "@/components/shared/TableShared";
 import SyncStatusBadge from "./SyncStatusBadge";
 
 function IconPlus() {
@@ -24,13 +24,13 @@ function ToggleCell({ checked, onToggle }) {
       role="switch"
       aria-checked={checked}
       onClick={onToggle}
-      className={`relative inline-flex h-[22px] w-[42px] items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none ${
+      className={`relative inline-flex h-5.5 w-10.5 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none ${
         checked ? "bg-[#143888]" : "bg-gray-200"
       }`}
     >
       <span
-        className={`inline-block h-[18px] w-[18px] transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-          checked ? "translate-x-[22px]" : "translate-x-[2px]"
+        className={`inline-block h-4.5 w-4.5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+          checked ? "translate-x-5.5" : "translate-x-0.5"
         }`}
       />
     </button>
