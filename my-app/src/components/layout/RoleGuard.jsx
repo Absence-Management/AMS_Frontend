@@ -27,16 +27,6 @@ export function RoleGuard({ children, allowedRoles }) {
 
   useEffect(() => {
     if (isAuthLoading) return;
-    console.log(
-      "[RoleGuard] isAuthenticated:",
-      isAuthenticated,
-      "role:",
-      normalizedRole,
-      "allowedRoles:",
-      allowedRoles,
-      "pathname:",
-      pathname,
-    );
 
     // Not logged in → redirect to login
     if (!isAuthenticated) {

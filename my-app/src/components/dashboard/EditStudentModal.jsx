@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { updateStudent } from "@/services/accountsService";
+import { studentsService } from "@/services/accountsService";
 import { formatApiValidationError } from "@/lib/apiError";
 import AccountFormModal from "@/components/shared/AccountFormModal";
 import AccountFormFields from "@/components/shared/AccountFormFields";
@@ -115,7 +115,7 @@ export default function EditStudentModal({
 
     try {
       const payload = normalizeForPayload(formData);
-      await updateStudent(student.id, payload);
+      await studentsService.update(student.id, payload);
 
       await onUpdated?.();
       handleClose();

@@ -1,86 +1,60 @@
+import React from "react";
+
+// --- Better Icons (Modern Lucide-like style) ---
+
+function IconChart() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 3v18h18" />
+      <path d="m19 9-5 5-4-4-3 3" />
+    </svg>
+  );
+}
+
+function IconUsers() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
+function IconMapPin() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  );
+}
+
 function IconClock() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <circle cx="8" cy="8" r="5.5" stroke="#4a5567" strokeWidth="1.2" />
-      <path
-        d="M8 5v3l2 1.5"
-        stroke="#4a5567"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
     </svg>
   );
 }
 
-function IconRoom() {
+function IconCheckCircle() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <rect
-        x="2.5"
-        y="2.5"
-        width="11"
-        height="11"
-        rx="1.5"
-        stroke="#4a5567"
-        strokeWidth="1.2"
-      />
-      <path
-        d="M6 2.5v11M10 2.5v11M2.5 6h3.5M2.5 10h3.5M10 6h3.5M10 10h3.5"
-        stroke="#4a5567"
-        strokeWidth="1.1"
-        strokeLinecap="round"
-      />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#069855]">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+      <polyline points="22 4 12 14.01 9 11.01" />
     </svg>
   );
 }
 
-function IconGroup() {
+function IconXCircle() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <circle cx="6" cy="5.5" r="2.2" stroke="#4a5567" strokeWidth="1.2" />
-      <path
-        d="M2 13c0-2.2 1.8-4 4-4s4 1.8 4 4"
-        stroke="#4a5567"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-      />
-      <circle cx="11.5" cy="5.5" r="1.8" stroke="#4a5567" strokeWidth="1.2" />
-      <path
-        d="M13.5 13c0-1.8-1-3.2-2-3.6"
-        stroke="#4a5567"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function IconPresent() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <circle cx="8" cy="8" r="6.5" stroke="#069855" strokeWidth="1.2" />
-      <path
-        d="M5 8.2l2 2 4-4"
-        stroke="#069855"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function IconAbsent() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <circle cx="8" cy="8" r="6.5" stroke="#d62525" strokeWidth="1.2" />
-      <path
-        d="M5.5 5.5l5 5M10.5 5.5l-5 5"
-        stroke="#d62525"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-      />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#d62525]">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="15" y1="9" x2="9" y2="15" />
+      <line x1="9" y1="9" x2="15" y2="15" />
     </svg>
   );
 }
@@ -90,84 +64,113 @@ export default function SessionDetailsStats({
   presentCount,
   absentCount,
   absenceRate,
+  liveSummary = null, // New prop for polled data
 }) {
-  const firstGroupNumber = Number(session.groupNumber);
-  const secondGroupNumber = Number.isNaN(firstGroupNumber)
-    ? session.groupNumber
-    : firstGroupNumber + 1;
+  const secondGroupNumber = !isNaN(Number(session.groupNumber))
+    ? Number(session.groupNumber) + 1
+    : session.groupNumber;
+
+  // Use live data if available, otherwise fallback to local calculation
+  const displayPresent = liveSummary ? liveSummary.present : presentCount;
+  const displayAbsent = liveSummary ? liveSummary.absent : absentCount;
+  const displayPending = liveSummary ? liveSummary.pending : 0;
+  const displayRate = liveSummary 
+    ? ((liveSummary.absent / (liveSummary.total || 1)) * 100).toFixed(1) 
+    : absenceRate;
 
   return (
-    <div className="flex items-start gap-6">
-      <div className="bg-white border border-[#e3e8ef] rounded-lg overflow-hidden w-1/4 shrink-0">
-        <div className="flex items-center justify-between px-3.5 py-4 border-b border-[#e3e8ef] bg-white">
-          <p className="text-[16px] font-medium text-black tracking-[-0.08px]">
-            Absence Rate
-          </p>
-          <p className="text-[14px] text-[#4a5567] tracking-[-0.07px]">
-            {absenceRate}%
-          </p>
+    <div className="flex gap-6 h-full items-stretch">
+      {/* 1. Absence Rate Card */}
+      <div className="bg-white border border-[#e3e8ef] rounded-[12px] p-5 flex-[1.4] flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow duration-200 relative overflow-hidden">
+        {/* Live Indicator */}
+        <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#f0fdf4] border border-[#dcfce7]">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22c55e] opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#22c55e]"></span>
+          </span>
+          <span className="text-[0.625rem] font-bold text-[#166534] uppercase tracking-wider">Live</span>
         </div>
 
-        <div className="flex items-center justify-between p-3.5">
-          <div className="flex gap-1.25 items-center">
-            <IconPresent />
-            <span className="text-[14px] text-[#069855] tracking-[-0.07px]">
-              {presentCount}
-            </span>
-            <span className="text-[14px] text-[#069855] tracking-[-0.07px]">
-              Present
-            </span>
+        <div className="flex items-center justify-between mb-4 mt-1">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-[#f0f4ff] rounded-[8px] text-[#143888]">
+              <IconChart />
+            </div>
+            <span className="text-[0.9375rem] font-semibold text-[#030712]">Attendance Rate</span>
           </div>
+          <span className="text-[1.25rem] font-bold text-[#143888] pr-12">{displayRate}%</span>
+        </div>
 
-          <div className="flex gap-1.25 items-center">
-            <IconAbsent />
-            <span className="text-[14px] text-[#d62525] tracking-[-0.07px]">
-              {absentCount}
-            </span>
-            <span className="text-[14px] text-[#d62525] tracking-[-0.07px]">
-              Absent
-            </span>
+        <div className="flex items-center justify-between mt-2 pt-4 border-t border-[#f1f5f9]">
+          <div className="flex items-center gap-2.5">
+            <IconCheckCircle />
+            <div className="flex flex-col">
+              <span className="text-[1rem] font-bold text-[#069855] leading-none">{displayPresent}</span>
+              <span className="text-[0.6875rem] text-[#64748b] font-medium uppercase tracking-wider">Present</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <IconXCircle />
+            <div className="flex flex-col">
+              <span className="text-[1rem] font-bold text-[#d62525] leading-none">{displayAbsent}</span>
+              <span className="text-[0.6875rem] text-[#64748b] font-medium uppercase tracking-wider">Absent</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2.5 border-l border-[#f1f5f9] pl-4">
+            <div className="flex flex-col">
+              <span className="text-[1rem] font-bold text-[#64748b] leading-none">{displayPending}</span>
+              <span className="text-[0.6875rem] text-[#64748b] font-medium uppercase tracking-wider text-center">Pending</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-white border border-[#e3e8ef] rounded-lg overflow-hidden w-2/4">
-        <div className="flex items-center justify-between p-3.5 border-b border-[#e3e8ef] bg-white">
-          <p className="text-[16px] font-medium text-black tracking-[-0.08px]">
-            Session type :{" "}
-            <span className="text-[14px] text-[#4a5567] tracking-[-0.07px]">
+      {/* 2. Session Info Card */}
+      <div className="bg-white border border-[#e3e8ef] rounded-[12px] p-5 flex-[1.6] flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <span className="bg-[#143888] text-white text-[0.6875rem] font-bold px-2 py-0.5 rounded-[4px] uppercase ring-1 ring-white/20">
               {session.type}
             </span>
-          </p>
+            <h3 className="text-[1.0625rem] font-bold text-[#030712]">{session.title}</h3>
+          </div>
         </div>
 
-        <div className="flex items-center justify-between p-3.5">
-          <div className="flex gap-1.25 items-center">
-            <IconGroup />
-            <span className="text-[14px] text-[#4a5567] tracking-[-0.07px]">
-              group n˚:
-            </span>
-            <span className="text-[14px] text-[#030712] tracking-[-0.07px]">
-              {session.groupNumber} <span className="text-[#4a5567]">&</span>{" "}
-              {secondGroupNumber}
-            </span>
+        <div className="grid grid-cols-2 gap-y-5 gap-x-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] text-[#64748b] shadow-sm">
+              <IconUsers />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[0.75rem] text-[#64748b] font-bold uppercase tracking-tight">Group N°</span>
+              <span className="text-[0.875rem] font-bold text-[#030712]">
+                {session.groupNumber} & {secondGroupNumber}
+              </span>
+            </div>
           </div>
 
-          <div className="flex gap-1.25 items-center">
-            <IconClock />
-            <span className="text-[14px] text-[#4a5567] tracking-[-0.07px]">
-              {session.time}
-            </span>
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] text-[#64748b] shadow-sm">
+              <IconClock />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[0.75rem] text-[#64748b] font-bold uppercase tracking-tight">Timing</span>
+              <span className="text-[0.875rem] font-bold text-[#030712]">{session.time}</span>
+            </div>
           </div>
 
-          <div className="flex gap-1.25 items-center">
-            <IconRoom />
-            <span className="text-[14px] text-[#4a5567] tracking-[-0.07px]">
-              {session.room}
-            </span>
+          <div className="flex items-center gap-3 col-span-2">
+            <div className="p-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] text-[#64748b] shadow-sm">
+              <IconMapPin />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[0.75rem] text-[#64748b] font-bold uppercase tracking-tight">Location</span>
+              <span className="text-[0.875rem] font-bold text-[#030712]">{session.room}</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 }
+

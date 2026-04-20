@@ -76,9 +76,34 @@ export const ROLE_ROUTES = {
 };
 
 // ----------------------------
-// API ENDPOINTS — matches backend Swagger exactly
-// token is handled by httpOnly cookie — never in localStorage
+// SESSION & ATTENDANCE
 // ----------------------------
+export const SESSION_STATUS = {
+  SCHEDULED: "scheduled",
+  IN_PROGRESS: "in_progress",
+  COMPLETED: "completed",
+  CANCELED: "canceled",
+};
+
+export const SESSION_TYPE = {
+  COURSE: "Course",
+  TD: "TD",
+  LAB: "Lab",
+  EXAM: "Exam",
+};
+
+export const SYNC_STATUS = {
+  SYNCED: "synced",
+  PENDING: "pending",
+  FAILED: "failed",
+};
+
+export const ABSENCE_SOURCE = {
+  TEACHER: "teacher",
+  SYSTEM: "system",
+  ADMIN: "admin",
+};
+
 export const API_ENDPOINTS = {
   LOGIN: "/v1/auth/login",
   LOGOUT: "/v1/auth/logout",
@@ -91,7 +116,7 @@ export const API_ENDPOINTS = {
   STUDENTS: "/v1/accounts/students/",
   TEACHERS: "/v1/accounts/teachers/",
   ADMINS: "/v1/accounts/admins/",
-  ACOUNTS: "/v1/accounts/",
+  ACCOUNTS: "/v1/accounts/",
   USER_ME: "/v1/accounts/me",
   IMPORT_STUDENTS: "/v1/import/students",
   IMPORT_TEACHERS: "/v1/import/teachers",

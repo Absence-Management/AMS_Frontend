@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createStudent } from "@/services/accountsService";
+import { studentsService } from "@/services/accountsService";
 import { formatApiValidationError } from "@/lib/apiError";
 import AccountFormModal from "@/components/shared/AccountFormModal";
 import AccountFormFields from "@/components/shared/AccountFormFields";
@@ -108,7 +108,7 @@ export default function AddStudentModal({ isOpen, onClose, onCreated }) {
 
     try {
       const payload = normalizeForPayload(formData);
-      await createStudent(payload);
+      await studentsService.create(payload);
 
       await onCreated?.();
       handleClose();

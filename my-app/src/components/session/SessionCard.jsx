@@ -181,7 +181,9 @@ export default function SessionCard({
         <span className="session-card__meta-row">
           <UsersIcon />
           <span className="session-card__meta-group">
-            {group && groupNumber ? `${group} ${groupNumber}` : "G3"}
+            {group && groupNumber && group !== groupNumber
+              ? `${group} ${groupNumber}`
+              : group || groupNumber || "G3"}
           </span>
         </span>
       </div>

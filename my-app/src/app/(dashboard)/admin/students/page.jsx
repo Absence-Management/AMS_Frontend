@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getAllStudents } from "@/services/accountsService";
+import { studentsService } from "@/services/accountsService";
 import AdminStudentsTable from "@/components/dashboard/AdminStudentsTable";
 import AddStudentModal from "@/components/dashboard/AddStudentModal";
 import EditStudentModal from "@/components/dashboard/EditStudentModal";
@@ -21,8 +21,7 @@ function StudentsPage() {
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      const data = await getAllStudents();
-      console.log("[StudentsPage] getAllStudents response:", data);
+      const data = await studentsService.getAll();
       setStudents(data);
       setError("");
     } catch (err) {
@@ -139,7 +138,6 @@ function StudentsPage() {
       <EditStudentModal
         isOpen={showEditModal}
         onClose={closeEditModal}
-
         onUpdated={fetchStudents}
         student={selectedStudent}
       />

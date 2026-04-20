@@ -3,6 +3,11 @@ import { use, useState } from "react";
 import SessionDetailsHeader from "@/components/session/SessionDetailsHeader";
 import SessionDetailsStats from "@/components/session/SessionDetailsStats";
 import SessionStudentsTable from "@/components/session/SessionStudentsTable";
+import CompensationRequests from "@/components/dashboard/CompensationRequests";
+import CorrectionRequestModal from "@/components/session/CorrectionRequestModal";
+import { SYNC_STATUS } from "@/lib/constants";
+import { useAttendance } from "@/hooks/useAttendance";
+import { useAttendanceSummary } from "@/hooks/useAttendanceSummary";
 
 const MOCK_SESSIONS = [
   {
@@ -59,7 +64,7 @@ const MOCK_STUDENTS = [
     email: "r.bouhafs@esi-sba.dz",
     studentId: "202334652314",
     present: false,
-    grade: "A+",
+    syncStatus: SYNC_STATUS.SYNCED,
     avatarColor: "#e2e8f0",
   },
   {
@@ -68,7 +73,7 @@ const MOCK_STUDENTS = [
     email: "i.brahmi@esi-sba.dz",
     studentId: "202334652320",
     present: true,
-    grade: "A+",
+    syncStatus: SYNC_STATUS.SYNCED,
     avatarColor: "#dbeafe",
   },
   {
@@ -77,7 +82,7 @@ const MOCK_STUDENTS = [
     email: "f.trari@esi-sba.dz",
     studentId: "202334652321",
     present: true,
-    grade: "B+",
+    syncStatus: SYNC_STATUS.PENDING,
     avatarColor: "#fbecd1",
   },
   {
@@ -86,7 +91,7 @@ const MOCK_STUDENTS = [
     email: "s.khelifi@esi-sba.dz",
     studentId: "202334652322",
     present: true,
-    grade: "B",
+    syncStatus: SYNC_STATUS.FAILED,
     avatarColor: "#f5d0fe",
   },
   {
@@ -95,7 +100,7 @@ const MOCK_STUDENTS = [
     email: "m.cherif@esi-sba.dz",
     studentId: "202334652323",
     present: true,
-    grade: "A-",
+    syncStatus: null,
     avatarColor: "#e2e8f0",
   },
   {
@@ -104,7 +109,7 @@ const MOCK_STUDENTS = [
     email: "n.bensalem@esi-sba.dz",
     studentId: "202334652324",
     present: true,
-    grade: "A-",
+    syncStatus: SYNC_STATUS.SYNCED,
     avatarColor: "#fde68a",
   },
   {
@@ -113,7 +118,7 @@ const MOCK_STUDENTS = [
     email: "y.hassani@esi-sba.dz",
     studentId: "202334652325",
     present: true,
-    grade: "B+",
+    syncStatus: SYNC_STATUS.PENDING,
     avatarColor: "#bfdbfe",
   },
   {
@@ -122,22 +127,93 @@ const MOCK_STUDENTS = [
     email: "l.amrani@esi-sba.dz",
     studentId: "202334652326",
     present: true,
-    grade: "B",
+    syncStatus: SYNC_STATUS.SYNCED,
     avatarColor: "#fecaca",
+  },
+];
+
+const MOCK_COMPENSATION_REQUESTS = [
+  {
+    id: 101,
+    studentName: "Bouhafs Rim",
+    studentGroup: "G3",
+    targetGroup: "G6",
+    module: "Data Structures TD",
+    date: "Thu 23 Apr",
+    time: "10:00",
+    room: "Salle A2",
+  },
+  {
+    id: 102,
+    studentName: "Trari Foued",
+    studentGroup: "G1",
+    targetGroup: "G5",
+    module: "Algorithms TD",
+    date: "Wed 22 Apr",
+    time: "14:00",
+    room: "Salle B1",
+  },
+  {
+    id: 103,
+    studentName: "Brahmi Ilyes",
+    studentGroup: "G6",
+    targetGroup: "G3",
+    module: "Data Structures TD",
+    date: "Sun 19 Apr",
+    time: "08:00",
+    room: "Salle A2",
+  },
+  {
+    id: 104,
+    studentName: "Sara Khelifi",
+    studentGroup: "G4",
+    targetGroup: "G3",
+    module: "Data Structures TD",
+    date: "Sun 19 Apr",
+    time: "08:00",
+    room: "Salle A2",
+  },
+  {
+    id: 105,
+    studentName: "Malik Cherif",
+    studentGroup: "G2",
+    targetGroup: "G1",
+    module: "Algorithms Course",
+    date: "Sun 19 Apr",
+    time: "10:00",
+    room: "Salle B1",
   },
 ];
 
 export default function SessionDetailsPage({ params }) {
   const resolvedParams = use(params);
-  const [students, setStudents] = useState(MOCK_STUDENTS);
   const sessionId = Array.isArray(resolvedParams?.id)
     ? resolvedParams.id[0]
     : resolvedParams?.id;
   const sessionIdNum = Number(sessionId);
   const session = MOCK_SESSIONS.find((s) => s.id === sessionIdNum) ?? null;
+
+  // Use the hook with MOCK_STUDENTS as initial data so UI is populated immediately
+  const { students, handleTogglePresent } = useAttendance(sessionIdNum, MOCK_STUDENTS);
+  const { summary: liveSummary } = useAttendanceSummary(sessionIdNum);
+
+  // Correction Modal State
+  const [selectedStudentForCorrection, setSelectedStudentForCorrection] = useState(null);
+  const [isCorrectionModalOpen, setIsCorrectionModalOpen] = useState(false);
+
+  const handleOpenCorrection = (student) => {
+    setSelectedStudentForCorrection(student);
+    setIsCorrectionModalOpen(true);
+  };
+
   const presentCount = students.filter((student) => student.present).length;
   const absentCount = students.length - presentCount;
   const absenceRate = ((absentCount / students.length) * 100).toFixed(1);
+
+  // Filter requests that target this specific session's group
+  const sessionRequests = MOCK_COMPENSATION_REQUESTS.filter(
+    (req) => req.targetGroup === `G${session.groupNumber}`
+  );
 
   if (!session) {
     return (
@@ -158,18 +234,35 @@ export default function SessionDetailsPage({ params }) {
         presentCount={presentCount}
         absentCount={absentCount}
         absenceRate={absenceRate}
+        liveSummary={liveSummary}
       />
-      <SessionStudentsTable
-        session={session}
-        students={students}
-        onStudentsChange={setStudents}
-      />
+      <div className="flex gap-6 items-stretch">
+        <div className="flex-1">
+          <SessionStudentsTable
+            session={session}
+            students={students}
+            onToggleStudent={handleTogglePresent}
+            onOpenCorrection={handleOpenCorrection}
+          />
+        </div>
+        <div className="w-[380px] shrink-0">
+          <CompensationRequests requests={sessionRequests} />
+        </div>
+      </div>
 
-      <div className="flex justify-end">
-        <button className="bg-[#143888] border border-black/10 rounded-lg px-3.5 py-1.5 text-[14px] font-medium text-white hover:bg-[#0f2d6e] transition-colors">
+      <div className="flex justify-end mt-4">
+        <button className="bg-[#143888] border border-black/10 rounded-lg px-3.5 py-1.5 text-[14px] font-medium text-white hover:bg-[#0f2d6e] transition-colors shadow-sm">
           Save &amp; End session
         </button>
       </div>
+
+      {/* Correction Modal */}
+      <CorrectionRequestModal
+        isOpen={isCorrectionModalOpen}
+        onClose={() => setIsCorrectionModalOpen(false)}
+        student={selectedStudentForCorrection}
+        session={session}
+      />
     </div>
   );
 }

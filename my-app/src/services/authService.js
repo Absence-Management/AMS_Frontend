@@ -52,8 +52,8 @@ export const resetPasswordConfirm = async (
 ) => {
   const response = await api.post(API_ENDPOINTS.RESET_PASSWORD_CONFIRM, {
     token,
-    new_password: new_password,
-    confirm_password: confirm_password,
+    new_password,
+    confirm_password,
   });
   return response.data;
 };
@@ -66,9 +66,9 @@ export const changePassword = async (
   confirm_password,
 ) => {
   const response = await api.post(API_ENDPOINTS.CHANGE_PASSWORD, {
-    current_password: current_password,
-    new_password: new_password,
-    confirm_password: confirm_password,
+    current_password,
+    new_password,
+    confirm_password,
   });
   return response.data;
 };

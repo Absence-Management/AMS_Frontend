@@ -101,13 +101,14 @@ export default function AdminTeachersTable({ teachers = [], onEditTeacher }) {
       columns={COLUMNS}
       tableClass="admin-teachers-table"
       headerClass="admin-data-table__header-row admin-teachers-table__header-row"
-      footerClass="admin-teachers-table__footer"
+      footerClass="admin-data-table__footer"
       emptyMessage="No teachers found."
       rowLabel="teachers"
       page={page}
       pageSize={PAGE_SIZE}
       totalCount={totalCount}
       onPageChange={setPage}
+      showDefaultTools={false}
     >
       {pagedTeachers.map((teacher) => (
         <TeacherRow

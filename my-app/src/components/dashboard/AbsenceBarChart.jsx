@@ -45,13 +45,13 @@ const CustomTooltip = ({ active, payload, label }) => {
  *   data   { level: string, absences: number }[]  – chart data
  *   year   string | number                        – year shown top-right
  */
-export function AbsenceBarChart({ data = DEFAULT_DATA, year = 2026 }) {
+export function AbsenceBarChart({ data = DEFAULT_DATA, year = 2026, title = "Absences by Academic Year" }) {
   return (
-    <div className="chart-card">
+    <div className="chart-card h-full">
 
       {/* Header */}
       <div className="chart-header">
-        <h3 className="chart-title">Absences by Academic Year</h3>
+        <h3 className="chart-title">{title}</h3>
         <div className="chart-year">
           <span>{year}</span>
           <CalendarIcon />
@@ -59,39 +59,41 @@ export function AbsenceBarChart({ data = DEFAULT_DATA, year = 2026 }) {
       </div>
 
       {/* Chart */}
-      <ResponsiveContainer width="100%" height={260}>
-        <BarChart
-          data={data}
-          margin={{ top: 8, right: 0, left: -10, bottom: 0 }}
-          barCategoryGap="26%"
-        >
-          <CartesianGrid
-            vertical={false}
-            stroke="#f0f0f0"
-            strokeDasharray=""
-          />
-          <XAxis
-            dataKey="level"
-            axisLine={false}
-            tickLine={false}
-            tick={{ fontFamily: "Inter, sans-serif", fontSize: 12, fill: "#000" }}
-          />
-          <YAxis
-            tickFormatter={(v) => `${v}%`}
-            axisLine={false}
-            tickLine={false}
-            tick={{ fontFamily: "Inter, sans-serif", fontSize: 12, fill: "#000" }}
-            domain={[0, 80]}
-            ticks={[0, 20, 40, 60, 80]}
-          />
-          <Tooltip content={<CustomTooltip />} cursor={false} />
-          <Bar dataKey="absences" radius={[8, 8, 8, 8]} background={{ fill: "#f7f7f7", radius: 8 }}>
-            {data.map((entry, index) => (
-              <Cell key={index} fill="#143888" />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+      <div className="flex-grow min-h-0">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={data}
+            margin={{ top: 8, right: 0, left: -10, bottom: 0 }}
+            barCategoryGap="26%"
+          >
+            <CartesianGrid
+              vertical={false}
+              stroke="#f0f0f0"
+              strokeDasharray=""
+            />
+            <XAxis
+              dataKey="level"
+              axisLine={false}
+              tickLine={false}
+              tick={{ fontFamily: "Inter, sans-serif", fontSize: 12, fill: "#000" }}
+            />
+            <YAxis
+              tickFormatter={(v) => `${v}%`}
+              axisLine={false}
+              tickLine={false}
+              tick={{ fontFamily: "Inter, sans-serif", fontSize: 12, fill: "#000" }}
+              domain={[0, 80]}
+              ticks={[0, 20, 40, 60, 80]}
+            />
+            <Tooltip content={<CustomTooltip />} cursor={false} />
+            <Bar dataKey="absences" radius={[8, 8, 8, 8]} background={{ fill: "#f7f7f7", radius: 8 }}>
+              {data.map((entry, index) => (
+                <Cell key={index} fill="#143888" />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
 
     </div>
   );

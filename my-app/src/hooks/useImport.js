@@ -173,6 +173,12 @@ export function useImport(initialSelectedOption = 0, onCompleted) {
 
   // ── Submit & save ──────────────────────────────────────────────────────────
 
+  const IMPORT_FN_BY_OPTION = {
+    0: importService.importStudents,
+    1: importService.importTeachers,
+    2: importService.importTimetable,
+  };
+
   const handleSubmit = useCallback(async () => {
     if (!file) return;
 
@@ -183,12 +189,9 @@ export function useImport(initialSelectedOption = 0, onCompleted) {
     setCriticalError(false);
 
     try {
-      const result =
-        selectedOption === 0
-          ? await importService.importStudents(file)
-          : selectedOption === 1
-            ? await importService.importTeachers(file)
-            : await importService.importTimetable(file);
+      const importFn = IMPORT_FN_BY_OPTION[selectedOption];
+      if (!importFn) throw new Error("Invalid import option");
+      const result = await importFn(file);
 
       const normalizedResult = normalizeImportResult(result, file.name);
       setImportResult(normalizedResult);
@@ -209,10 +212,7 @@ export function useImport(initialSelectedOption = 0, onCompleted) {
         setError(null);
       }
 
-      if (
-        typeof onCompleted === "function" &&
-        normalizedResult.imported > 0
-      ) {
+      if (typeof onCompleted === "function" && normalizedResult.imported > 0) {
         onCompleted(normalizedResult);
       }
 

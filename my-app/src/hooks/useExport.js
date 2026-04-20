@@ -20,6 +20,11 @@ const EMPTY_FILTERS = {
 const PAGE_SIZE = 10;
 
 export function useExport() {
+  // ── Preview table ─────────────────────────────────────────────────────────
+  const [rows, setRows] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [hasSearched, setHasSearched] = useState(false);
   // ── Filters ──────────────────────────────────────────────────────────────
   const [filters, setFilters] = useState(EMPTY_FILTERS);
 
@@ -35,13 +40,8 @@ export function useExport() {
     setHasSearched(false);
   }, []);
 
-  // ── Preview table ─────────────────────────────────────────────────────────
-  const [rows, setRows] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [hasSearched, setHasSearched] = useState(false);
 
   const fetchPreview = useCallback(
     async (pageOverride) => {
@@ -57,7 +57,9 @@ export function useExport() {
         setHasSearched(true);
       } catch (err) {
         console.error("[useExport] preview failed:", err);
-        setError("Failed to load absences. Please check your filters and try again.");
+        setError(
+          "Failed to load absences. Please check your filters and try again.",
+        );
         setRows([]);
         setTotal(0);
       } finally {

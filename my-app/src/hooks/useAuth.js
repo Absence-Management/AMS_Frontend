@@ -8,7 +8,7 @@
 
 import { useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
-import { getMe } from "@/services/authService";
+import { getMe, refreshToken } from "@/services/authService";
 import { TOKEN } from "@/lib/constants";
 
 export function useAuth() {
@@ -39,9 +39,7 @@ export function useAuth() {
 
     const interval = setInterval(async () => {
       try {
-        await import("@/services/authService").then(({ refreshToken }) =>
-          refreshToken(),
-        );
+        await refreshToken();
       } catch (err) {
         // Refresh failed → force logout
         clearAuth();

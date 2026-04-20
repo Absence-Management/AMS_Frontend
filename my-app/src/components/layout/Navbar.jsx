@@ -75,8 +75,6 @@ const NotificationIcon = () => (
 export function Navbar() {
   const { user, role } = useAuthStore();
   const [imgError, setImgError] = useState(false);
-  // console.log("[Navbar] user:", user); // Removed after confirming display
-
   // Derive initials for the avatar fallback
   const fullName = [user?.first_name, user?.last_name]
     .filter(Boolean)

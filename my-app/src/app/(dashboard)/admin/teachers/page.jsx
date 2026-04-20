@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getAllTeachers } from "@/services/accountsService";
+import { teachersService } from "@/services/accountsService";
 import AdminTeachersTable from "@/components/dashboard/AdminTeachersTable";
 import AddTeacherModal from "@/components/dashboard/AddTeacherModal";
 import EditTeacherModal from "@/components/dashboard/EditTeacherModal";
@@ -21,7 +21,7 @@ function TeachersPage() {
   const fetchTeachers = async () => {
     try {
       setLoading(true);
-      const data = await getAllTeachers();
+      const data = await teachersService.getAll();
       setTeachers(data);
       setError("");
     } catch (err) {

@@ -29,6 +29,7 @@ export function useAutoLogout() {
           await logout();
         } catch (err) {
           // Even if logout API fails, clear the store
+          console.warn("AutoLogout: logout API failed", err);
         } finally {
           clearAuth();
           window.location.href = "/login";

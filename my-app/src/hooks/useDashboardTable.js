@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 
 function toSearchableString(value) {
   return String(value ?? "").toLowerCase();
@@ -13,6 +13,7 @@ export default function useDashboardTable({
   pageSize = 7,
   enableSearch = true,
   initialPage = 1,
+  filterFn = null,
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(initialPage);
@@ -23,30 +24,35 @@ export default function useDashboardTable({
   );
 
   const filteredItems = useMemo(() => {
-    if (!enableSearch) return normalizedItems;
+    let result = normalizedItems;
+    if (filterFn) {
+      result = result.filter(filterFn);
+    }
+
+    if (!enableSearch) return result;
 
     const query = searchQuery.trim().toLowerCase();
-    if (!query) return normalizedItems;
+    if (!query) return result;
 
     if (typeof searchFields === "function") {
-      return normalizedItems.filter((item) => searchFields(item, query));
+      return result.filter((item) => searchFields(item, query));
     }
 
     if (!Array.isArray(searchFields) || searchFields.length === 0) {
-      return normalizedItems;
+      return result;
     }
 
-    return normalizedItems.filter((item) => {
+    return result.filter((item) => {
       return searchFields.some((field) => {
         return toSearchableString(item && item[field]).includes(query);
       });
     });
-  }, [normalizedItems, searchQuery, enableSearch, searchFields]);
+  }, [normalizedItems, searchQuery, enableSearch, searchFields, filterFn]);
 
-  const handleSearch = (value) => {
+  const handleSearch = useCallback((value) => {
     setSearchQuery(value);
     setPage(1);
-  };
+  }, []);
 
   const totalCount = filteredItems.length;
 

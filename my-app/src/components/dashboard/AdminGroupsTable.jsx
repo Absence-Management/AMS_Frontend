@@ -5,9 +5,13 @@
 // AdminGroupsTable.jsx
 // ============================================
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import DataTable from "@/components/shared/DataTable";
-import { YearBadge, IconDots } from "@/components/shared/TableShared";
+import {
+  YearBadge,
+  IconDots,
+  FilterIcon,
+} from "@/components/shared/TableShared";
 import useDashboardTable from "@/hooks/useDashboardTable";
 
 const YEAR_THEME = {
@@ -338,6 +342,31 @@ function mergeGroupsByYear(groups) {
 
 export default function AdminGroupsTable({ groups = [] }) {
   const [viewMode, setViewMode] = useState("list");
+  const [filterYear, setFilterYear] = useState("");
+  const [filterSection, setFilterSection] = useState("");
+  const [filterSpeciality, setFilterSpeciality] = useState("");
+  const [showFilterOptions, setShowFilterOptions] = useState(false);
+  const filterRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (filterRef.current && !filterRef.current.contains(event.target)) {
+        setShowFilterOptions(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filterFn = useMemo(() => {
+    return (group) => {
+      if (filterYear && group.year !== filterYear) return false;
+      if (filterSection && group.section !== filterSection) return false;
+      if (filterSpeciality && group.speciality !== filterSpeciality)
+        return false;
+      return true;
+    };
+  }, [filterYear, filterSection, filterSpeciality]);
 
   const {
     page,
@@ -350,11 +379,122 @@ export default function AdminGroupsTable({ groups = [] }) {
     normalizeItem: normalizeGroup,
     pageSize: PAGE_SIZE,
     enableSearch: false,
+    filterFn,
   });
 
   const mergedYearGroups = useMemo(
     () => mergeGroupsByYear(normalizedGroups),
     [normalizedGroups],
+  );
+
+  const availableYears = useMemo(() => {
+    return [...new Set(groups.map((g) => normalizeGroup(g).year))]
+      .filter((y) => y && y !== "—")
+      .sort();
+  }, [groups]);
+
+  const availableSections = useMemo(() => {
+    const filtered = filterYear
+      ? groups.filter((g) => normalizeGroup(g).year === filterYear)
+      : groups;
+    return [...new Set(filtered.map((g) => normalizeGroup(g).section))]
+      .filter((s) => s && s !== "—")
+      .sort();
+  }, [groups, filterYear]);
+
+  const availableSpecialities = useMemo(() => {
+    const filtered = filterYear
+      ? groups.filter((g) => normalizeGroup(g).year === filterYear)
+      : groups;
+    return [...new Set(filtered.map((g) => normalizeGroup(g).speciality))]
+      .filter((s) => s && s !== "—")
+      .sort();
+  }, [groups, filterYear]);
+
+  const filterTools = (
+    <>
+      <div className="relative flex items-center" ref={filterRef}>
+        <button
+          type="button"
+          className="admin-data-table__control-btn relative"
+          onClick={() => setShowFilterOptions(!showFilterOptions)}
+        >
+          <FilterIcon />
+          Filter
+          {(filterYear || filterSection || filterSpeciality) && (
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-blue-600 rounded-full border-2 border-white"></span>
+          )}
+        </button>
+        {showFilterOptions && (
+          <div className="absolute right-0 top-full mt-2 w-64 bg-white border border-[#e3e8ef] shadow-lg rounded-xl p-4 z-10 flex flex-col gap-4 text-left font-sans">
+            <div>
+              <label className="block text-[12px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">
+                Year
+              </label>
+              <select
+                className="w-full border border-gray-200 rounded-lg text-[14px] p-2 bg-gray-50 text-gray-800 outline-none focus:border-blue-500 focus:bg-white transition-colors cursor-pointer"
+                value={filterYear}
+                onChange={(e) => setFilterYear(e.target.value)}
+              >
+                <option value="">All Years</option>
+                {availableYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-[12px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">
+                Section
+              </label>
+              <select
+                className="w-full border border-gray-200 rounded-lg text-[14px] p-2 bg-gray-50 text-gray-800 outline-none focus:border-blue-500 focus:bg-white transition-colors cursor-pointer"
+                value={filterSection}
+                onChange={(e) => setFilterSection(e.target.value)}
+              >
+                <option value="">All Sections</option>
+                {availableSections.map((section) => (
+                  <option key={section} value={section}>
+                    {section}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-[12px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">
+                Speciality
+              </label>
+              <select
+                className="w-full border border-gray-200 rounded-lg text-[14px] p-2 bg-gray-50 text-gray-800 outline-none focus:border-blue-500 focus:bg-white transition-colors cursor-pointer"
+                value={filterSpeciality}
+                onChange={(e) => setFilterSpeciality(e.target.value)}
+              >
+                <option value="">All Specialities</option>
+                {availableSpecialities.map((speciality) => (
+                  <option key={speciality} value={speciality}>
+                    {speciality}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {(filterYear || filterSection || filterSpeciality) && (
+              <button
+                type="button"
+                className="text-[13px] text-blue-600 font-medium text-right hover:text-blue-800 transition-colors mt-1"
+                onClick={() => {
+                  setFilterYear("");
+                  setFilterSection("");
+                  setFilterSpeciality("");
+                }}
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </>
   );
 
   const isCardView = viewMode === "card";
@@ -400,7 +540,7 @@ export default function AdminGroupsTable({ groups = [] }) {
       showHead={true}
       showColumnHeaders={!isCardView}
       showSearch={false}
-      showDefaultTools={true}
+      showDefaultTools={false}
       columns={COLUMNS}
       tableClass="admin-groups-table"
       headerClass="admin-data-table__header-row admin-groups-table__header-row"
@@ -411,7 +551,12 @@ export default function AdminGroupsTable({ groups = [] }) {
       totalCount={!isCardView ? totalCount : undefined}
       onPageChange={!isCardView ? setPage : undefined}
       emptyMessage="No groups found."
-      extraTools={viewToggle}
+      extraTools={
+        <>
+          <span>{filterTools}</span>
+          {viewToggle}
+        </>
+      }
     >
       {isCardView ? (
         <div className="admin-groups-card-grid">

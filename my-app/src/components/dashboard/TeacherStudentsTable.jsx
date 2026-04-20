@@ -1,19 +1,12 @@
 "use client";
 
-// ============================================
-// AMS — ESI Sidi Bel Abbès
-// AdminStudentsTable.jsx
-// ============================================
-
 import DataTable from "@/components/shared/DataTable";
 import useDashboardTable from "@/hooks/useDashboardTable";
 import {
   Avatar,
   StatusBadge,
   YearBadge,
-  IconDots,
   FilterIcon,
-  SortIcon,
 } from "@/components/shared/TableShared";
 import { useState, useMemo, useRef, useEffect } from "react";
 
@@ -28,9 +21,7 @@ const COLUMNS = [
 ];
 const PAGE_SIZE = 10;
 
-function StudentRow({ student, onEditStudent }) {
-  const canEdit = Boolean(student?.id);
-
+function StudentRow({ student }) {
   return (
     <div className="admin-data-table__row admin-students-table__row">
       <div className="admin-data-table__cell admin-data-table__cell--name">
@@ -63,18 +54,7 @@ function StudentRow({ student, onEditStudent }) {
         <StatusBadge status={student.status} />
       </div>
 
-      <div className="admin-data-table__cell admin-data-table__cell--action">
-        <button
-          type="button"
-          className="admin-data-table__action-btn"
-          onClick={() => onEditStudent?.(student)}
-          aria-label={`Actions for ${student.name}`}
-          title={canEdit ? "Edit student" : "Unavailable: missing student id"}
-          disabled={!canEdit}
-        >
-          <IconDots />
-        </button>
-      </div>
+      <div className="admin-data-table__cell admin-data-table__cell--action" />
     </div>
   );
 }
@@ -93,7 +73,7 @@ function normalizeStudent(raw) {
   };
 }
 
-export default function AdminStudentsTable({ students = [], onEditStudent }) {
+export default function TeacherStudentsTable({ students = [] }) {
   const [filterYear, setFilterYear] = useState("");
   const [filterGroup, setFilterGroup] = useState("");
   const [showFilterOptions, setShowFilterOptions] = useState(false);
@@ -117,6 +97,7 @@ export default function AdminStudentsTable({ students = [], onEditStudent }) {
     };
   }, [filterYear, filterGroup]);
 
+  // Hook handles filtering directly via filterFn
   const {
     searchQuery,
     handleSearch,
@@ -155,76 +136,66 @@ export default function AdminStudentsTable({ students = [], onEditStudent }) {
   }, [students, filterYear]);
 
   const extraTools = (
-    <>
-      <div className="relative flex items-center" ref={filterRef}>
-        <button
-          type="button"
-          className="admin-data-table__control-btn relative"
-          onClick={() => setShowFilterOptions(!showFilterOptions)}
-        >
-          <FilterIcon />
-          Filter
-          {(filterYear || filterGroup) && (
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-blue-600 rounded-full border-2 border-white"></span>
-          )}
-        </button>
-        
-        {showFilterOptions && (
-          <div className="absolute right-0 top-full mt-2 w-64 bg-white border border-[#e3e8ef] shadow-lg rounded-xl p-4 z-10 flex flex-col gap-4 text-left font-sans">
-            <div>
-              <label className="block text-[12px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">Academic Year</label>
-              <select
-                className="w-full border border-gray-200 rounded-lg text-[14px] p-2 bg-gray-50 text-gray-800 outline-none focus:border-blue-500 focus:bg-white transition-colors cursor-pointer"
-                value={filterYear}
-                onChange={(e) => setFilterYear(e.target.value)}
-              >
-                <option value="">All Years</option>
-                {availableYears.map(year => (
-                  <option key={year} value={year}>{year}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-[12px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">Student Group</label>
-              <select
-                className="w-full border border-gray-200 rounded-lg text-[14px] p-2 bg-gray-50 text-gray-800 outline-none focus:border-blue-500 focus:bg-white transition-colors cursor-pointer"
-                value={filterGroup}
-                onChange={(e) => setFilterGroup(e.target.value)}
-              >
-                <option value="">All Groups</option>
-                {availableGroups.map(group => (
-                  <option key={group} value={group}>Group {group}</option>
-                ))}
-              </select>
-            </div>
-            
-            {(filterYear || filterGroup) && (
-              <button
-                type="button"
-                className="text-[13px] text-blue-600 font-medium text-right hover:text-blue-800 transition-colors mt-1"
-                onClick={() => { setFilterYear(""); setFilterGroup(""); }}
-              >
-                Clear Filters
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-
+    <div className="relative flex items-center" ref={filterRef}>
       <button
         type="button"
-        className="admin-data-table__control-btn"
+        className="admin-data-table__control-btn relative"
+        onClick={() => setShowFilterOptions(!showFilterOptions)}
       >
-        <SortIcon />
-        Sort
+        <FilterIcon />
+        Filter Groups
+        {(filterYear || filterGroup) && (
+          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-blue-600 rounded-full border-2 border-white"></span>
+        )}
       </button>
-    </>
+      
+      {showFilterOptions && (
+        <div className="absolute right-0 top-full mt-2 w-64 bg-white border border-[#e3e8ef] shadow-lg rounded-xl p-4 z-10 flex flex-col gap-4 text-left font-sans">
+          <div>
+            <label className="block text-[12px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">Academic Year</label>
+            <select
+              className="w-full border border-gray-200 rounded-lg text-[14px] p-2 bg-gray-50 text-gray-800 outline-none focus:border-blue-500 focus:bg-white transition-colors cursor-pointer"
+              value={filterYear}
+              onChange={(e) => setFilterYear(e.target.value)}
+            >
+              <option value="">All Years</option>
+              {availableYears.map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-[12px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">Student Group</label>
+            <select
+              className="w-full border border-gray-200 rounded-lg text-[14px] p-2 bg-gray-50 text-gray-800 outline-none focus:border-blue-500 focus:bg-white transition-colors cursor-pointer"
+              value={filterGroup}
+              onChange={(e) => setFilterGroup(e.target.value)}
+            >
+              <option value="">All Groups</option>
+              {availableGroups.map(group => (
+                <option key={group} value={group}>Group {group}</option>
+              ))}
+            </select>
+          </div>
+          
+          {(filterYear || filterGroup) && (
+            <button
+              type="button"
+              className="text-[13px] text-blue-600 font-medium text-right hover:text-blue-800 transition-colors mt-1"
+              onClick={() => { setFilterYear(""); setFilterGroup(""); }}
+            >
+              Clear Filters
+            </button>
+          )}
+        </div>
+      )}
+    </div>
   );
 
   return (
     <DataTable
-      title="Total Students"
+      title="All Enrolled Students"
       count={normalizedStudents.length}
       searchQuery={searchQuery}
       onSearch={handleSearch}
@@ -242,12 +213,10 @@ export default function AdminStudentsTable({ students = [], onEditStudent }) {
       showDefaultTools={false}
       extraTools={extraTools}
     >
-
       {pagedStudents.map((student) => (
         <StudentRow
           key={student.id}
           student={student}
-          onEditStudent={onEditStudent}
         />
       ))}
     </DataTable>

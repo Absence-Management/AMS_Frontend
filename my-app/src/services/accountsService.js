@@ -1,54 +1,16 @@
 import api from "@/services/api";
 import { API_ENDPOINTS } from "@/lib/constants";
 
-const withId = (basePath, id) => `${basePath.replace(/\/$/, "")}/${id}`;
+function createCrudService(basePath) {
+  const url = (id) => `${basePath.replace(/\/$/, "")}/${id}`;
+  return {
+    getAll: () => api.get(basePath).then((r) => r.data),
+    getById: (id) => api.get(url(id)).then((r) => r.data),
+    create: (data) => api.post(basePath, data).then((r) => r.data),
+    update: (id, data) => api.patch(url(id), data).then((r) => r.data),
+    delete: (id) => api.delete(url(id)).then((r) => r.data),
+  };
+}
 
-export const getAllStudents = async () => {
-  const response = await api.get(API_ENDPOINTS.STUDENTS);
-  return response.data;
-};
-
-export const getStudentById = async (id) => {
-  const response = await api.get(withId(API_ENDPOINTS.STUDENTS, id));
-  return response.data;
-};
-export const createStudent = async (studentData) => {
-  const response = await api.post(API_ENDPOINTS.STUDENTS, studentData);
-  return response.data;
-};
-export const updateStudent = async (id, studentData) => {
-  const response = await api.patch(
-    withId(API_ENDPOINTS.STUDENTS, id),
-    studentData,
-  );
-  return response.data;
-};
-export const deleteStudent = async (id) => {
-  const response = await api.delete(withId(API_ENDPOINTS.STUDENTS, id));
-  return response.data;
-};
-
-export const getAllTeachers = async () => {
-  const response = await api.get(API_ENDPOINTS.TEACHERS);
-  return response.data;
-};
-
-export const getTeacherById = async (id) => {
-  const response = await api.get(withId(API_ENDPOINTS.TEACHERS, id));
-  return response.data;
-};
-export const createTeacher = async (teacherData) => {
-  const response = await api.post(API_ENDPOINTS.TEACHERS, teacherData);
-  return response.data;
-};
-export const updateTeacher = async (id, teacherData) => {
-  const response = await api.patch(
-    withId(API_ENDPOINTS.TEACHERS, id),
-    teacherData,
-  );
-  return response.data;
-};
-export const deleteTeacher = async (id) => {
-  const response = await api.delete(withId(API_ENDPOINTS.TEACHERS, id));
-  return response.data;
-};
+export const studentsService = createCrudService(API_ENDPOINTS.STUDENTS);
+export const teachersService = createCrudService(API_ENDPOINTS.TEACHERS);

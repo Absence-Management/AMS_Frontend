@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SessionCard from "@/components/session/SessionCard";
 import RescheduleSession from "@/components/session/RescheduleSession";
-import { getWeeklyPlanning } from "@/services/sessionService";
+import { getTimetable } from "@/services/timetableService";
 
 function getCurrentSemester() {
   const month = new Date().getMonth() + 1;
@@ -45,9 +45,8 @@ export default function Page() {
       try {
         const semester = getCurrentSemester();
         const day = getCurrentDay();
-        const data = await getWeeklyPlanning({ semester, day });
-        // API returns { total, sessions: [...] }
-        setSessions(Array.isArray(data.sessions) ? data.sessions : []);
+        const result = await getTimetable({ semester, day });
+        setSessions(Array.isArray(result.rows) ? result.rows : []);
       } catch (err) {
         setError("Failed to load sessions");
       } finally {
@@ -92,7 +91,7 @@ export default function Page() {
             time={`${s.time_start} — ${s.time_end}`}
             room={s.room}
             group={s.group}
-            groupNumber={s.groupNumber || s.group || ""}
+            groupNumber={s.groupNumber || ""}
             onStartSession={() => router.push(`/teacher/sessions/${s.id}`)}
             onReschedule={() => openRescheduleModal(s)}
             onCancel={() => console.log("Cancel", s.id)}

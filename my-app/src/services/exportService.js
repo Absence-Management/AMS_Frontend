@@ -1,3 +1,5 @@
+// Max rows to export in CSV (matches backend/export limit)
+export const EXPORT_MAX_ROWS = 1000;
 // ============================================
 // AMS — ESI Sidi Bel Abbès
 // services/exportService.js — Export API Calls
@@ -50,7 +52,7 @@ export const downloadAbsencesCSV = async (
   filename = "absences.csv",
 ) => {
   const response = await api.get(API_ENDPOINTS.EXPORT_ABSENCES, {
-    params: buildParams(filters, { page: 1, page_size: 1000 }),
+    params: buildParams(filters, { page: 1, page_size: EXPORT_MAX_ROWS }),
     headers: { Accept: "text/csv" },
     responseType: "blob",
   });
