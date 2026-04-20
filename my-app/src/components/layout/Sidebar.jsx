@@ -463,6 +463,12 @@ const TEACHER_SECTIONS = [
       { label: "Timetable", href: "/teacher/timetable", icon: "timetable" },
     ],
   },
+  {
+    title: "System",
+    links: [
+      { label: "Settings", href: "/teacher/settings", icon: "settings" },
+    ],
+  },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
