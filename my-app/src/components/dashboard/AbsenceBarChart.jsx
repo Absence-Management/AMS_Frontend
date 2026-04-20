@@ -42,10 +42,19 @@ const CustomTooltip = ({ active, payload, label }) => {
 // ── Component ─────────────────────────────────────────────────────────────────
 /**
  * Props:
- *   data   { level: string, absences: number }[]  – chart data
- *   year   string | number                        – year shown top-right
+ *   data   { [key]: string|number }[]  – chart data
+ *   year   string | number             – year shown top-right
+ *   title  string                      – chart title
+ *   xKey   string                      – key for X-axis (default "level")
+ *   yKey   string                      – key for Y-axis (default "absences")
  */
-export function AbsenceBarChart({ data = DEFAULT_DATA, year = 2026, title = "Absences by Academic Year" }) {
+export function AbsenceBarChart({ 
+  data = [], 
+  year = 2026, 
+  title = "Absences",
+  xKey = "level",
+  yKey = "absences"
+}) {
   return (
     <div className="chart-card h-full">
 
@@ -60,7 +69,7 @@ export function AbsenceBarChart({ data = DEFAULT_DATA, year = 2026, title = "Abs
 
       {/* Chart */}
       <div className="flex-grow min-h-0">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height={260}>
           <BarChart
             data={data}
             margin={{ top: 8, right: 0, left: -10, bottom: 0 }}
@@ -72,7 +81,7 @@ export function AbsenceBarChart({ data = DEFAULT_DATA, year = 2026, title = "Abs
               strokeDasharray=""
             />
             <XAxis
-              dataKey="level"
+              dataKey={xKey}
               axisLine={false}
               tickLine={false}
               tick={{ fontFamily: "Inter, sans-serif", fontSize: 12, fill: "#000" }}
@@ -86,7 +95,7 @@ export function AbsenceBarChart({ data = DEFAULT_DATA, year = 2026, title = "Abs
               ticks={[0, 20, 40, 60, 80]}
             />
             <Tooltip content={<CustomTooltip />} cursor={false} />
-            <Bar dataKey="absences" radius={[8, 8, 8, 8]} background={{ fill: "#f7f7f7", radius: 8 }}>
+            <Bar dataKey={yKey} radius={[8, 8, 8, 8]} background={{ fill: "#f7f7f7", radius: 8 }}>
               {data.map((entry, index) => (
                 <Cell key={index} fill="#143888" />
               ))}

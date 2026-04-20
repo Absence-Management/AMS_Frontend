@@ -220,7 +220,12 @@ export default function AdminPage() {
 
       {/* ── Charts ── */}
       <div className="charts-grid">
-        <AbsenceBarChart data={YEAR_DATA} year={2026} />
+        <AbsenceBarChart 
+          data={YEAR_DATA} 
+          title="Absences by Study Level"
+          xKey="level"
+          year={2026} 
+        />
         <MonthlyTrendChart data={MONTHLY_DATA} year={2026} />
       </div>
     </div>
