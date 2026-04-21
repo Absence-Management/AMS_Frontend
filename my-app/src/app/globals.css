@@ -459,8 +459,8 @@ button {
 .dashboard-main {
   display: flex;
   flex-direction: column;
-  margin-left: 16rem;
-  width: calc(100% - 16rem);
+  margin-left: 18rem;
+  width: calc(100% - 18rem);
   min-height: 100vh;
 }
 
@@ -780,7 +780,7 @@ button {
 .sidebar {
   display: flex;
   flex-direction: column;
-  width: 16rem;
+  width: 18rem;
   min-height: 0;
   height: auto;
   inset: 0 0 0 0;
