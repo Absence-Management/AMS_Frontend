@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SessionCard from "@/components/session/SessionCard";
 import RescheduleSession from "@/components/session/RescheduleSession";
-import { getTimetable } from "@/services/timetableService";
+import api from "@/services/api";
 
 function getCurrentSemester() {
   const month = new Date().getMonth() + 1;
@@ -43,10 +43,35 @@ export default function Page() {
       setLoading(true);
       setError(null);
       try {
-        const semester = getCurrentSemester();
-        const day = getCurrentDay();
-        const result = await getTimetable({ semester, day });
-        setSessions(Array.isArray(result.rows) ? result.rows : []);
+        const response = await api.get("/v1/sessions/today");
+        let data = response.data;
+        
+        // Unwrap array if it's nested
+        if (!Array.isArray(data)) {
+          data = data.data || data.sessions || data.items || data.results || data.rows || [];
+        }
+        
+        const mappedSessions = (Array.isArray(data) ? data : []).map(s => {
+          const teacherName = s.teacher ? `${s.teacher.first_name || ''} ${s.teacher.last_name || ''}`.trim() : "";
+          const startTimeStr = s.start_time ? s.start_time.slice(0, 5) : "";
+          const endTimeStr = s.end_time ? s.end_time.slice(0, 5) : "";
+          
+          return {
+            id: s.id,
+            subject: s.module?.nom || s.module?.code || "Unknown Module",
+            type: s.type || "Course",
+            time_start: startTimeStr,
+            time_end: endTimeStr,
+            room: s.room?.code || s.room?.nom || "TBD",
+            group: s.year && s.group ? `${s.year} - ${s.group}` : (s.group || ""),
+            groupNumber: s.group ? s.group.replace(/\D/g, '') : "",
+            teacher: teacherName,
+            status: s.status,
+            is_makeup: s.is_makeup
+          };
+        });
+
+        setSessions(mappedSessions);
       } catch (err) {
         setError("Failed to load sessions");
       } finally {
@@ -92,7 +117,10 @@ export default function Page() {
             room={s.room}
             group={s.group}
             groupNumber={s.groupNumber || ""}
-            onStartSession={() => router.push(`/teacher/sessions/${s.id}`)}
+            onStartSession={() => {
+              sessionStorage.setItem(`session_${s.id}`, JSON.stringify(s));
+              router.push(`/teacher/sessions/${s.id}`);
+            }}
             onReschedule={() => openRescheduleModal(s)}
             onCancel={() => console.log("Cancel", s.id)}
           />

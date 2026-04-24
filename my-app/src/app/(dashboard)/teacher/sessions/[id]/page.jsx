@@ -1,5 +1,6 @@
 "use client";
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import SessionDetailsHeader from "@/components/session/SessionDetailsHeader";
 import SessionDetailsStats from "@/components/session/SessionDetailsStats";
 import SessionStudentsTable from "@/components/session/SessionStudentsTable";
@@ -9,211 +10,136 @@ import { SYNC_STATUS } from "@/lib/constants";
 import { useAttendance } from "@/hooks/useAttendance";
 import { useAttendanceSummary } from "@/hooks/useAttendanceSummary";
 
-const MOCK_SESSIONS = [
-  {
-    id: 101,
-    title: "Data Structures",
-    type: "TD",
-    time: "08:00 — 09:30",
-    room: "Salle A2 — Sup",
-    group: "CP1 — group",
-    groupNumber: "3",
-  },
-  {
-    id: 102,
-    title: "Algorithms",
-    type: "Course",
-    time: "10:00 — 11:30",
-    room: "Salle B1",
-    group: "CP2 — group",
-    groupNumber: "1",
-  },
-  {
-    id: 103,
-    title: "Database Systems",
-    type: "Lab",
-    time: "12:00 — 13:30",
-    room: "Salle S3",
-    group: "CS1 — group",
-    groupNumber: "2",
-  },
-  {
-    id: 104,
-    title: "Operating Systems",
-    type: "TD",
-    time: "14:00 — 15:30",
-    room: "Salle S4",
-    group: "CS3 — group",
-    groupNumber: "4",
-  },
-  {
-    id: 105,
-    title: "Computer Networks",
-    type: "Course",
-    time: "16:00 — 17:30",
-    room: "Amphi E",
-    group: "CS2 — group",
-    groupNumber: "1",
-  },
-];
 
-const MOCK_STUDENTS = [
-  {
-    id: 1,
-    name: "Bouhafs Rim",
-    email: "r.bouhafs@esi-sba.dz",
-    studentId: "202334652314",
-    present: false,
-    syncStatus: SYNC_STATUS.SYNCED,
-    avatarColor: "#e2e8f0",
-  },
-  {
-    id: 2,
-    name: "Ilyes Brahmi",
-    email: "i.brahmi@esi-sba.dz",
-    studentId: "202334652320",
-    present: true,
-    syncStatus: SYNC_STATUS.SYNCED,
-    avatarColor: "#dbeafe",
-  },
-  {
-    id: 3,
-    name: "Trari Foued",
-    email: "f.trari@esi-sba.dz",
-    studentId: "202334652321",
-    present: true,
-    syncStatus: SYNC_STATUS.PENDING,
-    avatarColor: "#fbecd1",
-  },
-  {
-    id: 4,
-    name: "Khelifi Sara",
-    email: "s.khelifi@esi-sba.dz",
-    studentId: "202334652322",
-    present: true,
-    syncStatus: SYNC_STATUS.FAILED,
-    avatarColor: "#f5d0fe",
-  },
-  {
-    id: 5,
-    name: "Cherif Malik",
-    email: "m.cherif@esi-sba.dz",
-    studentId: "202334652323",
-    present: true,
-    syncStatus: null,
-    avatarColor: "#e2e8f0",
-  },
-  {
-    id: 6,
-    name: "Bensalem Nadia",
-    email: "n.bensalem@esi-sba.dz",
-    studentId: "202334652324",
-    present: true,
-    syncStatus: SYNC_STATUS.SYNCED,
-    avatarColor: "#fde68a",
-  },
-  {
-    id: 7,
-    name: "Hassani Youssef",
-    email: "y.hassani@esi-sba.dz",
-    studentId: "202334652325",
-    present: true,
-    syncStatus: SYNC_STATUS.PENDING,
-    avatarColor: "#bfdbfe",
-  },
-  {
-    id: 8,
-    name: "Amrani Lila",
-    email: "l.amrani@esi-sba.dz",
-    studentId: "202334652326",
-    present: true,
-    syncStatus: SYNC_STATUS.SYNCED,
-    avatarColor: "#fecaca",
-  },
-];
-
-const MOCK_COMPENSATION_REQUESTS = [
-  {
-    id: 101,
-    studentName: "Bouhafs Rim",
-    studentGroup: "G3",
-    targetGroup: "G6",
-    module: "Data Structures TD",
-    date: "Thu 23 Apr",
-    time: "10:00",
-    room: "Salle A2",
-  },
-  {
-    id: 102,
-    studentName: "Trari Foued",
-    studentGroup: "G1",
-    targetGroup: "G5",
-    module: "Algorithms TD",
-    date: "Wed 22 Apr",
-    time: "14:00",
-    room: "Salle B1",
-  },
-  {
-    id: 103,
-    studentName: "Brahmi Ilyes",
-    studentGroup: "G6",
-    targetGroup: "G3",
-    module: "Data Structures TD",
-    date: "Sun 19 Apr",
-    time: "08:00",
-    room: "Salle A2",
-  },
-  {
-    id: 104,
-    studentName: "Sara Khelifi",
-    studentGroup: "G4",
-    targetGroup: "G3",
-    module: "Data Structures TD",
-    date: "Sun 19 Apr",
-    time: "08:00",
-    room: "Salle A2",
-  },
-  {
-    id: 105,
-    studentName: "Malik Cherif",
-    studentGroup: "G2",
-    targetGroup: "G1",
-    module: "Algorithms Course",
-    date: "Sun 19 Apr",
-    time: "10:00",
-    room: "Salle B1",
-  },
-];
 
 export default function SessionDetailsPage({ params }) {
   const resolvedParams = use(params);
   const sessionId = Array.isArray(resolvedParams?.id)
     ? resolvedParams.id[0]
     : resolvedParams?.id;
-  const sessionIdNum = Number(sessionId);
-  const session = MOCK_SESSIONS.find((s) => s.id === sessionIdNum) ?? null;
+  
+  const [session, setSession] = useState(null);
+  const [isLoadingSession, setIsLoadingSession] = useState(true);
 
-  // Use the hook with MOCK_STUDENTS as initial data so UI is populated immediately
-  const { students, handleTogglePresent } = useAttendance(sessionIdNum, MOCK_STUDENTS);
-  const { summary: liveSummary } = useAttendanceSummary(sessionIdNum);
+  useEffect(() => {
+    if (!sessionId) return;
+
+    async function resolveSession() {
+      // Step 1: Try sessionStorage (set when navigating from the sessions list)
+      const cached = sessionStorage.getItem(`session_${sessionId}`);
+      if (cached) {
+        try {
+          const s = JSON.parse(cached);
+          setSession(mapSession(s));
+          setIsLoadingSession(false);
+          return;
+        } catch {
+          console.warn("Failed to parse cached session, falling back to API");
+        }
+      }
+
+      // Step 2: Fallback — fetch today's sessions list and find by ID
+      // (handles direct URL access, browser refresh, shared links)
+      try {
+        const { default: api } = await import("@/services/api");
+        const response = await api.get("/v1/sessions/today");
+        let data = response.data;
+        if (!Array.isArray(data)) {
+          data = data.data || data.sessions || data.items || data.results || [];
+        }
+        const found = (Array.isArray(data) ? data : []).find(s => s.id === sessionId);
+        if (found) {
+          const mapped = {
+            id: found.id,
+            subject: found.module?.nom || found.module?.code || "Unknown Module",
+            type: found.type || "Course",
+            time_start: found.start_time?.slice(0, 5) || "",
+            time_end: found.end_time?.slice(0, 5) || "",
+            room: found.room?.code || found.room?.nom || "TBD",
+            group: found.year && found.group ? `${found.year} - ${found.group}` : (found.group || ""),
+            groupNumber: found.group ? found.group.replace(/\D/g, "") : "",
+          };
+          // Cache it for next time
+          sessionStorage.setItem(`session_${sessionId}`, JSON.stringify(mapped));
+          setSession(mapSession(mapped));
+          setIsLoadingSession(false);
+          return;
+        }
+      } catch (err) {
+        console.error("Fallback session fetch failed:", err);
+      }
+
+      // Step 3: Last resort — render the page with a minimal stub so
+      // the attendance table still loads (the hook only needs sessionId)
+      setSession({
+        id: sessionId,
+        title: "Session",
+        type: "",
+        time: "",
+        room: "",
+        group: "",
+        groupNumber: "",
+      });
+      setIsLoadingSession(false);
+    }
+
+    resolveSession();
+  }, [sessionId]);
+
+  /** Normalise a cached/mapped session object into the shape used by this page */
+  function mapSession(s) {
+    return {
+      id: s.id,
+      title: s.subject || s.title || "Unknown",
+      type: s.type || "Course",
+      time: s.time || (s.time_start && s.time_end ? `${s.time_start} — ${s.time_end}` : ""),
+      room: s.room || "TBD",
+      group: s.group || "",
+      groupNumber: s.groupNumber || "",
+    };
+  }
+
+  // Use the hook to fetch from API
+  const { students, handleTogglePresent, saveAttendance, addStudent, addGroup } = useAttendance(sessionId);
+  const { summary: liveSummary } = useAttendanceSummary(sessionId);
+  const router = useRouter();
 
   // Correction Modal State
   const [selectedStudentForCorrection, setSelectedStudentForCorrection] = useState(null);
   const [isCorrectionModalOpen, setIsCorrectionModalOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const handleOpenCorrection = (student) => {
     setSelectedStudentForCorrection(student);
     setIsCorrectionModalOpen(true);
   };
 
-  const presentCount = students.filter((student) => student.present).length;
-  const absentCount = students.length - presentCount;
-  const absenceRate = ((absentCount / students.length) * 100).toFixed(1);
+  const handleSaveAndEnd = async () => {
+    setSaving(true);
+    try {
+      const res = await saveAttendance();
+      // Optional: Show success toast here if you implement a toast system 
+      // alert(`Saved! Created: ${res.created}, Updated: ${res.updated}`);
+      router.push("/teacher/sessions");
+    } catch (e) {
+      alert("Failed to save session attendance.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
-  // Filter requests that target this specific session's group
-  const sessionRequests = MOCK_COMPENSATION_REQUESTS.filter(
-    (req) => req.targetGroup === `G${session.groupNumber}`
-  );
+  const presentCount = students.filter((s) => s.present).length;
+  const absentCount = students.length - presentCount;
+  const pendingCount = students.filter((s) => s.syncStatus === "pending").length;
+  const absenceRate = students.length > 0 ? ((absentCount / students.length) * 100).toFixed(1) : "0.0";
+
+  if (isLoadingSession) {
+    return (
+      <div className="main-page flex items-center justify-center min-h-[500px]">
+        <div className="text-[#64748b] font-medium text-[16px]">Loading session details...</div>
+      </div>
+    );
+  }
 
   if (!session) {
     return (
@@ -226,6 +152,9 @@ export default function SessionDetailsPage({ params }) {
     );
   }
 
+  // Compensation API not yet provided
+  const sessionRequests = [];
+
   return (
     <div className="main-page">
       <SessionDetailsHeader session={session} />
@@ -233,6 +162,7 @@ export default function SessionDetailsPage({ params }) {
         session={session}
         presentCount={presentCount}
         absentCount={absentCount}
+        pendingCount={pendingCount}
         absenceRate={absenceRate}
         liveSummary={liveSummary}
       />
@@ -243,6 +173,8 @@ export default function SessionDetailsPage({ params }) {
             students={students}
             onToggleStudent={handleTogglePresent}
             onOpenCorrection={handleOpenCorrection}
+            onAddStudent={addStudent}
+            onAddGroup={addGroup}
           />
         </div>
         <div className="w-[380px] shrink-0">
@@ -251,8 +183,12 @@ export default function SessionDetailsPage({ params }) {
       </div>
 
       <div className="flex justify-end mt-4">
-        <button className="bg-[#143888] border border-black/10 rounded-lg px-3.5 py-1.5 text-[14px] font-medium text-white hover:bg-[#0f2d6e] transition-colors shadow-sm">
-          Save &amp; End session
+        <button 
+          disabled={saving} 
+          onClick={handleSaveAndEnd} 
+          className="bg-[#143888] border border-black/10 rounded-lg px-3.5 py-1.5 text-[14px] font-medium text-white hover:bg-[#0f2d6e] transition-colors shadow-sm disabled:opacity-50"
+        >
+          {saving ? "Saving..." : "Save & End session"}
         </button>
       </div>
 

@@ -1,81 +1,56 @@
-// import api from "./api";
-// import { API_ENDPOINTS } from "@/lib/constants";
+import api from "./api";
 
 /**
- * MOCK DATA for initial development
+ * Fetches the list of students with attendance state for a session.
+ * Endpoint: GET /v1/sessions/{session_id}/attendance
+ * Response shape: { session_id, total, records: [...] }
  */
-const MOCK_STUDENTS_LIST = [
-  {
-    id: 1,
-    name: "Bouhafs Rim",
-    email: "r.bouhafs@esi-sba.dz",
-    matricule: "202334652314",
-    is_absent: true,
-    avatar_color: "#e2e8f0",
-  },
-  {
-    id: 2,
-    name: "Ilyes Brahmi",
-    email: "i.brahmi@esi-sba.dz",
-    matricule: "202334652320",
-    is_absent: false,
-    avatar_color: "#dbeafe",
-  },
-  {
-    id: 3,
-    name: "Trari Foued",
-    email: "f.trari@esi-sba.dz",
-    matricule: "202334652321",
-    is_absent: false,
-    avatar_color: "#fbecd1",
-  },
-  {
-    id: 4,
-    name: "Khelifi Sara",
-    email: "s.khelifi@esi-sba.dz",
-    matricule: "202334652322",
-    is_absent: false,
-    avatar_color: "#f5d0fe",
-  },
-  {
-    id: 5,
-    name: "Cherif Malik",
-    email: "m.cherif@esi-sba.dz",
-    matricule: "202334652323",
-    is_absent: false,
-    avatar_color: "#e2e8f0",
-  },
-];
-
-/**
- * Toggles a student's absence for a session.
- * MOCK implementation: Always succeeds after 500ms.
- */
-export async function toggleAbsence(sessionId, studentId, isAbsent, absenceId = null) {
-  console.log(`[MOCK API] toggleAbsence: sess=${sessionId}, stud=${studentId}, absent=${isAbsent}, id=${absenceId}`);
-  
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        id: absenceId || Math.floor(Math.random() * 10000),
-        session_id: sessionId,
-        student_id: studentId,
-        is_absent: isAbsent,
-      });
-    }, 500);
-  });
+export async function getSessionStudents(sessionId, q = null) {
+  const params = q ? { q } : {};
+  const response = await api.get(`/v1/sessions/${sessionId}/attendance`, { params });
+  return response.data;
 }
 
 /**
- * Fetches the list of students for a session.
- * MOCK implementation: Returns static list after 800ms.
+ * Bulk updates attendance for a session.
+ * Endpoint: PUT /v1/sessions/{session_id}/attendance
+ * Payload: { records: [{ student_matricule, is_present, participation }] }
  */
-export async function getSessionStudents(sessionId) {
-  console.log(`[MOCK API] getSessionStudents: sess=${sessionId}`);
-
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(MOCK_STUDENTS_LIST);
-    }, 800);
-  });
+export async function bulkUpdateAttendance(sessionId, attendanceData) {
+  const response = await api.put(`/v1/sessions/${sessionId}/attendance`, attendanceData);
+  return response.data;
 }
+
+/**
+ * One-tap absence marking — UPSERT per student (US-19).
+ * Endpoint: POST /v1/absences
+ * First tap  → INSERT (is_absent=true)
+ * Second tap → TOGGLE (present ↔ absent)
+ */
+export async function markAbsence({ sessionId, studentMatricule, isAbsent }) {
+  const response = await api.post("/v1/absences", {
+    session_id: sessionId,
+    student_matricule: studentMatricule,
+    is_absent: isAbsent,
+    source: "PWA",
+  });
+  return response.data; // { created: bool }
+}
+
+
+/**
+ * Adds a student directly to a session (Feature 2.2).
+ */
+export async function addStudentToSession(sessionId, matricule) {
+  const response = await api.post(`/v1/sessions/${sessionId}/students`, { matricule });
+  return response.data;
+}
+
+/**
+ * Adds a group to a session (Feature 2.1).
+ */
+export async function addGroupToSession(sessionId, group_name) {
+  const response = await api.post(`/v1/sessions/${sessionId}/groups`, { group_name });
+  return response.data;
+}
+

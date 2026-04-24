@@ -63,6 +63,7 @@ export default function SessionDetailsStats({
   session,
   presentCount,
   absentCount,
+  pendingCount,
   absenceRate,
   liveSummary = null, // New prop for polled data
 }) {
@@ -70,13 +71,13 @@ export default function SessionDetailsStats({
     ? Number(session.groupNumber) + 1
     : session.groupNumber;
 
-  // Use live data if available, otherwise fallback to local calculation
-  const displayPresent = liveSummary ? liveSummary.present : presentCount;
-  const displayAbsent = liveSummary ? liveSummary.absent : absentCount;
-  const displayPending = liveSummary ? liveSummary.pending : 0;
-  const displayRate = liveSummary 
-    ? ((liveSummary.absent / (liveSummary.total || 1)) * 100).toFixed(1) 
-    : absenceRate;
+  // Always derive counts from local student state — the API summary starts at
+  // zero (no DB records on first load) so it cannot be trusted as source of truth.
+  // liveSummary is kept for future use once the backend tracks live state reliably.
+  const displayPresent = presentCount;
+  const displayAbsent  = absentCount;
+  const displayPending = pendingCount;
+  const displayRate    = absenceRate;
 
   return (
     <div className="flex gap-6 h-full items-stretch">

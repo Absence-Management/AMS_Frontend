@@ -93,8 +93,34 @@ function StudentRow({ student, onTogglePresent, onCorrection }) {
   );
 }
 
-export default function SessionStudentsTable({ session, students, onToggleStudent, onOpenCorrection }) {
+export default function SessionStudentsTable({ session, students, onToggleStudent, onOpenCorrection, onAddStudent, onAddGroup }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAddStudentInput, setShowAddStudentInput] = useState(false);
+  const [newMatricule, setNewMatricule] = useState("");
+  const [showAddGroupInput, setShowAddGroupInput] = useState(false);
+  const [newGroup, setNewGroup] = useState("");
+
+  const handleAddSubmit = async () => {
+    if (!newMatricule.trim() || !onAddStudent) return;
+    try {
+      await onAddStudent(newMatricule);
+      setShowAddStudentInput(false);
+      setNewMatricule("");
+    } catch (err) {
+      alert(err?.response?.data?.detail?.[0]?.msg || err?.response?.data?.detail || "Failed to add student. Verify matricule is correct.");
+    }
+  };
+
+  const handleAddGroupSubmit = async () => {
+    if (!newGroup.trim() || !onAddGroup) return;
+    try {
+      await onAddGroup(newGroup.toUpperCase());
+      setShowAddGroupInput(false);
+      setNewGroup("");
+    } catch (err) {
+      alert(err?.response?.data?.detail?.[0]?.msg || err?.response?.data?.detail || "Failed to add group. Verify group name is correct.");
+    }
+  };
 
   const filteredStudents = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -133,13 +159,53 @@ export default function SessionStudentsTable({ session, students, onToggleStuden
             />
           </div>
 
-          <button className="bg-white border border-[#e2e8f0] rounded-lg h-10 flex gap-2 items-center px-4 text-[0.875rem] font-bold text-[#1e293b] hover:bg-[#f1f5f9] transition-all shadow-sm">
-            Add Group <IconPlus />
-          </button>
+          {showAddGroupInput ? (
+            <div className="bg-white border border-[#e2e8f0] rounded-lg h-10 flex gap-2 items-center px-3 shadow-sm focus-within:border-[#143888] focus-within:ring-1 focus-within:ring-[#143888] transition-all">
+              <input 
+                type="text" 
+                placeholder="Group Name (e.g. G2)" 
+                value={newGroup}
+                onChange={e => setNewGroup(e.target.value)}
+                onKeyDown={e => { if(e.key === "Enter") handleAddGroupSubmit(); }}
+                className="w-36 bg-transparent text-[0.875rem] text-[#111827] outline-none placeholder:text-[#94a3b8]"
+                autoFocus
+              />
+              <button onClick={handleAddGroupSubmit} className="text-[#143888] font-bold text-[0.875rem] hover:opacity-80">Add</button>
+              <span className="text-gray-300">|</span>
+              <button onClick={() => { setShowAddGroupInput(false); setNewGroup(""); }} className="text-gray-400 font-bold text-[0.875rem] hover:text-gray-600">Cancel</button>
+            </div>
+          ) : (
+            <button 
+              onClick={() => setShowAddGroupInput(true)} 
+              className="bg-white border border-[#e2e8f0] rounded-lg h-10 flex gap-2 items-center px-4 text-[0.875rem] font-bold text-[#1e293b] hover:bg-[#f1f5f9] transition-all shadow-sm"
+            >
+              Add Group <IconPlus />
+            </button>
+          )}
 
-          <button className="bg-white border border-[#e2e8f0] rounded-lg h-10 flex gap-2 items-center px-4 text-[0.875rem] font-bold text-[#1e293b] hover:bg-[#f1f5f9] transition-all shadow-sm">
-            Add Student <IconPlus />
-          </button>
+          {showAddStudentInput ? (
+            <div className="bg-white border border-[#e2e8f0] rounded-lg h-10 flex gap-2 items-center px-3 shadow-sm focus-within:border-[#143888] focus-within:ring-1 focus-within:ring-[#143888] transition-all">
+              <input 
+                type="text" 
+                placeholder="Matricule..." 
+                value={newMatricule}
+                onChange={e => setNewMatricule(e.target.value)}
+                onKeyDown={e => { if(e.key === "Enter") handleAddSubmit(); }}
+                className="w-28 bg-transparent text-[0.875rem] text-[#111827] outline-none placeholder:text-[#94a3b8]"
+                autoFocus
+              />
+              <button onClick={handleAddSubmit} className="text-[#143888] font-bold text-[0.875rem] hover:opacity-80">Add</button>
+              <span className="text-gray-300">|</span>
+              <button onClick={() => { setShowAddStudentInput(false); setNewMatricule(""); }} className="text-gray-400 font-bold text-[0.875rem] hover:text-gray-600">Cancel</button>
+            </div>
+          ) : (
+            <button 
+              onClick={() => setShowAddStudentInput(true)} 
+              className="bg-white border border-[#e2e8f0] rounded-lg h-10 flex gap-2 items-center px-4 text-[0.875rem] font-bold text-[#1e293b] hover:bg-[#f1f5f9] transition-all shadow-sm"
+            >
+              Add Student <IconPlus />
+            </button>
+          )}
         </div>
       </div>
 

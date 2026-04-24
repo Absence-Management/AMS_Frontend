@@ -3198,6 +3198,434 @@ button {
 }
 
 /* ============================================
+   SETTINGS (Admin)
+   ============================================ */
+
+.settings-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1.5px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 28px;
+}
+
+.settings-tab {
+  padding: 10px 22px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.5);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1.5px;
+  transition: color 0.15s;
+}
+
+.settings-tab.is-active {
+  font-weight: 600;
+  color: #143888;
+  border-bottom-color: #143888;
+}
+
+.settings-tab-content,
+.settings-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.settings-cards-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.settings-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 10px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1 1 280px;
+  min-width: 260px;
+}
+
+.settings-card--grow {
+  flex: 1 1 320px;
+}
+
+.settings-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.settings-section-header__title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #143888;
+  margin: 0;
+}
+
+.settings-section-header__subtitle {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.5);
+  margin: 3px 0 0;
+}
+
+.settings-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  color: #143888;
+}
+
+.settings-edit-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.settings-btn {
+  padding: 7px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #ffffff;
+  color: #666;
+}
+
+.settings-btn--ghost {
+  background: #ffffff;
+  color: #666;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.settings-btn--primary {
+  border: none;
+  background: #143888;
+  color: #ffffff;
+}
+
+.settings-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.settings-alert {
+  margin: 0;
+  font-size: 13px;
+}
+
+.settings-alert--error {
+  color: #dc2626;
+}
+
+.settings-alert--success {
+  color: #16a34a;
+}
+
+.settings-profile-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.settings-profile-head__name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+}
+
+.settings-profile-head__role {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.5);
+  text-transform: capitalize;
+}
+
+.settings-avatar {
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c3d4f5 0%, #94b4ee 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.settings-avatar__initials {
+  font-weight: 700;
+  color: #143888;
+  font-size: 23px;
+}
+
+.settings-form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.settings-form-two-col {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.settings-field__label {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.settings-field__input {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background: #fbfcfc;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #000;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.settings-field__input:disabled,
+.settings-field__input[readonly] {
+  background: #f5f6f7;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.settings-select {
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background: #fbfcfc;
+}
+
+.settings-select.is-disabled {
+  background: #f5f6f7;
+}
+
+.settings-select__control {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 8px 32px 8px 12px;
+  font-size: 14px;
+  appearance: none;
+  outline: none;
+}
+
+.settings-select__chevron {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #888;
+}
+
+.settings-pwd {
+  position: relative;
+}
+
+.settings-pwd__input {
+  padding-right: 44px;
+}
+
+.settings-pwd__toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  color: #888;
+  display: inline-flex;
+  padding: 0;
+}
+
+.settings-divider {
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.settings-card-block__eyebrow {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.settings-card-block__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #111;
+}
+
+.settings-card-block__subtitle {
+  margin: 3px 0 0;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.settings-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.settings-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.settings-stat__label {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.02em;
+}
+
+.settings-stat__value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #143888;
+}
+
+.settings-notif-head {
+  display: flex;
+  justify-content: flex-end;
+  gap: 30px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.settings-notif-head__cell {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.5);
+  width: 40px;
+  text-align: center;
+}
+
+.settings-notif-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-notif-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  gap: 12px;
+}
+
+.settings-notif-row:last-child {
+  border-bottom: none;
+}
+
+.settings-notif-row__label {
+  font-size: 14px;
+  color: #111;
+  flex: 1;
+}
+
+.settings-notif-row__toggles {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.settings-toggle {
+  width: 40px;
+  height: 22px;
+  border-radius: 11px;
+  border: none;
+  background: #e0e0e0;
+  position: relative;
+  transition: background 0.2s;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.settings-toggle.is-checked {
+  background: #143888;
+}
+
+.settings-toggle__thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: left 0.2s;
+}
+
+.settings-toggle.is-checked .settings-toggle__thumb {
+  left: 21px;
+}
+
+.settings-subsection-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.settings-callout {
+  margin-top: 8px;
+  padding: 14px;
+  background: #f0f5ff;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-callout__title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #143888;
+}
+
+.settings-callout__text {
+  margin: 0;
+  font-size: 12px;
+  color: #4a6bc0;
+}
+
+/* ============================================
    EXAM ABSENCES PAGE
    ============================================ */
 

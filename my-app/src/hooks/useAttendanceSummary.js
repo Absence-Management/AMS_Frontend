@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import api from "@/services/api";
 
 /**
  * Hook to poll the attendance summary for a specific session.
@@ -24,24 +25,22 @@ export function useAttendanceSummary(sessionId, interval = 5000) {
     let isMounted = true;
 
     async function fetchSummary() {
-      // In a real app: fetch(`/api/v1/sessions/${sessionId}/summary`)
       try {
-        // Mocking the delay and response
-        // For demonstration, we'll randomize counts slightly or just return static
-        const mockData = {
-          present: 24,
-          absent: 4,
-          pending: 2,
-          total: 30,
-        };
-
+        const { data } = await api.get(`/v1/sessions/${sessionId}/summary`);
+        
         if (isMounted) {
-          setSummary(mockData);
+          setSummary({
+            present: data.present_count ?? data.present ?? 0,
+            absent: data.absent_count ?? data.absent ?? 0,
+            pending: data.pending_count ?? data.pending ?? 0,
+            total: data.total_students ?? data.total ?? 0,
+          });
           setLoading(false);
         }
       } catch (err) {
+        // Fail silently — the summary endpoint may not be implemented yet.
+        // Attendance marking still works; the banner just shows stale counts.
         if (isMounted) {
-          setError(err.message);
           setLoading(false);
         }
       }
