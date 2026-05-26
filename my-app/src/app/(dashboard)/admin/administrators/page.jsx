@@ -5,25 +5,44 @@ import { useRouter } from "next/navigation";
 import { getAllAdmins, createAdmin } from "@/services/accountsService";
 
 const ROLE_OPTIONS = [
-  { value: "chef_department",  label: "Chef department"  },
-  { value: "regular",          label: "Admin"            },
-  { value: "super",            label: "Super Admin"      },
+  { value: "chef_department", label: "Chef department" },
+  { value: "regular", label: "Admin" },
+  { value: "super", label: "Super Admin" },
 ];
 
 function AdminAvatar({ name, avatarUrl, size = 36 }) {
   const initials = (name || "?")
-    .split(" ").map(n => n[0] || "").join("").slice(0, 2).toUpperCase();
+    .split(" ")
+    .map((n) => n[0] || "")
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
   return (
-    <div style={{
-      width: size, height: size, borderRadius: "50%",
-      background: "linear-gradient(135deg, #c3d4f5 0%, #94b4ee 100%)",
-      display: "flex", alignItems: "center", justifyContent: "center",
-      flexShrink: 0, overflow: "hidden",
-    }}>
+    <div
+      style={{
+        width: size,
+        height: size,
+        borderRadius: "50%",
+        background: "linear-gradient(135deg, #c3d4f5 0%, #94b4ee 100%)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
+        overflow: "hidden",
+      }}
+    >
       {avatarUrl ? (
-        <img src={avatarUrl} alt={name} style={{ width: size, height: size, objectFit: "cover" }} />
+        <img
+          src={avatarUrl}
+          alt={name}
+          style={{ width: size, height: size, objectFit: "cover" }}
+        />
       ) : (
-        <span style={{ fontSize: size * 0.38, fontWeight: 700, color: "#143888" }}>{initials}</span>
+        <span
+          style={{ fontSize: size * 0.38, fontWeight: 700, color: "#143888" }}
+        >
+          {initials}
+        </span>
       )}
     </div>
   );
@@ -31,28 +50,68 @@ function AdminAvatar({ name, avatarUrl, size = 36 }) {
 
 // ── Admin card ────────────────────────────────────────────────────────────────
 function AdminCard({ admin, onViewProfile }) {
-  const fullName = admin.name || `${admin.first_name || ""} ${admin.last_name || ""}`.trim();
+  const fullName =
+    admin.name || `${admin.first_name || ""} ${admin.last_name || ""}`.trim();
   const role = admin.department || admin.specialization || "Admin";
-  const since = admin.created_at ? new Date(admin.created_at).getFullYear() : "—";
+  const since = admin.created_at
+    ? new Date(admin.created_at).getFullYear()
+    : "—";
 
   return (
-    <div style={{
-      boxSizing: "border-box",
-      display: "flex", flexDirection: "column",
-      padding: 16, gap: 19,
-      background: "#FFFFFF", border: "1px solid rgba(0,0,0,0.06)",
-      borderRadius: 8, flex: 1, minWidth: 0,
-    }}>
+    <div
+      style={{
+        boxSizing: "border-box",
+        display: "flex",
+        flexDirection: "column",
+        padding: 16,
+        gap: 19,
+        background: "#FFFFFF",
+        border: "1px solid rgba(0,0,0,0.06)",
+        borderRadius: 8,
+        flex: 1,
+        minWidth: 0,
+      }}
+    >
       {/* Top: avatar + name */}
-      <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 12 }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
         <AdminAvatar name={fullName} avatarUrl={admin.avatar_url} size={36} />
-        <div style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1, minWidth: 0 }}>
-          <span style={{
-            fontSize: 16, fontWeight: 500, color: "#000",
-            letterSpacing: "0.02em", whiteSpace: "nowrap",
-            overflow: "hidden", textOverflow: "ellipsis",
-          }}>{fullName}</span>
-          <span style={{ fontSize: 13, fontWeight: 400, color: "rgba(0,0,0,0.5)", letterSpacing: "0.02em" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            flex: 1,
+            minWidth: 0,
+          }}
+        >
+          <span
+            style={{
+              fontSize: 16,
+              fontWeight: 500,
+              color: "#000",
+              letterSpacing: "0.02em",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {fullName}
+          </span>
+          <span
+            style={{
+              fontSize: 13,
+              fontWeight: 400,
+              color: "rgba(0,0,0,0.5)",
+              letterSpacing: "0.02em",
+            }}
+          >
             {role}
           </span>
         </div>
@@ -63,10 +122,22 @@ function AdminCard({ admin, onViewProfile }) {
 
       {/* Contact info */}
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <span style={{ fontSize: 12, color: "rgba(0,0,0,0.7)", letterSpacing: "0.02em" }}>
+        <span
+          style={{
+            fontSize: 12,
+            color: "rgba(0,0,0,0.7)",
+            letterSpacing: "0.02em",
+          }}
+        >
           {admin.email || "—"}
         </span>
-        <span style={{ fontSize: 12, color: "rgba(0,0,0,0.7)", letterSpacing: "0.02em" }}>
+        <span
+          style={{
+            fontSize: 12,
+            color: "rgba(0,0,0,0.7)",
+            letterSpacing: "0.02em",
+          }}
+        >
           {admin.phone || "—"}
         </span>
       </div>
@@ -75,22 +146,47 @@ function AdminCard({ admin, onViewProfile }) {
       <div style={{ borderTop: "1px solid rgba(0,0,0,0.06)" }} />
 
       {/* Footer: since + view profile */}
-      <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ fontSize: 12, color: "rgba(0,0,0,0.7)", letterSpacing: "0.02em" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <span
+          style={{
+            fontSize: 12,
+            color: "rgba(0,0,0,0.7)",
+            letterSpacing: "0.02em",
+          }}
+        >
           Teacher since {since}
         </span>
         <button
           onClick={() => onViewProfile(admin.id)}
           style={{
-            display: "flex", alignItems: "center", gap: 4,
-            background: "none", border: "none", cursor: "pointer",
-            fontSize: 12, color: "#030712", letterSpacing: "0.02em",
+            display: "flex",
+            alignItems: "center",
+            gap: 4,
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            fontSize: 12,
+            color: "#030712",
+            letterSpacing: "0.02em",
             padding: 0,
           }}
         >
           View profile
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-            <path d="M4 12L12 4M12 4H7M12 4V9" stroke="#030712" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path
+              d="M4 12L12 4M12 4H7M12 4V9"
+              stroke="#030712"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
       </div>
@@ -110,7 +206,14 @@ function AddAdminModal({ onClose, onSave }) {
   const [err, setErr] = useState("");
 
   async function handleSave() {
-    if (!firstName || !lastName || !email || !password || !phone || !selectedRole) {
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !password ||
+      !phone ||
+      !selectedRole
+    ) {
       setErr("Please fill all required fields.");
       return;
     }
@@ -129,31 +232,64 @@ function AddAdminModal({ onClose, onSave }) {
       });
       onClose();
     } catch (e) {
-      setErr(e?.response?.data?.detail || "Failed to create admin. Please try again.");
+      setErr(
+        e?.response?.data?.detail ||
+          "Failed to create admin. Please try again.",
+      );
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <div style={{
-      position: "fixed", inset: 0, zIndex: 100,
-      background: "rgba(0,0,0,0.35)",
-      display: "flex", alignItems: "center", justifyContent: "center",
-    }}>
-      <div style={{
-        boxSizing: "border-box",
-        display: "flex", flexDirection: "column", alignItems: "flex-end",
-        padding: 24, gap: 37,
-        width: 472,
-        background: "#FFFFFF", border: "1px solid rgba(0,0,0,0.06)",
-        boxShadow: "0px 0px 7px rgba(0,0,0,0.07)", borderRadius: 14,
-        maxHeight: "90vh", overflowY: "auto",
-      }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 28, width: "100%" }}>
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 100,
+        background: "rgba(0,0,0,0.35)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <div
+        style={{
+          boxSizing: "border-box",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-end",
+          padding: 24,
+          gap: 37,
+          width: 472,
+          background: "#FFFFFF",
+          border: "1px solid rgba(0,0,0,0.06)",
+          boxShadow: "0px 0px 7px rgba(0,0,0,0.07)",
+          borderRadius: 14,
+          maxHeight: "90vh",
+          overflowY: "auto",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 28,
+            width: "100%",
+          }}
+        >
           {/* Title */}
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <h2 style={{ fontSize: 20, fontWeight: 600, color: "#143888", margin: 0 }}>Add new admin</h2>
+            <h2
+              style={{
+                fontSize: 20,
+                fontWeight: 600,
+                color: "#143888",
+                margin: 0,
+              }}
+            >
+              Add new admin
+            </h2>
             <p style={{ fontSize: 14, color: "rgba(0,0,0,0.6)", margin: 0 }}>
               Fill in the details to create a new administrator account
             </p>
@@ -163,35 +299,73 @@ function AddAdminModal({ onClose, onSave }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {/* First Name & Last Name */}
             <div style={{ display: "flex", gap: 12 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
-                <label style={{ fontSize: 14, fontWeight: 500, color: "rgba(0,0,0,0.8)", letterSpacing: "0.4px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                  flex: 1,
+                }}
+              >
+                <label
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: "rgba(0,0,0,0.8)",
+                    letterSpacing: "0.4px",
+                  }}
+                >
                   First Name <span style={{ color: "#dc2626" }}>*</span>
                 </label>
                 <input
                   type="text"
                   value={firstName}
-                  onChange={e => setFirstName(e.target.value)}
+                  onChange={(e) => setFirstName(e.target.value)}
                   placeholder="e.g. Nadia"
                   style={{
-                    padding: "10px 12px", background: "#FBFCFC",
-                    border: "1px solid rgba(0,0,0,0.06)", borderRadius: 8,
-                    fontSize: 14, outline: "none", width: "100%", boxSizing: "border-box"
+                    padding: "10px 12px",
+                    background: "#FBFCFC",
+                    border: "1px solid rgba(0,0,0,0.06)",
+                    borderRadius: 8,
+                    fontSize: 14,
+                    outline: "none",
+                    width: "100%",
+                    boxSizing: "border-box",
                   }}
                 />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
-                <label style={{ fontSize: 14, fontWeight: 500, color: "rgba(0,0,0,0.8)", letterSpacing: "0.4px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                  flex: 1,
+                }}
+              >
+                <label
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: "rgba(0,0,0,0.8)",
+                    letterSpacing: "0.4px",
+                  }}
+                >
                   Last Name <span style={{ color: "#dc2626" }}>*</span>
                 </label>
                 <input
                   type="text"
                   value={lastName}
-                  onChange={e => setLastName(e.target.value)}
+                  onChange={(e) => setLastName(e.target.value)}
                   placeholder="e.g. Admin"
                   style={{
-                    padding: "10px 12px", background: "#FBFCFC",
-                    border: "1px solid rgba(0,0,0,0.06)", borderRadius: 8,
-                    fontSize: 14, outline: "none", width: "100%", boxSizing: "border-box"
+                    padding: "10px 12px",
+                    background: "#FBFCFC",
+                    border: "1px solid rgba(0,0,0,0.06)",
+                    borderRadius: 8,
+                    fontSize: 14,
+                    outline: "none",
+                    width: "100%",
+                    boxSizing: "border-box",
                   }}
                 />
               </div>
@@ -199,86 +373,158 @@ function AddAdminModal({ onClose, onSave }) {
 
             {/* Email */}
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <label style={{ fontSize: 14, fontWeight: 500, color: "rgba(0,0,0,0.8)", letterSpacing: "0.4px" }}>
+              <label
+                style={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: "rgba(0,0,0,0.8)",
+                  letterSpacing: "0.4px",
+                }}
+              >
                 Email <span style={{ color: "#dc2626" }}>*</span>
               </label>
               <input
                 type="email"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin.one@esi-sba.dz"
                 style={{
-                  padding: "10px 12px", background: "#FBFCFC",
-                  border: "1px solid rgba(0,0,0,0.06)", borderRadius: 8,
-                  fontSize: 14, outline: "none", width: "100%", boxSizing: "border-box"
+                  padding: "10px 12px",
+                  background: "#FBFCFC",
+                  border: "1px solid rgba(0,0,0,0.06)",
+                  borderRadius: 8,
+                  fontSize: 14,
+                  outline: "none",
+                  width: "100%",
+                  boxSizing: "border-box",
                 }}
               />
             </div>
 
             {/* Phone */}
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <label style={{ fontSize: 14, fontWeight: 500, color: "rgba(0,0,0,0.8)", letterSpacing: "0.4px" }}>
+              <label
+                style={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: "rgba(0,0,0,0.8)",
+                  letterSpacing: "0.4px",
+                }}
+              >
                 Phone <span style={{ color: "#dc2626" }}>*</span>
               </label>
               <input
                 type="tel"
                 value={phone}
-                onChange={e => setPhone(e.target.value)}
+                onChange={(e) => setPhone(e.target.value)}
                 placeholder="+213550000003"
                 style={{
-                  padding: "10px 12px", background: "#FBFCFC",
-                  border: "1px solid rgba(0,0,0,0.06)", borderRadius: 8,
-                  fontSize: 14, outline: "none", width: "100%", boxSizing: "border-box"
+                  padding: "10px 12px",
+                  background: "#FBFCFC",
+                  border: "1px solid rgba(0,0,0,0.06)",
+                  borderRadius: 8,
+                  fontSize: 14,
+                  outline: "none",
+                  width: "100%",
+                  boxSizing: "border-box",
                 }}
               />
             </div>
 
             {/* Password */}
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <label style={{ fontSize: 14, fontWeight: 500, color: "rgba(0,0,0,0.8)", letterSpacing: "0.4px" }}>
+              <label
+                style={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: "rgba(0,0,0,0.8)",
+                  letterSpacing: "0.4px",
+                }}
+              >
                 Password <span style={{ color: "#dc2626" }}>*</span>
               </label>
               <input
                 type="text"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="ExampleAuth1!"
                 style={{
-                  padding: "10px 12px", background: "#FBFCFC",
-                  border: "1px solid rgba(0,0,0,0.06)", borderRadius: 8,
-                  fontSize: 14, outline: "none", width: "100%", boxSizing: "border-box"
+                  padding: "10px 12px",
+                  background: "#FBFCFC",
+                  border: "1px solid rgba(0,0,0,0.06)",
+                  borderRadius: 8,
+                  fontSize: 14,
+                  outline: "none",
+                  width: "100%",
+                  boxSizing: "border-box",
                 }}
               />
             </div>
 
             {/* Role select */}
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <label style={{ fontSize: 14, fontWeight: 500, color: "rgba(0,0,0,0.8)", letterSpacing: "0.4px" }}>
+              <label
+                style={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: "rgba(0,0,0,0.8)",
+                  letterSpacing: "0.4px",
+                }}
+              >
                 Role <span style={{ color: "#dc2626" }}>*</span>
               </label>
-              <div style={{
-                display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center",
-                padding: "6px 12px", background: "#FBFCFC",
-                border: "1px solid rgba(0,0,0,0.06)", borderRadius: 8,
-                position: "relative",
-              }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "6px 12px",
+                  background: "#FBFCFC",
+                  border: "1px solid rgba(0,0,0,0.06)",
+                  borderRadius: 8,
+                  position: "relative",
+                }}
+              >
                 <select
                   value={selectedRole}
-                  onChange={e => setSelectedRole(e.target.value)}
+                  onChange={(e) => setSelectedRole(e.target.value)}
                   style={{
-                    width: "100%", border: "none", background: "transparent",
-                    fontSize: 14, color: selectedRole ? "#000" : "#898989",
-                    appearance: "none", cursor: "pointer", outline: "none",
-                    height: 24, padding: 0,
+                    width: "100%",
+                    border: "none",
+                    background: "transparent",
+                    fontSize: 14,
+                    color: selectedRole ? "#000" : "#898989",
+                    appearance: "none",
+                    cursor: "pointer",
+                    outline: "none",
+                    height: 24,
+                    padding: 0,
                   }}
                 >
-                  <option value="" disabled>Select a role</option>
-                  {ROLE_OPTIONS.map(r => (
-                    <option key={r.value} value={r.value}>{r.label}</option>
+                  <option value="" disabled>
+                    Select a role
+                  </option>
+                  {ROLE_OPTIONS.map((r) => (
+                    <option key={r.value} value={r.value}>
+                      {r.label}
+                    </option>
                   ))}
                 </select>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, pointerEvents: "none" }}>
-                  <path d="M4 6l4 4 4-4" stroke="#898989" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  style={{ flexShrink: 0, pointerEvents: "none" }}
+                >
+                  <path
+                    d="M4 6l4 4 4-4"
+                    stroke="#898989"
+                    strokeWidth="1.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </div>
             </div>
@@ -290,14 +536,26 @@ function AddAdminModal({ onClose, onSave }) {
           )}
 
           {/* Buttons */}
-          <div style={{ display: "flex", flexDirection: "row", gap: 20, justifyContent: "flex-end" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 20,
+              justifyContent: "flex-end",
+            }}
+          >
             <button
               onClick={onClose}
               disabled={saving}
               style={{
-                padding: "5px 32px", border: "1.3px solid rgba(0,0,0,0.16)",
-                borderRadius: 8, background: "none", cursor: "pointer",
-                fontSize: 16, fontWeight: 500, color: "#898989",
+                padding: "5px 32px",
+                border: "1.3px solid rgba(0,0,0,0.16)",
+                borderRadius: 8,
+                background: "none",
+                cursor: "pointer",
+                fontSize: 16,
+                fontWeight: 500,
+                color: "#898989",
               }}
             >
               Cancel
@@ -306,9 +564,14 @@ function AddAdminModal({ onClose, onSave }) {
               onClick={handleSave}
               disabled={saving}
               style={{
-                padding: "5px 32px", border: "none",
-                borderRadius: 8, background: "#143888", cursor: "pointer",
-                fontSize: 16, fontWeight: 500, color: "#FFFFFF",
+                padding: "5px 32px",
+                border: "none",
+                borderRadius: 8,
+                background: "#143888",
+                cursor: "pointer",
+                fontSize: 16,
+                fontWeight: 500,
+                color: "#FFFFFF",
                 opacity: saving ? 0.7 : 1,
               }}
             >
@@ -352,7 +615,7 @@ export default function AdministratorsPage() {
   }
 
   function handleViewProfile(id) {
-    router.push(`/admin/teachers/${id}?from=administrators`);
+    router.push(`/admin/administrators/${id}`);
   }
 
   // Split admins into rows of 3
@@ -366,18 +629,29 @@ export default function AdministratorsPage() {
       {/* ── Header ── */}
       <div className="main-header">
         <div className="main-header-text">
-          <h2 style={{ fontSize: 20, fontWeight: 600, color: "#143888", margin: 0 }}>Administrators</h2>
+          <h2
+            style={{
+              fontSize: 20,
+              fontWeight: 600,
+              color: "#143888",
+              margin: 0,
+            }}
+          >
+            Administrators
+          </h2>
           <p className="main-subtitle">View and manage administrators</p>
         </div>
 
-        <button
-          className="main-export-btn"
-          onClick={() => setShowModal(true)}
-        >
+        <button className="main-export-btn" onClick={() => setShowModal(true)}>
           Add new admin
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M8 3.33337V12.6667M3.33337 8.00004H12.6667"
-              stroke="#FFFFFF" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+            <path
+              d="M8 3.33337V12.6667M3.33337 8.00004H12.6667"
+              stroke="#FFFFFF"
+              strokeWidth="1.3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
       </div>
@@ -387,27 +661,43 @@ export default function AdministratorsPage() {
 
       {/* ── Loading ── */}
       {loading ? (
-        <div style={{ padding: 24, color: "#4a5567", fontSize: 14 }}>Loading administrators…</div>
+        <div style={{ padding: 24, color: "#4a5567", fontSize: 14 }}>
+          Loading administrators…
+        </div>
       ) : admins.length === 0 ? (
-        <div style={{
-          padding: 48, textAlign: "center", color: "#8C97A7",
-          fontSize: 14, background: "#fff",
-          border: "1px solid rgba(0,0,0,0.06)", borderRadius: 8,
-        }}>
+        <div
+          style={{
+            padding: 48,
+            textAlign: "center",
+            color: "#8C97A7",
+            fontSize: 14,
+            background: "#fff",
+            border: "1px solid rgba(0,0,0,0.06)",
+            borderRadius: 8,
+          }}
+        >
           No administrators found. Click &quot;Add new admin&quot; to add one.
         </div>
       ) : (
         /* ── Admin cards grid ── */
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {rows.map((row, rowIdx) => (
-            <div key={rowIdx} style={{ display: "flex", flexDirection: "row", gap: 20 }}>
-              {row.map(admin => (
-                <AdminCard key={admin.id} admin={admin} onViewProfile={handleViewProfile} />
+            <div
+              key={rowIdx}
+              style={{ display: "flex", flexDirection: "row", gap: 20 }}
+            >
+              {row.map((admin) => (
+                <AdminCard
+                  key={admin.id}
+                  admin={admin}
+                  onViewProfile={handleViewProfile}
+                />
               ))}
               {/* Fill empty slots to maintain 3-column layout */}
-              {row.length < 3 && Array.from({ length: 3 - row.length }).map((_, i) => (
-                <div key={`empty-${i}`} style={{ flex: 1 }} />
-              ))}
+              {row.length < 3 &&
+                Array.from({ length: 3 - row.length }).map((_, i) => (
+                  <div key={`empty-${i}`} style={{ flex: 1 }} />
+                ))}
             </div>
           ))}
         </div>

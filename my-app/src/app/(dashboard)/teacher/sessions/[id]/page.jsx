@@ -5,8 +5,6 @@ import SessionDetailsHeader from "@/components/session/SessionDetailsHeader";
 import SessionDetailsStats from "@/components/session/SessionDetailsStats";
 import SessionStudentsTable from "@/components/session/SessionStudentsTable";
 import CompensationRequests from "@/components/dashboard/CompensationRequests";
-import CorrectionRequestModal from "@/components/session/CorrectionRequestModal";
-import { SYNC_STATUS } from "@/lib/constants";
 import { useAttendance } from "@/hooks/useAttendance";
 import { useAttendanceSummary } from "@/hooks/useAttendanceSummary";
 
@@ -104,15 +102,7 @@ export default function SessionDetailsPage({ params }) {
   const { summary: liveSummary } = useAttendanceSummary(sessionId);
   const router = useRouter();
 
-  // Correction Modal State
-  const [selectedStudentForCorrection, setSelectedStudentForCorrection] = useState(null);
-  const [isCorrectionModalOpen, setIsCorrectionModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-
-  const handleOpenCorrection = (student) => {
-    setSelectedStudentForCorrection(student);
-    setIsCorrectionModalOpen(true);
-  };
 
   const handleSaveAndEnd = async () => {
     setSaving(true);
@@ -130,7 +120,6 @@ export default function SessionDetailsPage({ params }) {
 
   const presentCount = students.filter((s) => s.present).length;
   const absentCount = students.length - presentCount;
-  const pendingCount = students.filter((s) => s.syncStatus === "pending").length;
   const absenceRate = students.length > 0 ? ((absentCount / students.length) * 100).toFixed(1) : "0.0";
 
   if (isLoadingSession) {
@@ -162,7 +151,7 @@ export default function SessionDetailsPage({ params }) {
         session={session}
         presentCount={presentCount}
         absentCount={absentCount}
-        pendingCount={pendingCount}
+        pendingCount={0}
         absenceRate={absenceRate}
         liveSummary={liveSummary}
       />
@@ -172,7 +161,6 @@ export default function SessionDetailsPage({ params }) {
             session={session}
             students={students}
             onToggleStudent={handleTogglePresent}
-            onOpenCorrection={handleOpenCorrection}
             onAddStudent={addStudent}
             onAddGroup={addGroup}
           />
@@ -191,14 +179,6 @@ export default function SessionDetailsPage({ params }) {
           {saving ? "Saving..." : "Save & End session"}
         </button>
       </div>
-
-      {/* Correction Modal */}
-      <CorrectionRequestModal
-        isOpen={isCorrectionModalOpen}
-        onClose={() => setIsCorrectionModalOpen(false)}
-        student={selectedStudentForCorrection}
-        session={session}
-      />
     </div>
   );
 }

@@ -40,9 +40,13 @@ export async function markAbsence({ sessionId, studentMatricule, isAbsent }) {
 
 /**
  * Adds a student directly to a session (Feature 2.2).
+ * Endpoint: POST /v1/sessions/{session_id}/students
+ * Payload: { student_matricule }
  */
 export async function addStudentToSession(sessionId, matricule) {
-  const response = await api.post(`/v1/sessions/${sessionId}/students`, { matricule });
+  const response = await api.post(`/v1/sessions/${sessionId}/students`, {
+    student_matricule: matricule,
+  });
   return response.data;
 }
 
@@ -53,4 +57,3 @@ export async function addGroupToSession(sessionId, group_name) {
   const response = await api.post(`/v1/sessions/${sessionId}/groups`, { group_name });
   return response.data;
 }
-

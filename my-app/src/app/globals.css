@@ -1740,6 +1740,11 @@ button {
   grid-template-columns: 2.2fr 1.15fr 0.9fr 0.9fr 0.9fr 1fr 64px;
 }
 
+.teacher-students-table__header-row,
+.teacher-students-table__row {
+  grid-template-columns: 2fr 1.35fr 0.85fr 0.75fr 0.75fr 86px;
+}
+
 .admin-students-table__footer,
 .admin-teachers-table__footer,
 .admin-groups-table__footer,
@@ -2861,6 +2866,11 @@ button {
   overflow: hidden;
 }
 
+.student-history-modal {
+  max-width: min(760px, 95vw);
+  max-height: 88vh;
+}
+
 /* Header */
 .export-modal-header {
   display: flex;
@@ -2971,6 +2981,126 @@ button {
   font-weight: 600;
   color: #374151;
   margin-right: 6px;
+}
+
+.student-history-state,
+.student-history-error {
+  padding: 18px;
+  border: 1px solid #e3e8ef;
+  border-radius: 10px;
+  color: #4a5567;
+  font-size: 14px;
+  text-align: center;
+}
+
+.student-history-error {
+  border-color: #fecaca;
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+.student-history-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.student-history-summary div {
+  border: 1px solid #e3e8ef;
+  border-radius: 10px;
+  padding: 12px;
+  background: #f8faff;
+}
+
+.student-history-summary span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.student-history-summary strong {
+  color: #030712;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.student-history-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.student-history-item {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  gap: 12px;
+}
+
+.student-history-item__marker {
+  width: 10px;
+  height: 10px;
+  margin-top: 18px;
+  border-radius: 50%;
+  background: #143888;
+  box-shadow: 0 0 0 4px #eef2ff;
+}
+
+.student-history-item__content {
+  border: 1px solid #e3e8ef;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.student-history-item__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.student-history-item__subject {
+  margin: 0 0 3px;
+  color: #030712;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.student-history-item__meta,
+.student-history-item__type {
+  margin: 0;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.student-history-item__type {
+  margin-top: 8px;
+}
+
+.student-history-status {
+  flex-shrink: 0;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.student-history-status--present {
+  background: #ecfdf3;
+  color: #047857;
+}
+
+.student-history-status--absent {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.student-history-status--pending {
+  background: #f8fafc;
+  color: #64748b;
 }
 
 /* Footer */

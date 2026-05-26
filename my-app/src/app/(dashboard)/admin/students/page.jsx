@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { studentsService } from "@/services/accountsService";
+import { fetchStudentsWithAbsenceCounts } from "@/services/accountsService";
 import AdminStudentsTable from "@/components/dashboard/AdminStudentsTable";
 import AddStudentModal from "@/components/dashboard/AddStudentModal";
 import EditStudentModal from "@/components/dashboard/EditStudentModal";
@@ -18,11 +18,12 @@ function StudentsPage() {
   const [showImportPanel, setShowImportPanel] = useState(false);
 
   // ── Fetch Students ───────────────────────────────
-  const fetchStudents = async () => {
+  const fetchStudents = async (params = {}) => {
     try {
       setLoading(true);
-      const data = await studentsService.getAll();
-      setStudents(data);
+      // You can pass params for search, filter, sort, pagination
+      const studentsArray = await fetchStudentsWithAbsenceCounts(params);
+      setStudents(studentsArray);
       setError("");
     } catch (err) {
       setError("Failed to load students");

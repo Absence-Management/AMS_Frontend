@@ -280,10 +280,12 @@ function normalizeGroup(raw, index) {
     id: raw?.id || index,
     year: raw?.year || "—",
     section: raw?.section || "—",
-    number: raw?.number || "—",
+    number: raw?.number || raw?.group_name || "—",
+
     speciality: raw?.speciality || "—",
-    studentCount: raw?.student_count ?? null,
-    absenceRate: raw?.absence_rate ?? null,
+    studentCount: raw?.studentCount ?? raw?.student_count ?? null,
+    absenceRate: raw?.absenceRate ?? raw?.absence_rate ?? null,
+
     sectionCount: raw?.section_count ?? 1,
     groupCount: Number.isNaN(extractedGroupCount)
       ? (raw?.group_count ?? "—")

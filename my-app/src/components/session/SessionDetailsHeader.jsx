@@ -104,6 +104,7 @@ const MODES = [
 export default function SessionDetailsHeader({ session }) {
   const [activeMode, setActiveMode] = useState("manual");
   const [isQrOpen, setIsQrOpen] = useState(false);
+  const sessionLabel = [session.title, session.group].filter(Boolean).join(" ");
 
   const handleModeClick = (modeKey) => {
     setActiveMode(modeKey);
@@ -116,7 +117,7 @@ export default function SessionDetailsHeader({ session }) {
     <div className="main-header">
       <div className="main-header-text">
         <h2 className="main-title">
-          {session.title} {session.group} {session.groupNumber}
+          {sessionLabel}
         </h2>
         <p className="main-subtitle">
           {new Date().toLocaleDateString(undefined, {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { teachersService } from "@/services/accountsService";
+import { fetchTeachers as fetchTeachersList } from "@/services/accountsService";
 import AdminTeachersTable from "@/components/dashboard/AdminTeachersTable";
 import AddTeacherModal from "@/components/dashboard/AddTeacherModal";
 import EditTeacherModal from "@/components/dashboard/EditTeacherModal";
@@ -21,8 +21,12 @@ function TeachersPage() {
   const fetchTeachers = async () => {
     try {
       setLoading(true);
-      const data = await teachersService.getAll();
-      setTeachers(data);
+      const data = await fetchTeachersList();
+      setTeachers(
+        Array.isArray(data)
+          ? data
+          : data?.teachers || data?.results || data?.items || data?.data || [],
+      );
       setError("");
     } catch (err) {
       setError("Failed to load teachers");

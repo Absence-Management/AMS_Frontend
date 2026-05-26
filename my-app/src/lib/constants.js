@@ -92,12 +92,6 @@ export const SESSION_TYPE = {
   EXAM: "Exam",
 };
 
-export const SYNC_STATUS = {
-  SYNCED: "synced",
-  PENDING: "pending",
-  FAILED: "failed",
-};
-
 export const ABSENCE_SOURCE = {
   TEACHER: "teacher",
   SYSTEM: "system",
@@ -114,7 +108,7 @@ export const API_ENDPOINTS = {
   ME: "/v1/auth/me",
   GOOGLE_AUTH: "/v1/auth/google",
   STUDENTS: "/v1/accounts/students/",
-  TEACHERS: "/v1/accounts/teachers/",
+  TEACHERS: "/v1/accounts/teachers",
   ADMINS: "/v1/accounts/admins/",
   ACCOUNTS: "/v1/accounts/",
   USER_ME: "/v1/accounts/me",
@@ -124,4 +118,7 @@ export const API_ENDPOINTS = {
   IMPORT_EXPORT_HISTORY: "/v1/import-export/history",
   EXPORT_ABSENCES: "/v1/export/absences",
   MY_SCHEDULE: "/v1/planning/my-schedule",
+  TEACHER_MY_GROUPS: "/v1/teachers/my-groups",
+  TEACHER_BY_MATRICULE: "/v1/accounts/teachers",
+  ADMIN_BY_ID: "/v1/accounts/admins",
 };

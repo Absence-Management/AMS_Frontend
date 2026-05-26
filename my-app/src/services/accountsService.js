@@ -11,20 +11,47 @@ export function createAdmin(data) {
   return api.post(API_ENDPOINTS.ADMINS, data).then((r) => r.data);
 }
 
+export function getAdminProfile(accountId) {
+  return api
+    .get(`${API_ENDPOINTS.ADMIN_BY_ID}/${accountId}`)
+    .then((r) => r.data);
+}
+
+export function patchAdmin(accountId, data) {
+  return api
+    .patch(`${API_ENDPOINTS.ADMIN_BY_ID}/${accountId}`, data)
+    .then((r) => r.data);
+}
+
 // Teachers
 
 export function getAllTeachers() {
   return api.get(API_ENDPOINTS.TEACHERS).then((r) => r.data);
 }
-/**
- * Update an admin account by ID.
- * @param {string} accountId - The admin account ID.
- * @param {object} data - The fields to update.
- * @returns {Promise<object>} The updated admin data.
- */
+
+export async function fetchTeachers() {
+  try {
+    const response = await api.get(API_ENDPOINTS.TEACHERS);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch teachers:", error);
+    throw error;
+  }
+}
+
+// Fetch students with absence counts from the new API
+export async function fetchStudentsWithAbsenceCounts(params = {}) {
+  // Remove page and page_size if present
+  const { page, page_size, ...filteredParams } = params;
+  const response = await api.get("/v1/students", { params: filteredParams });
+  console.log("/v1/students API response:", response.data);
+  // API returns an array directly
+  return response.data;
+}
+
 export function updateAdmin(accountId, data) {
   return api
-    .patch(`/api/v1/accounts/admins/${accountId}`, data)
+    .patch(`${API_ENDPOINTS.ADMIN_BY_ID}/${accountId}`, data)
     .then((res) => res.data);
 }
 
@@ -40,21 +67,23 @@ function createCrudService(basePath) {
 }
 
 export const studentsService = createCrudService(API_ENDPOINTS.STUDENTS);
-export const getStudentById = (id) => 
+
+// GET /api/v1/accounts/{account_id}
+export const getAccountById = (accountId) =>
+  api.get(`${API_ENDPOINTS.ACCOUNTS}${accountId}`).then((r) => r.data);
+
+export const getStudentById = (id) =>
   api.get(`${API_ENDPOINTS.ACCOUNTS}${id}`).then((r) => r.data);
-export const patchStudent = (id, data) => 
+export const patchStudent = (id, data) =>
   api.patch(`${API_ENDPOINTS.ACCOUNTS}${id}`, data).then((r) => r.data);
-export const updateStudentStatus = (id, status) => 
+export const updateStudentStatus = (id, status) =>
   api.patch(`/v1/students/${id}/status`, { status }).then((r) => r.data);
 
 export const teachersService = createCrudService(API_ENDPOINTS.TEACHERS);
-export const getTeacherById = (id) => 
+export const getTeacherById = (id) =>
   api.get(`${API_ENDPOINTS.ACCOUNTS}${id}`).then((r) => r.data);
-export const patchTeacher = (id, data) => 
+export const patchTeacher = (id, data) =>
   api.patch(`${API_ENDPOINTS.ACCOUNTS}${id}`, data).then((r) => r.data);
 
-export const adminsService = createCrudService(API_ENDPOINTS.ADMINS);
-export const getAdminById = (id) => 
-  api.get(`${API_ENDPOINTS.ACCOUNTS}${id}`).then((r) => r.data);
-export const patchAdmin = (id, data) => 
-  api.patch(`${API_ENDPOINTS.ACCOUNTS}${id}`, data).then((r) => r.data);
+export const getAdminById = (id) =>
+  api.get(`${API_ENDPOINTS.ADMIN_BY_ID}/${id}`).then((r) => r.data);

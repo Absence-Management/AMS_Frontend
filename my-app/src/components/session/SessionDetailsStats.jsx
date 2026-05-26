@@ -67,9 +67,7 @@ export default function SessionDetailsStats({
   absenceRate,
   liveSummary = null, // New prop for polled data
 }) {
-  const secondGroupNumber = !isNaN(Number(session.groupNumber))
-    ? Number(session.groupNumber) + 1
-    : session.groupNumber;
+  const groupLabel = session.group || session.groupNumber || "—";
 
   // Always derive counts from local student state — the API summary starts at
   // zero (no DB records on first load) so it cannot be trusted as source of truth.
@@ -82,7 +80,7 @@ export default function SessionDetailsStats({
   return (
     <div className="flex gap-6 h-full items-stretch">
       {/* 1. Absence Rate Card */}
-      <div className="bg-white border border-[#e3e8ef] rounded-[12px] p-5 flex-[1.4] flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow duration-200 relative overflow-hidden">
+      <div className="bg-white border border-[#e3e8ef] rounded-xl p-5 flex-[1.4] flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow duration-200 relative overflow-hidden">
         {/* Live Indicator */}
         <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#f0fdf4] border border-[#dcfce7]">
           <span className="relative flex h-2 w-2">
@@ -94,7 +92,7 @@ export default function SessionDetailsStats({
 
         <div className="flex items-center justify-between mb-4 mt-1">
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-[#f0f4ff] rounded-[8px] text-[#143888]">
+            <div className="p-2 bg-[#f0f4ff] rounded-lg text-[#143888]">
               <IconChart />
             </div>
             <span className="text-[0.9375rem] font-semibold text-[#030712]">Attendance Rate</span>
@@ -127,10 +125,10 @@ export default function SessionDetailsStats({
       </div>
 
       {/* 2. Session Info Card */}
-      <div className="bg-white border border-[#e3e8ef] rounded-[12px] p-5 flex-[1.6] flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div className="bg-white border border-[#e3e8ef] rounded-xl p-5 flex-[1.6] flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <span className="bg-[#143888] text-white text-[0.6875rem] font-bold px-2 py-0.5 rounded-[4px] uppercase ring-1 ring-white/20">
+            <span className="bg-[#143888] text-white text-[0.6875rem] font-bold px-2 py-0.5 rounded-sm uppercase ring-1 ring-white/20">
               {session.type}
             </span>
             <h3 className="text-[1.0625rem] font-bold text-[#030712]">{session.title}</h3>
@@ -139,19 +137,19 @@ export default function SessionDetailsStats({
 
         <div className="grid grid-cols-2 gap-y-5 gap-x-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] text-[#64748b] shadow-sm">
+            <div className="p-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-lg text-[#64748b] shadow-sm">
               <IconUsers />
             </div>
             <div className="flex flex-col">
               <span className="text-[0.75rem] text-[#64748b] font-bold uppercase tracking-tight">Group N°</span>
               <span className="text-[0.875rem] font-bold text-[#030712]">
-                {session.groupNumber} & {secondGroupNumber}
+                {groupLabel}
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] text-[#64748b] shadow-sm">
+            <div className="p-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-lg text-[#64748b] shadow-sm">
               <IconClock />
             </div>
             <div className="flex flex-col">
@@ -161,7 +159,7 @@ export default function SessionDetailsStats({
           </div>
 
           <div className="flex items-center gap-3 col-span-2">
-            <div className="p-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] text-[#64748b] shadow-sm">
+            <div className="p-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-lg text-[#64748b] shadow-sm">
               <IconMapPin />
             </div>
             <div className="flex flex-col">
@@ -174,4 +172,3 @@ export default function SessionDetailsStats({
     </div>
   );
 }
-

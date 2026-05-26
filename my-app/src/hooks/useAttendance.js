@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { bulkUpdateAttendance, getSessionStudents, markAbsence } from "@/services/attendanceService";
-import { SYNC_STATUS } from "@/lib/constants";
 
 export function useAttendance(sessionId, initialMockData = null) {
   const [students, setStudents] = useState(initialMockData || []);
@@ -26,7 +25,6 @@ export function useAttendance(sessionId, initialMockData = null) {
         present: s.is_present,           // API returns is_present directly (default: false)
         participation: s.participation || null,
         totalAbsences: s.total_absences || 0,
-        syncStatus: SYNC_STATUS.SYNCED,
         avatarUrl: s.avatar_url || null,
         avatarColor: "#e2e8f0",
       }));
@@ -57,7 +55,7 @@ export function useAttendance(sessionId, initialMockData = null) {
         if (s.id === studentId) {
           studentMatricule = s.studentId;
           newIsPresent = !s.present;
-          return { ...s, present: newIsPresent, syncStatus: SYNC_STATUS.PENDING };
+          return { ...s, present: newIsPresent };
         }
         return s;
       })
@@ -71,19 +69,14 @@ export function useAttendance(sessionId, initialMockData = null) {
         isAbsent: !newIsPresent, // API uses is_absent (inverted)
       })
         .then(() => {
-          // 4a. Success → mark SYNCED
-          setStudents((prev) =>
-            prev.map((s) =>
-              s.id === studentId ? { ...s, syncStatus: SYNC_STATUS.SYNCED } : s
-            )
-          );
+          // Success: optimistic value is already reflected in local state.
         })
         .catch(() => {
-          // 4b. Failure → revert optimistic update + mark FAILED
+          // Failure: revert optimistic update.
           setStudents((prev) =>
             prev.map((s) =>
               s.id === studentId
-                ? { ...s, present: !newIsPresent, syncStatus: SYNC_STATUS.FAILED }
+                ? { ...s, present: !newIsPresent }
                 : s
             )
           );
@@ -103,23 +96,18 @@ export function useAttendance(sessionId, initialMockData = null) {
 
     try {
       const result = await bulkUpdateAttendance(sessionId, payload);
-      setStudents(prev => prev.map(s => ({ ...s, syncStatus: SYNC_STATUS.SYNCED })));
       return result;
     } catch (err) {
       console.error("Failed to save attendance:", err);
-      setStudents(prev => prev.map(s => 
-        s.syncStatus === SYNC_STATUS.PENDING 
-          ? { ...s, syncStatus: SYNC_STATUS.FAILED } 
-          : s
-      ));
       throw err;
     }
   }, [sessionId, students]);
 
   const addStudent = useCallback(async (matricule) => {
     try {
+      const studentMatricule = matricule.trim();
       await import('@/services/attendanceService').then(({ addStudentToSession }) => 
-        addStudentToSession(sessionId, matricule).then(() => fetchStudents())
+        addStudentToSession(sessionId, studentMatricule).then(() => fetchStudents())
       );
     } catch (err) {
       console.error("Failed to add student:", err);

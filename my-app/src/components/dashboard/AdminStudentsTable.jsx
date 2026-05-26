@@ -24,7 +24,7 @@ const COLUMNS = [
   "Student ID",
   "Year",
   "Group",
-  "Absence",
+  "Absences",
   "Status",
   "Action",
 ];
@@ -57,15 +57,24 @@ function StudentActions({ student, onEdit }) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1 w-36 bg-white border border-[#e3e8ef] shadow-lg rounded-lg py-1 z-[100] flex flex-col items-start overflow-hidden">
+        <div className="absolute right-0 top-full mt-1 w-36 bg-white border border-[#e3e8ef] shadow-lg rounded-lg py-1 z-100 flex flex-col items-start overflow-hidden">
           <button
             className="w-full text-left px-3 py-2 text-[13px] font-medium text-gray-700 hover:bg-[#f8faff] hover:text-[#143888] transition-colors flex items-center gap-2"
             onClick={() => {
               setIsOpen(false);
-              router.push(`/admin/students/${student.id}`);
+              router.push(`/admin/students/${student.matricule}`);
             }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
@@ -78,7 +87,16 @@ function StudentActions({ student, onEdit }) {
               onEdit?.(student);
             }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
             </svg>
@@ -98,7 +116,7 @@ function StudentRow({ student, onEditStudent }) {
           <Avatar name={student.name} fallback="Student" />
           <div className="admin-data-table__name-info">
             <Link
-              href={`/admin/students/${student.id}`}
+              href={`/admin/students/${student.matricule}`}
               className="admin-data-table__name hover:text-[#143888] hover:underline"
             >
               {student.name}
@@ -121,7 +139,7 @@ function StudentRow({ student, onEditStudent }) {
       </div>
 
       <div className="admin-data-table__cell admin-data-table__text-cell">
-        {student.absence}
+        {student.absencesCount ?? student.total_absences ?? 0}
       </div>
 
       <div className="admin-data-table__cell">
@@ -136,15 +154,25 @@ function StudentRow({ student, onEditStudent }) {
 }
 
 function normalizeStudent(raw) {
+  const level = raw.level || "";
+  const program = raw.program || "";
+  const year =
+    raw.year ??
+    (level && program && !level.endsWith(program)
+      ? `${level}${program}`
+      : level || program);
+
   return {
     id: raw.id,
-    name: `${raw.first_name || ""} ${raw.last_name || ""}`.trim(),
+    matricule: raw.matricule || raw.student_id,
+    name:
+      raw.full_name || `${raw.first_name || ""} ${raw.last_name || ""}`.trim(),
     email: raw.email || "",
     studentId: raw.student_id,
-    year: `${raw.level}${raw.program}`,
+    year,
     group: raw.group,
     program: raw.program,
-    absence: raw.absence_count ?? 0,
+    absencesCount: raw.total_absences ?? 0,
     status: raw.is_active ? "active" : "disabled",
   };
 }
@@ -168,7 +196,8 @@ export default function AdminStudentsTable({ students = [], onEditStudent }) {
   const filterFn = useMemo(() => {
     return (student) => {
       if (filterYear && student.year !== filterYear) return false;
-      if (filterGroup && String(student.group) !== String(filterGroup)) return false;
+      if (filterGroup && String(student.group) !== String(filterGroup))
+        return false;
       return true;
     };
   }, [filterYear, filterGroup]);
@@ -190,16 +219,22 @@ export default function AdminStudentsTable({ students = [], onEditStudent }) {
   });
 
   const availableYears = useMemo(() => {
-    return [...new Set(students.map(s => normalizeStudent(s).year))].filter(y => y && y !== "undefined").sort();
+    return [...new Set(students.map((s) => normalizeStudent(s).year))]
+      .filter((y) => y && y !== "undefined")
+      .sort();
   }, [students]);
 
   const availableGroups = useMemo(() => {
-    const matchingStudents = filterYear 
-      ? students.filter(s => normalizeStudent(s).year === filterYear)
+    const matchingStudents = filterYear
+      ? students.filter((s) => normalizeStudent(s).year === filterYear)
       : students;
 
-    return [...new Set(matchingStudents.map(s => String(normalizeStudent(s).group)))]
-      .filter(g => g !== "undefined" && g !== "null" && g !== "")
+    return [
+      ...new Set(
+        matchingStudents.map((s) => String(normalizeStudent(s).group)),
+      ),
+    ]
+      .filter((g) => g !== "undefined" && g !== "null" && g !== "")
       .sort((a, b) => {
         const numA = parseInt(a, 10);
         const numB = parseInt(b, 10);
@@ -224,42 +259,53 @@ export default function AdminStudentsTable({ students = [], onEditStudent }) {
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-blue-600 rounded-full border-2 border-white"></span>
           )}
         </button>
-        
+
         {showFilterOptions && (
           <div className="absolute right-0 top-full mt-2 w-64 bg-white border border-[#e3e8ef] shadow-lg rounded-xl p-4 z-10 flex flex-col gap-4 text-left font-sans">
             <div>
-              <label className="block text-[12px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">Academic Year</label>
+              <label className="block text-[12px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">
+                Academic Year
+              </label>
               <select
                 className="w-full border border-gray-200 rounded-lg text-[14px] p-2 bg-gray-50 text-gray-800 outline-none focus:border-blue-500 focus:bg-white transition-colors cursor-pointer"
                 value={filterYear}
                 onChange={(e) => setFilterYear(e.target.value)}
               >
                 <option value="">All Years</option>
-                {availableYears.map(year => (
-                  <option key={year} value={year}>{year}</option>
+                {availableYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
                 ))}
               </select>
             </div>
-            
+
             <div>
-              <label className="block text-[12px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">Student Group</label>
+              <label className="block text-[12px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">
+                Student Group
+              </label>
               <select
                 className="w-full border border-gray-200 rounded-lg text-[14px] p-2 bg-gray-50 text-gray-800 outline-none focus:border-blue-500 focus:bg-white transition-colors cursor-pointer"
                 value={filterGroup}
                 onChange={(e) => setFilterGroup(e.target.value)}
               >
                 <option value="">All Groups</option>
-                {availableGroups.map(group => (
-                  <option key={group} value={group}>Group {group}</option>
+                {availableGroups.map((group) => (
+                  <option key={group} value={group}>
+                    Group {group}
+                  </option>
                 ))}
               </select>
             </div>
-            
+
             {(filterYear || filterGroup) && (
               <button
                 type="button"
                 className="text-[13px] text-blue-600 font-medium text-right hover:text-blue-800 transition-colors mt-1"
-                onClick={() => { setFilterYear(""); setFilterGroup(""); }}
+                onClick={() => {
+                  setFilterYear("");
+                  setFilterGroup("");
+                }}
               >
                 Clear Filters
               </button>
@@ -268,10 +314,7 @@ export default function AdminStudentsTable({ students = [], onEditStudent }) {
         )}
       </div>
 
-      <button
-        type="button"
-        className="admin-data-table__control-btn"
-      >
+      <button type="button" className="admin-data-table__control-btn">
         <SortIcon />
         Sort
       </button>
@@ -298,10 +341,14 @@ export default function AdminStudentsTable({ students = [], onEditStudent }) {
       showDefaultTools={false}
       extraTools={extraTools}
     >
-
       {pagedStudents.map((student) => (
         <StudentRow
-          key={student.id}
+          key={
+            student.studentId ??
+            student.id ??
+            student.matricule ??
+            student.student_id
+          }
           student={student}
           onEditStudent={onEditStudent}
         />

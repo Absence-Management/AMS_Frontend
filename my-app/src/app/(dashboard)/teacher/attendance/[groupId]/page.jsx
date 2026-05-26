@@ -1,30 +1,104 @@
 "use client";
 
-import { useMemo, use } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import TeacherStudentsTable from "@/components/dashboard/TeacherStudentsTable";
+import StudentHistoryModal from "@/components/dashboard/StudentHistoryModal";
 import ExportAbsencesButton from "@/components/dashboard/ExportAbsencesButton";
-import { MOCK_STUDENTS } from "../page"; // Reusing the static data centrally stored in the index page
+import { getGroupStudents, getStudentHistory } from "@/services/teacherService";
+
+function safeDecode(value) {
+  try {
+    return decodeURIComponent(value || "");
+  } catch {
+    return value || "";
+  }
+}
 
 export default function GroupDetailsPage({ params }) {
   const resolvedParams = use(params);
   const rawGroupId = Array.isArray(resolvedParams?.groupId) ? resolvedParams.groupId[0] : resolvedParams?.groupId;
   
-  // Safely parse the slug e.g. "CP1-1" -> year: "CP1", group: "1"
-  const [yearSegment, ...groupSegments] = (rawGroupId || "").split("-");
+  const decodedGroupId = safeDecode(rawGroupId);
+  const [yearSegment, ...groupSegments] = decodedGroupId.split("-");
   const year = yearSegment;
   const groupLabel = groupSegments.join("-");
+  const [groupData, setGroupData] = useState(null);
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  const [studentHistory, setStudentHistory] = useState(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState("");
 
-  // Derive the filtered students cohort
-  const filteredStudents = useMemo(() => {
-    if (!year || !groupLabel) return [];
-    
-    return MOCK_STUDENTS.filter((s) => {
-      const sYear = s.year || (s.level ? `${s.level}${s.program}` : "Unknown");
-      const sGroup = String(s.group || "N/A");
-      return sYear === year && sGroup === groupLabel;
-    });
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadStudents() {
+      if (!year || !groupLabel) {
+        setLoading(false);
+        setError("Invalid group selected.");
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError("");
+        const data = await getGroupStudents(groupLabel, year);
+        if (!isMounted) return;
+
+        setGroupData(data);
+        setStudents(
+          Array.isArray(data?.students)
+            ? data.students.map((student) => ({
+                ...student,
+                year: data.year,
+                group: data.group_name,
+              }))
+            : [],
+        );
+      } catch (err) {
+        console.error("Failed to load group students:", err);
+        if (isMounted) {
+          setError("Failed to load students for this group.");
+          setGroupData(null);
+          setStudents([]);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadStudents();
+
+    return () => {
+      isMounted = false;
+    };
   }, [year, groupLabel]);
+
+  const totalStudents = groupData?.total_students ?? students.length;
+
+  async function handleViewHistory(student) {
+    if (!student?.matricule) return;
+
+    setHistoryModalOpen(true);
+    setStudentHistory(null);
+    setHistoryError("");
+    setHistoryLoading(true);
+
+    try {
+      const data = await getStudentHistory(groupLabel, student.matricule, year);
+      setStudentHistory(data);
+    } catch (err) {
+      console.error("Failed to load student history:", err);
+      setHistoryError("Failed to load attendance history for this student.");
+    } finally {
+      setHistoryLoading(false);
+    }
+  }
 
   return (
     <div className="main-page">
@@ -45,7 +119,8 @@ export default function GroupDetailsPage({ params }) {
           </div>
           
           <p className="main-subtitle mt-0.5">
-            Viewing {filteredStudents.length} enrolled students.
+            Viewing {totalStudents} enrolled students
+            {groupData?.total_sessions != null ? ` across ${groupData.total_sessions} sessions.` : "."}
           </p>
         </div>
 
@@ -53,8 +128,23 @@ export default function GroupDetailsPage({ params }) {
       </div>
 
       <div className="mt-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-        <TeacherStudentsTable students={filteredStudents} />
+        {loading && <div className="text-[#4a5567] p-4 text-center">Loading students...</div>}
+        {!loading && error && <div className="text-red-600 p-4 text-center">{error}</div>}
+        {!loading && !error && (
+          <TeacherStudentsTable
+            students={students}
+            onViewHistory={handleViewHistory}
+          />
+        )}
       </div>
+
+      <StudentHistoryModal
+        isOpen={historyModalOpen}
+        history={studentHistory}
+        loading={historyLoading}
+        error={historyError}
+        onClose={() => setHistoryModalOpen(false)}
+      />
     </div>
   );
 }

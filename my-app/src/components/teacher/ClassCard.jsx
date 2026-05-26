@@ -11,7 +11,7 @@ const YEAR_COLORS = {
 export default function ClassCard({ subject, year, groups = [] }) {
   const yearStyle = YEAR_COLORS[year] || { bg: "#f1f5f9", color: "#64748b" };
   return (
-    <div className="box-border flex flex-col bg-white border border-black/10 rounded-[8px] flex-1 min-w-0">
+    <div className="box-border flex flex-col bg-white border border-black/10 rounded-[8px] flex-1 w-full max-w-[400px] shadow-sm hover:shadow-md transition-shadow duration-200">
       <div className="flex flex-row justify-between items-center px-4 py-[10px] bg-white">
         <span className="text-[12px] font-medium text-black">{subject}</span>
         <span

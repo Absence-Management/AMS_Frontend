@@ -151,6 +151,10 @@ export default function SessionCard({
   onCancel,
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const groupLabel =
+    group && groupNumber && !String(group).includes(String(groupNumber))
+      ? `${group} ${groupNumber}`
+      : group || groupNumber || "G3";
 
   return (
     <div className={`session-card ${menuOpen ? "session-card--blur" : ""}`}>
@@ -181,9 +185,7 @@ export default function SessionCard({
         <span className="session-card__meta-row">
           <UsersIcon />
           <span className="session-card__meta-group">
-            {group && groupNumber && group !== groupNumber
-              ? `${group} ${groupNumber}`
-              : group || groupNumber || "G3"}
+            {groupLabel}
           </span>
         </span>
       </div>

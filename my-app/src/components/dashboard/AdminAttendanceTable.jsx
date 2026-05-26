@@ -78,20 +78,17 @@ function normalizeStatus(rawStatus, absencesValue) {
 }
 
 function normalizeAttendance(raw, index) {
-  const firstName = raw?.first_name || raw?.firstName || "";
-  const lastName = raw?.last_name || raw?.lastName || "";
+  // Map API fields directly
   const name =
-    raw?.name || `${firstName} ${lastName}`.trim() || `Student ${index + 1}`;
-
-  const absences = raw?.absences ?? raw?.absence ?? raw?.absence_count ?? 0;
-
+    `${raw?.nom || ""} ${raw?.prenom || ""}`.trim() || `Student ${index + 1}`;
+  const absences = raw?.absences_count ?? 0;
   return {
-    id: raw?.id || raw?.student_id || raw?.studentId || index,
+    id: raw?.id || raw?.matricule || index,
     name,
-    email: raw?.email || raw?.student_email || "",
-    studentId: raw?.student_id || raw?.studentId || "",
-    year: raw?.year || raw?.level || "",
-    group: raw?.group || raw?.group_name || "",
+    email: raw?.email || "",
+    studentId: raw?.matricule || "",
+    year: raw?.niveau || "",
+    group: raw?.groupe || "",
     absences,
     status: normalizeStatus(raw?.status, absences),
   };

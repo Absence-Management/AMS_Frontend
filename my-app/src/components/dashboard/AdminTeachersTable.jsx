@@ -47,10 +47,19 @@ function TeacherActions({ teacher, onEdit }) {
             className="w-full text-left px-3 py-2 text-[13px] font-medium text-gray-700 hover:bg-[#f8faff] hover:text-[#143888] transition-colors flex items-center gap-2"
             onClick={() => {
               setIsOpen(false);
-              router.push(`/admin/teachers/${teacher.id}`);
+              router.push(`/admin/teachers/${teacher.matricule || teacher.id}`);
             }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
@@ -63,7 +72,16 @@ function TeacherActions({ teacher, onEdit }) {
               onEdit?.(teacher);
             }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
             </svg>
@@ -83,7 +101,7 @@ function TeacherRow({ teacher, onEditTeacher }) {
           <Avatar name={teacher.name} fallback="Teacher" />
           <div className="admin-data-table__name-info">
             <Link
-              href={`/admin/teachers/${teacher.id}`}
+              href={`/admin/teachers/${teacher.matricule || teacher.id}`}
               className="admin-data-table__name hover:text-[#143888] hover:underline"
             >
               {teacher.name}
@@ -112,9 +130,94 @@ function TeacherRow({ teacher, onEditTeacher }) {
   );
 }
 
+function uniqueValues(values) {
+  return [
+    ...new Set(values.filter(Boolean).map((value) => String(value).trim())),
+  ].filter(Boolean);
+}
+
+function getSubjectLabel(item) {
+  if (!item) return "";
+  if (typeof item === "string") return item;
+
+  if (item.module && typeof item.module === "object") {
+    return getSubjectLabel(item.module);
+  }
+
+  if (item.subject && typeof item.subject === "object") {
+    return getSubjectLabel(item.subject);
+  }
+
+  return (
+    item.subject ||
+    item.subject_name ||
+    item.module ||
+    item.module_name ||
+    item.code_module ||
+    item.code ||
+    item.nom ||
+    item.name ||
+    ""
+  );
+}
+
+function getGroupLabel(item) {
+  if (!item) return "";
+  if (typeof item === "string") return item;
+
+  if (item.group && typeof item.group === "object") {
+    return getGroupLabel(item.group);
+  }
+
+  const groupName = item.group_name || item.group || item.name || "";
+  const year = item.year || item.level || "";
+
+  return [year, groupName].filter(Boolean).join(" ");
+}
+
+function getTeacherAssignments(raw) {
+  return [
+    ...(Array.isArray(raw?.assignments) ? raw.assignments : []),
+    ...(Array.isArray(raw?.teaching_assignments)
+      ? raw.teaching_assignments
+      : []),
+    ...(Array.isArray(raw?.classes) ? raw.classes : []),
+    ...(Array.isArray(raw?.planning) ? raw.planning : []),
+  ];
+}
+
+function formatTeacherSubjects(raw) {
+  const directSubjects = Array.isArray(raw?.subjects)
+    ? raw.subjects.map(getSubjectLabel)
+    : [getSubjectLabel(raw?.subjects || raw?.subject)];
+
+  const moduleSubjects = Array.isArray(raw?.modules)
+    ? raw.modules.map(getSubjectLabel)
+    : [getSubjectLabel(raw?.module)];
+
+  const assignmentSubjects = getTeacherAssignments(raw).map(getSubjectLabel);
+
+  return uniqueValues([
+    ...directSubjects,
+    ...moduleSubjects,
+    ...assignmentSubjects,
+  ]).join(", ");
+}
+
+function formatTeacherGroups(raw) {
+  const directGroups = Array.isArray(raw?.groups)
+    ? raw.groups.map(getGroupLabel)
+    : [getGroupLabel(raw?.groups || raw?.group || raw?.group_name)];
+
+  const assignmentGroups = getTeacherAssignments(raw).map(getGroupLabel);
+
+  return uniqueValues([...directGroups, ...assignmentGroups]).join(", ");
+}
+
 function normalizeTeacher(raw, index) {
   return {
-    id: raw?.id || raw?.email || index,
+    // For navigation we must prefer the backend employee_id (e.g. ENS100) over UUID `id`
+    id: raw?.employee_id || raw?.matricule || raw?.id || raw?.email || index,
     first_name: raw?.first_name || "",
     last_name: raw?.last_name || "",
     name:
@@ -125,6 +228,8 @@ function normalizeTeacher(raw, index) {
     phone: raw?.phone || "",
     role: raw?.role || "teacher",
     group: raw?.group || "",
+    subject: formatTeacherSubjects(raw),
+    groups: formatTeacherGroups(raw),
     is_active: raw?.is_active ?? true,
     student_id: raw?.student_id || "",
     program: raw?.program || "",
