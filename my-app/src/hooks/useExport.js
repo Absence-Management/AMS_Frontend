@@ -7,7 +7,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { previewAbsences, downloadAbsencesCSV } from "@/services/exportService";
+import { previewAbsences, downloadAbsencesCSV, downloadAbsencesPDF } from "@/services/exportService";
 
 const EMPTY_FILTERS = {
   filiere: "",
@@ -107,6 +107,42 @@ export function useExport() {
     }
   }, [filters]);
 
+  const handleDownloadPDF = useCallback(async () => {
+    setDownloading(true);
+    setDownloadError("");
+    try {
+      // Build a descriptive filename from active filters
+      const parts = ["absences"];
+      if (filters.filiere) parts.push(filters.filiere);
+      if (filters.code_module) parts.push(filters.code_module);
+      if (filters.date_from) parts.push(`from-${filters.date_from}`);
+      if (filters.date_to) parts.push(`to-${filters.date_to}`);
+      const filename = `${parts.join("_")}.pdf`;
+
+      // Map existing export filters to PDF API filters
+      const pdfFilters = {
+        module: filters.code_module,
+        student_id: filters.matricule_etudiant,
+        // Optional additions if the UI is updated later:
+        // year, semester, month, week, day, group, teacher_id
+      };
+
+      // Add mapped fields dynamically so buildParams works
+      Object.keys(pdfFilters).forEach(key => {
+        if (pdfFilters[key] === undefined) delete pdfFilters[key];
+      });
+
+      await downloadAbsencesPDF(pdfFilters, filename);
+      return true;
+    } catch (err) {
+      console.error("[useExport] PDF download failed:", err);
+      setDownloadError("Failed to download PDF. Please try again.");
+      return false;
+    } finally {
+      setDownloading(false);
+    }
+  }, [filters]);
+
   return {
     // filters
     filters,
@@ -126,5 +162,6 @@ export function useExport() {
     downloading,
     downloadError,
     handleDownload,
+    handleDownloadPDF,
   };
 }

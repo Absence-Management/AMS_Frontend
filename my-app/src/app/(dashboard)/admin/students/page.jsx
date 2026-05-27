@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { fetchStudentsWithAbsenceCounts } from "@/services/accountsService";
+import { downloadStudentsCSV, downloadStudentsPDF } from "@/services/exportService";
 import AdminStudentsTable from "@/components/dashboard/AdminStudentsTable";
 import AddStudentModal from "@/components/dashboard/AddStudentModal";
 import EditStudentModal from "@/components/dashboard/EditStudentModal";
 import AccountImportPanel from "@/components/dashboard/AccountImportPanel";
+import ExportSelectionModal from "@/components/dashboard/ExportSelectionModal";
 
 function StudentsPage() {
   // ── State ─────────────────────────────────────
@@ -16,6 +18,9 @@ function StudentsPage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [showImportPanel, setShowImportPanel] = useState(false);
+  const [isExportingCSV, setIsExportingCSV] = useState(false);
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   // ── Fetch Students ───────────────────────────────
   const fetchStudents = async (params = {}) => {
@@ -30,6 +35,32 @@ function StudentsPage() {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExportCSV = async () => {
+    setIsExportingCSV(true);
+    try {
+      await downloadStudentsCSV({}, "students.csv");
+      setShowExportModal(false);
+    } catch (error) {
+      console.error("Failed to export students CSV", error);
+      alert("Failed to export students. Please try again.");
+    } finally {
+      setIsExportingCSV(false);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    setIsExportingPDF(true);
+    try {
+      await downloadStudentsPDF({}, "students.pdf");
+      setShowExportModal(false);
+    } catch (error) {
+      console.error("Failed to export students PDF", error);
+      alert("Failed to export students. Please try again.");
+    } finally {
+      setIsExportingPDF(false);
     }
   };
 
@@ -77,6 +108,38 @@ function StudentsPage() {
               <path
                 d="M5.16667 0.5V9.83333M0.5 5.16667H9.83333"
                 stroke="#143888"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          <button
+            className="main-export-btn"
+            onClick={() => setShowExportModal(true)}
+          >
+            Export data
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <polyline
+                points="7 10 12 15 17 10"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <line
+                x1="12"
+                y1="15"
+                x2="12"
+                y2="3"
+                stroke="white"
+                strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
@@ -141,6 +204,16 @@ function StudentsPage() {
         onClose={closeEditModal}
         onUpdated={fetchStudents}
         student={selectedStudent}
+      />
+
+      <ExportSelectionModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExportCSV={handleExportCSV}
+        onExportPDF={handleExportPDF}
+        isExportingCSV={isExportingCSV}
+        isExportingPDF={isExportingPDF}
+        entityName="students"
       />
     </div>
   );

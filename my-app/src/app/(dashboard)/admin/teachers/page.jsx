@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { fetchTeachers as fetchTeachersList } from "@/services/accountsService";
+import { downloadTeachersCSV, downloadTeachersPDF } from "@/services/exportService";
 import AdminTeachersTable from "@/components/dashboard/AdminTeachersTable";
 import AddTeacherModal from "@/components/dashboard/AddTeacherModal";
 import EditTeacherModal from "@/components/dashboard/EditTeacherModal";
 import AccountImportPanel from "@/components/dashboard/AccountImportPanel";
+import ExportSelectionModal from "@/components/dashboard/ExportSelectionModal";
 
 function TeachersPage() {
   // ── State ─────────────────────────────────────
@@ -16,6 +18,9 @@ function TeachersPage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [showImportPanel, setShowImportPanel] = useState(false);
+  const [isExportingCSV, setIsExportingCSV] = useState(false);
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   // ── Fetch Teachers ───────────────────────────────
   const fetchTeachers = async () => {
@@ -33,6 +38,32 @@ function TeachersPage() {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExportCSV = async () => {
+    setIsExportingCSV(true);
+    try {
+      await downloadTeachersCSV({}, "teachers.csv");
+      setShowExportModal(false);
+    } catch (error) {
+      console.error("Failed to export teachers CSV", error);
+      alert("Failed to export teachers. Please try again.");
+    } finally {
+      setIsExportingCSV(false);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    setIsExportingPDF(true);
+    try {
+      await downloadTeachersPDF({}, "teachers.pdf");
+      setShowExportModal(false);
+    } catch (error) {
+      console.error("Failed to export teachers PDF", error);
+      alert("Failed to export teachers. Please try again.");
+    } finally {
+      setIsExportingPDF(false);
     }
   };
 
@@ -80,6 +111,38 @@ function TeachersPage() {
               <path
                 d="M5.16667 0.5V9.83333M0.5 5.16667H9.83333"
                 stroke="#143888"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          <button
+            className="main-export-btn"
+            onClick={() => setShowExportModal(true)}
+          >
+            Export data
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <polyline
+                points="7 10 12 15 17 10"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <line
+                x1="12"
+                y1="15"
+                x2="12"
+                y2="3"
+                stroke="white"
+                strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
@@ -143,6 +206,16 @@ function TeachersPage() {
         onClose={closeEditModal}
         onUpdated={fetchTeachers}
         teacher={selectedTeacher}
+      />
+
+      <ExportSelectionModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExportCSV={handleExportCSV}
+        onExportPDF={handleExportPDF}
+        isExportingCSV={isExportingCSV}
+        isExportingPDF={isExportingPDF}
+        entityName="teachers"
       />
     </div>
   );

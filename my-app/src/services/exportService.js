@@ -70,3 +70,213 @@ export const downloadAbsencesCSV = async (
   link.remove();
   URL.revokeObjectURL(url);
 };
+
+/**
+ * Download absences as a PDF file.
+ *
+ * @param {object} filters  { year, semester, month, week, day, module, group, teacher_id, student_id }
+ * @param {string} filename  suggested filename (default: absences.pdf)
+ */
+export const downloadAbsencesPDF = async (
+  filters,
+  filename = "absences.pdf",
+) => {
+  const response = await api.get(`${API_ENDPOINTS.EXPORT_ABSENCES}/pdf`, {
+    params: buildParams(filters),
+    headers: { Accept: "application/pdf" },
+    responseType: "blob",
+  });
+
+  const blob = new Blob([response.data], { type: "application/pdf" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+
+  // Cleanup
+  link.remove();
+  URL.revokeObjectURL(url);
+};
+
+/**
+ * Download students as a CSV file.
+ *
+ * @param {object} filters  { year, group, search }
+ * @param {string} filename  suggested filename (default: students.csv)
+ */
+export const downloadStudentsCSV = async (
+  filters = {},
+  filename = "students.csv",
+) => {
+  const response = await api.get(`/v1/export/students/csv`, {
+    params: buildParams(filters),
+    headers: { Accept: "text/csv" },
+    responseType: "blob",
+  });
+
+  const blob = new Blob([response.data], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+
+  // Cleanup
+  link.remove();
+  URL.revokeObjectURL(url);
+};
+
+/**
+ * Download students as a PDF file.
+ *
+ * @param {object} filters  { year, group, search }
+ * @param {string} filename  suggested filename (default: students.pdf)
+ */
+export const downloadStudentsPDF = async (
+  filters = {},
+  filename = "students.pdf",
+) => {
+  const response = await api.get(`/v1/export/students/pdf`, {
+    params: buildParams(filters),
+    headers: { Accept: "application/pdf" },
+    responseType: "blob",
+  });
+
+  const blob = new Blob([response.data], { type: "application/pdf" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+
+  // Cleanup
+  link.remove();
+  URL.revokeObjectURL(url);
+};
+
+/**
+ * Download teachers as a CSV file.
+ *
+ * @param {object} filters  { year, module, search }
+ * @param {string} filename  suggested filename (default: teachers.csv)
+ */
+export const downloadTeachersCSV = async (
+  filters = {},
+  filename = "teachers.csv",
+) => {
+  const response = await api.get(`/v1/export/teachers/csv`, {
+    params: buildParams(filters),
+    headers: { Accept: "text/csv" },
+    responseType: "blob",
+  });
+
+  const blob = new Blob([response.data], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+
+  // Cleanup
+  link.remove();
+  URL.revokeObjectURL(url);
+};
+
+/**
+ * Download teachers as a PDF file.
+ *
+ * @param {object} filters  { year, module, search }
+ * @param {string} filename  suggested filename (default: teachers.pdf)
+ */
+export const downloadTeachersPDF = async (
+  filters = {},
+  filename = "teachers.pdf",
+) => {
+  const response = await api.get(`/v1/export/teachers/pdf`, {
+    params: buildParams(filters),
+    headers: { Accept: "application/pdf" },
+    responseType: "blob",
+  });
+
+  const blob = new Blob([response.data], { type: "application/pdf" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+
+  // Cleanup
+  link.remove();
+  URL.revokeObjectURL(url);
+};
+
+/**
+ * Download planning as a CSV file.
+ *
+ * @param {object} filters  { year, semester, week, day, group, teacher_id, module }
+ * @param {string} filename  suggested filename (default: planning.csv)
+ */
+export const downloadPlanningCSV = async (
+  filters = {},
+  filename = "planning.csv",
+) => {
+  const response = await api.get(`/v1/export/planning/csv`, {
+    params: buildParams(filters),
+    headers: { Accept: "text/csv" },
+    responseType: "blob",
+  });
+
+  const blob = new Blob([response.data], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+
+  // Cleanup
+  link.remove();
+  URL.revokeObjectURL(url);
+};
+
+/**
+ * Download planning as a PDF file.
+ *
+ * @param {object} filters  { year, semester, week, day, group, teacher_id, module }
+ * @param {string} filename  suggested filename (default: planning.pdf)
+ */
+export const downloadPlanningPDF = async (
+  filters = {},
+  filename = "planning.pdf",
+) => {
+  const response = await api.get(`/v1/export/planning/pdf`, {
+    params: buildParams(filters),
+    headers: { Accept: "application/pdf" },
+    responseType: "blob",
+  });
+
+  const blob = new Blob([response.data], { type: "application/pdf" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+
+  // Cleanup
+  link.remove();
+  URL.revokeObjectURL(url);
+};

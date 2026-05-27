@@ -124,7 +124,7 @@ export default function SessionDetailsPage({ params }) {
 
   if (isLoadingSession) {
     return (
-      <div className="main-page flex items-center justify-center min-h-[500px]">
+      <div className="main-page flex items-center justify-center min-h-125">
         <div className="text-[#64748b] font-medium text-[16px]">Loading session details...</div>
       </div>
     );
@@ -165,7 +165,7 @@ export default function SessionDetailsPage({ params }) {
             onAddGroup={addGroup}
           />
         </div>
-        <div className="w-[380px] shrink-0">
+        <div className="w-95 shrink-0">
           <CompensationRequests requests={sessionRequests} />
         </div>
       </div>

@@ -1,89 +1,92 @@
-import AdminJustificationsTable from "@/components/dashboard/AdminJustificationsTable";
+"use client";
 
-const MOCK_JUSTIFICATIONS = [
-  {
-    id: 1,
-    student_name: "Bouhafs Rim",
-    student_email: "r.bouhafs@esi-sba.dz",
-    date: "2026-03-21",
-    reason: "Medical — Flu",
-    document: "/docs/medical_cert_001.pdf",
-    document_name: "medical_cert_001.pdf",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    student_name: "Ilyes Brahmi",
-    student_email: "i.brahmi@esi-sba.dz",
-    date: "2026-03-21",
-    reason: "Family emergency",
-    document: "/docs/family_cert_002.pdf",
-    document_name: "family_cert_002.pdf",
-    status: "Pending",
-  },
-  {
-    id: 3,
-    student_name: "Bouteraa Ahmed Yassine",
-    student_email: "a.bouteraa@esi-sba.dz",
-    date: "2026-03-21",
-    reason: "Medical — Surgery recovery",
-    document: "/docs/surgery_cert_003.pdf",
-    document_name: "surgery_cert_003.pdf",
-    status: "Pending",
-  },
-  {
-    id: 4,
-    student_name: "Meziani Ayla",
-    student_email: "a.meziani@esi-sba.dz",
-    date: "2026-03-21",
-    reason: "Transport strike",
-    document: "/docs/transport_proof_004.pdf",
-    document_name: "transport_proof_004.pdf",
-    status: "Rejected",
-  },
-  {
-    id: 5,
-    student_name: "Bouhafs Abd El Djalil",
-    student_email: "d.bouhafs@esi-sba.dz",
-    date: "2026-03-21",
-    reason: "Medical — Dental procedure",
-    document: "/docs/dental_cert_005.pdf",
-    document_name: "dental_cert_005.pdf",
-    status: "Approved",
-  },
-  {
-    id: 6,
-    student_name: "Trari Foued",
-    student_email: "f.trari@esi-sba.dz",
-    date: "2026-03-21",
-    reason: "Medical — Dental procedure",
-    document: "/docs/dental_cert_005.pdf",
-    document_name: "dental_cert_005.pdf",
-    status: "Rejected",
-  },
-  {
-    id: 7,
-    student_name: "Trari Foued",
-    student_email: "f.trari@esi-sba.dz",
-    date: "2026-03-21",
-    reason: "Medical — Dental procedure",
-    document: "/docs/dental_cert_005.pdf",
-    document_name: "dental_cert_005.pdf",
-    status: "Rejected",
-  },
-  {
-    id: 8,
-    student_name: "Ait Oussama",
-    student_email: "o.ait@esi-sba.dz",
-    date: "2026-03-20",
-    reason: "Administrative issue",
-    document: "/docs/admin_006.pdf",
-    document_name: "admin_006.pdf",
-    status: "Pending",
-  },
-];
+import { useState, useEffect, useCallback } from "react";
+import AdminJustificationsTable from "@/components/dashboard/AdminJustificationsTable";
+import { fetchJustifications, bulkApproveJustifications, bulkRejectJustifications, approveJustification } from "@/services/justificationService";
 
 export default function JustificationPage() {
+  const [data, setData] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [isApproving, setIsApproving] = useState(false);
+  const [isRejecting, setIsRejecting] = useState(false);
+
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(7);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetchJustifications({
+        page,
+        page_size: pageSize,
+        search: search || undefined,
+        status: status || undefined,
+      });
+      setData(res?.data || []);
+      setTotal(res?.total || 0);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, pageSize, search, status]);
+
+  const handleApproveAll = async () => {
+    setIsApproving(true);
+    try {
+      // Empty array/omitted ids implies approve all pending justifications
+      await bulkApproveJustifications();
+      await loadData();
+    } catch (err) {
+      console.error("Failed to bulk approve", err);
+    } finally {
+      setIsApproving(false);
+    }
+  };
+
+  const handleRejectAll = async () => {
+    const reason = window.prompt("Reason for rejecting all (optional):");
+    if (reason === null) return; // User cancelled the prompt
+    
+    setIsRejecting(true);
+    try {
+      await bulkRejectJustifications([], reason.trim());
+      await loadData();
+    } catch (err) {
+      console.error("Failed to bulk reject", err);
+    } finally {
+      setIsRejecting(false);
+    }
+  };
+
+  const handleApprove = async (id) => {
+    try {
+      await approveJustification(id);
+      await loadData();
+    } catch (err) {
+      console.error("Failed to approve", err);
+    }
+  };
+
+  const handleReject = async (id) => {
+    const reason = window.prompt("Reason for rejecting (optional):");
+    if (reason === null) return; // User cancelled
+
+    try {
+      await rejectJustification(id, reason.trim());
+      await loadData();
+    } catch (err) {
+      console.error("Failed to reject", err);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
   return (
     <div className="main-page">
       {/* ── Header row ── */}
@@ -93,7 +96,11 @@ export default function JustificationPage() {
           <p className="main-subtitle">View ESI attendance statistics</p>
         </div>
         <div className="justifications-actions">
-          <button className="justifications-action-btn justifications-action-btn--reject">
+          <button 
+            className="justifications-action-btn justifications-action-btn--reject"
+            onClick={handleRejectAll}
+            disabled={isRejecting}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="10"
@@ -111,7 +118,11 @@ export default function JustificationPage() {
             </svg>
             Reject all
           </button>
-          <button className="justifications-action-btn justifications-action-btn--approve">
+          <button 
+            className="justifications-action-btn justifications-action-btn--approve"
+            onClick={handleApproveAll}
+            disabled={isApproving}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="12"
@@ -132,7 +143,18 @@ export default function JustificationPage() {
         </div>
       </div>
 
-      <AdminJustificationsTable justifications={MOCK_JUSTIFICATIONS} />
+      <AdminJustificationsTable
+        justifications={data}
+        totalCount={total}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        searchQuery={search}
+        onSearch={setSearch}
+        loading={loading}
+        onApprove={handleApprove}
+        onReject={handleReject}
+      />
     </div>
   );
 }

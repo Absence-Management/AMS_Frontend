@@ -1,7 +1,7 @@
 "use client";
 
+import { useState } from "react";
 import DataTable from "@/components/shared/DataTable";
-import useDashboardTable from "@/hooks/useDashboardTable";
 
 const COLUMNS = ["Student", "Date", "Reason", "Document", "Status", "Action"];
 const PAGE_SIZE = 7;
@@ -51,8 +51,32 @@ function getStatusKey(status) {
   return "pending";
 }
 
-function JustificationRow({ justification }) {
+function JustificationRow({ justification, onApprove, onReject }) {
   const statusKey = getStatusKey(justification.status);
+  const [isApproving, setIsApproving] = useState(false);
+  const [isRejecting, setIsRejecting] = useState(false);
+
+  const handleApprove = async () => {
+    if (onApprove) {
+      setIsApproving(true);
+      try {
+        await onApprove(justification.id);
+      } finally {
+        setIsApproving(false);
+      }
+    }
+  };
+
+  const handleReject = async () => {
+    if (onReject) {
+      setIsRejecting(true);
+      try {
+        await onReject(justification.id);
+      } finally {
+        setIsRejecting(false);
+      }
+    }
+  };
 
   return (
     <div className="admin-data-table__row admin-justifications-table__row">
@@ -106,6 +130,8 @@ function JustificationRow({ justification }) {
             <button
               type="button"
               className="admin-justifications-table__inline-btn admin-justifications-table__inline-btn--approve"
+              onClick={handleApprove}
+              disabled={isApproving}
             >
               <CheckIcon />
               Approve
@@ -113,6 +139,8 @@ function JustificationRow({ justification }) {
             <button
               type="button"
               className="admin-justifications-table__inline-btn admin-justifications-table__inline-btn--reject"
+              onClick={handleReject}
+              disabled={isRejecting}
             >
               <CrossIcon />
               Reject
@@ -127,17 +155,23 @@ function JustificationRow({ justification }) {
 }
 
 function normalizeJustification(raw, index) {
-  const documentValue = raw?.document || raw?.document_url || null;
+  const student = raw?.student || {};
+  const doc = raw?.document || {};
+
+  const documentValue = doc.url || raw?.document_url || raw?.document || null;
   const documentName =
-    raw?.document_name ||
+    doc.name || raw?.document_name ||
     (typeof documentValue === "string" ? documentValue.split("/").pop() : null);
+
+  const dateDisplay = (raw?.start_date && raw?.end_date && raw.start_date !== raw.end_date)
+    ? `${formatDate(raw.start_date)} to ${formatDate(raw.end_date)}`
+    : formatDate(raw?.start_date || raw?.date || "");
 
   return {
     id: raw?.id || index,
-    studentName:
-      raw?.student_name || raw?.studentName || `Student ${index + 1}`,
-    studentEmail: raw?.student_email || raw?.email || "",
-    date: formatDate(raw?.date || ""),
+    studentName: student.full_name || raw?.student_name || raw?.studentName || `Student ${index + 1}`,
+    studentEmail: student.email || raw?.student_email || raw?.email || "",
+    date: dateDisplay,
     reason: raw?.reason || "—",
     document: documentValue,
     documentName,
@@ -145,44 +179,51 @@ function normalizeJustification(raw, index) {
   };
 }
 
-export default function AdminJustificationsTable({ justifications = [] }) {
-  const {
-    searchQuery,
-    handleSearch,
-    page,
-    setPage,
-    normalizedItems: normalizedJustifications,
-    pagedItems: pagedJustifications,
-    totalCount,
-  } = useDashboardTable({
-    items: justifications,
-    normalizeItem: normalizeJustification,
-    searchFields: ["studentName", "studentEmail", "date", "reason", "status"],
-    pageSize: PAGE_SIZE,
-  });
+export default function AdminJustificationsTable({ 
+  justifications = [],
+  totalCount = 0,
+  page = 1,
+  pageSize = 7,
+  onPageChange,
+  searchQuery = "",
+  onSearch,
+  loading = false,
+  onApprove,
+  onReject,
+}) {
+  const pagedJustifications = justifications.map((item, index) => normalizeJustification(item, index));
+
+  const handleSearch = (val) => {
+    if (onSearch) {
+      onSearch(val);
+      if (onPageChange) onPageChange(1);
+    }
+  };
 
   return (
     <DataTable
       title="Total Justifications"
-      count={normalizedJustifications.length}
+      count={totalCount}
       searchQuery={searchQuery}
       onSearch={handleSearch}
-      placeholder="Search student, email, date, reason, status..."
+      placeholder="Search student, email, reason, status..."
       columns={COLUMNS}
       tableClass="admin-justifications-table"
       headerClass="admin-data-table__header-row admin-justifications-table__header-row"
       footerClass="admin-justifications-table__footer"
       rowLabel="Requests"
       page={page}
-      pageSize={PAGE_SIZE}
+      pageSize={pageSize}
       totalCount={totalCount}
-      onPageChange={setPage}
-      emptyMessage="No justifications found."
+      onPageChange={onPageChange}
+      emptyMessage={loading ? "Loading justifications..." : "No justifications found."}
     >
       {pagedJustifications.map((justification) => (
         <JustificationRow
           key={justification.id}
           justification={justification}
+          onApprove={onApprove}
+          onReject={onReject}
         />
       ))}
     </DataTable>

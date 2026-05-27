@@ -121,4 +121,5 @@ export const API_ENDPOINTS = {
   TEACHER_MY_GROUPS: "/v1/teachers/my-groups",
   TEACHER_BY_MATRICULE: "/v1/accounts/teachers",
   ADMIN_BY_ID: "/v1/accounts/admins",
+  JUSTIFICATIONS: "/v1/justifications",
 };
