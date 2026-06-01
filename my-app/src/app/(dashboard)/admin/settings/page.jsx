@@ -697,8 +697,22 @@ function ProfileTab({ profile }) {
 
               {isAdmin && (
                 <>
-                  <div style={{ borderTop: "1px solid rgba(0,0,0,0.06)", margin: "8px 0" }} />
-                  <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "rgba(0,0,0,0.5)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                  <div
+                    style={{
+                      borderTop: "1px solid rgba(0,0,0,0.06)",
+                      margin: "8px 0",
+                    }}
+                  />
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: "rgba(0,0,0,0.5)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.06em",
+                    }}
+                  >
                     Admin
                   </p>
                   <InputField
@@ -718,29 +732,6 @@ function ProfileTab({ profile }) {
                     ]}
                     disabled={!editing}
                   />
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "rgba(0,0,0,0.5)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                      Permissions
-                    </p>
-                    {[
-                      { key: "can_import_data", label: "Import data" },
-                      { key: "can_export_data", label: "Export data" },
-                      { key: "can_manage_users", label: "Manage users" },
-                      { key: "can_manage_system_config", label: "Manage system config" },
-                      { key: "can_view_audit_logs", label: "View audit logs" },
-                    ].map((perm) => (
-                      <label key={perm.key} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: "rgba(0,0,0,0.7)", cursor: editing ? "pointer" : "default" }}>
-                        <input
-                          type="checkbox"
-                          checked={form[perm.key]}
-                          onChange={(e) => setForm((f) => ({ ...f, [perm.key]: e.target.checked }))}
-                          disabled={!editing}
-                          style={{ width: 16, height: 16, accentColor: "#143888" }}
-                        />
-                        {perm.label}
-                      </label>
-                    ))}
-                  </div>
                 </>
               )}
             </div>
