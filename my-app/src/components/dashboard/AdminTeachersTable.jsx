@@ -47,7 +47,9 @@ function TeacherActions({ teacher, onEdit }) {
             className="w-full text-left px-3 py-2 text-[13px] font-medium text-gray-700 hover:bg-[#f8faff] hover:text-[#143888] transition-colors flex items-center gap-2"
             onClick={() => {
               setIsOpen(false);
-              router.push(`/admin/teachers/${teacher.matricule || teacher.id}`);
+              router.push(
+                `/admin/teachers/${teacher.employeeId || teacher.matricule || teacher.id}`,
+              );
             }}
           >
             <svg
@@ -101,7 +103,7 @@ function TeacherRow({ teacher, onEditTeacher }) {
           <Avatar name={teacher.name} fallback="Teacher" />
           <div className="admin-data-table__name-info">
             <Link
-              href={`/admin/teachers/${teacher.matricule || teacher.id}`}
+              href={`/admin/teachers/${teacher.employeeId || teacher.matricule || teacher.id}`}
               className="admin-data-table__name hover:text-[#143888] hover:underline"
             >
               {teacher.name}
@@ -215,9 +217,13 @@ function formatTeacherGroups(raw) {
 }
 
 function normalizeTeacher(raw, index) {
+  const accountId = raw?.id ?? raw?.account_id ?? raw?.accountId;
+  const employeeId = raw?.employee_id || raw?.matricule || "";
   return {
-    // For navigation we must prefer the backend employee_id (e.g. ENS100) over UUID `id`
-    id: raw?.employee_id || raw?.matricule || raw?.id || raw?.email || index,
+    // Use account UUID for PATCH/keys; keep employee id for routing
+    id: accountId || employeeId || raw?.email || index,
+    accountId,
+    employeeId,
     first_name: raw?.first_name || "",
     last_name: raw?.last_name || "",
     name:

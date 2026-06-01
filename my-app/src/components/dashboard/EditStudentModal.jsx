@@ -105,7 +105,8 @@ export default function EditStudentModal({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!student?.id) {
+    const accountId = student?.accountId || student?.id || student?.account_id;
+    if (!accountId) {
       setSubmitError("Unable to update: missing student account id.");
       return;
     }
@@ -115,7 +116,7 @@ export default function EditStudentModal({
 
     try {
       const payload = normalizeForPayload(formData);
-      await studentsService.update(student.id, payload);
+      await studentsService.update(accountId, payload);
 
       await onUpdated?.();
       handleClose();

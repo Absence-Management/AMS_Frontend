@@ -43,8 +43,10 @@ export async function fetchTeachers() {
 export async function fetchStudentsWithAbsenceCounts(params = {}) {
   // Remove page and page_size if present
   const { page, page_size, ...filteredParams } = params;
-  const response = await api.get("/v1/students", { params: filteredParams });
-  console.log("/v1/students API response:", response.data);
+  const response = await api.get(API_ENDPOINTS.STUDENTS, {
+    params: filteredParams,
+  });
+  console.log("/v1/accounts/students API response:", response.data);
   // API returns an array directly
   return response.data;
 }
@@ -75,7 +77,7 @@ export const getAccountById = (accountId) =>
 export const getStudentById = (id) =>
   api.get(`${API_ENDPOINTS.ACCOUNTS}${id}`).then((r) => r.data);
 export const patchStudent = (id, data) =>
-  api.patch(`${API_ENDPOINTS.ACCOUNTS}${id}`, data).then((r) => r.data);
+  api.patch(`${API_ENDPOINTS.STUDENTS}${id}`, data).then((r) => r.data);
 export const updateStudentStatus = (id, status) =>
   api.patch(`/v1/students/${id}/status`, { status }).then((r) => r.data);
 
@@ -83,7 +85,7 @@ export const teachersService = createCrudService(API_ENDPOINTS.TEACHERS);
 export const getTeacherById = (id) =>
   api.get(`${API_ENDPOINTS.ACCOUNTS}${id}`).then((r) => r.data);
 export const patchTeacher = (id, data) =>
-  api.patch(`${API_ENDPOINTS.ACCOUNTS}${id}`, data).then((r) => r.data);
+  api.patch(`${API_ENDPOINTS.TEACHERS}/${id}`, data).then((r) => r.data);
 
 export const getAdminById = (id) =>
   api.get(`${API_ENDPOINTS.ADMIN_BY_ID}/${id}`).then((r) => r.data);

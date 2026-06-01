@@ -163,7 +163,8 @@ function normalizeStudent(raw) {
       : level || program);
 
   return {
-    id: raw.id,
+    id: raw.id ?? raw.account_id ?? raw.accountId,
+    accountId: raw.id ?? raw.account_id ?? raw.accountId,
     matricule: raw.matricule || raw.student_id,
     name:
       raw.full_name || `${raw.first_name || ""} ${raw.last_name || ""}`.trim(),
