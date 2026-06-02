@@ -128,7 +128,7 @@ export default function GroupDetailsPage({ params }) {
       </div>
 
       <div className="mt-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-        {loading && <div className="text-[#4a5567] p-4 text-center">Loading students...</div>}
+        {loading && null}
         {!loading && error && <div className="text-red-600 p-4 text-center">{error}</div>}
         {!loading && !error && (
           <TeacherStudentsTable

@@ -1,4 +1,5 @@
 "use client";
+
 import { use, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SessionDetailsHeader from "@/components/session/SessionDetailsHeader";
@@ -123,11 +124,7 @@ export default function SessionDetailsPage({ params }) {
   const absenceRate = students.length > 0 ? ((absentCount / students.length) * 100).toFixed(1) : "0.0";
 
   if (isLoadingSession) {
-    return (
-      <div className="main-page flex items-center justify-center min-h-125">
-        <div className="text-[#64748b] font-medium text-[16px]">Loading session details...</div>
-      </div>
-    );
+    return null;
   }
 
   if (!session) {

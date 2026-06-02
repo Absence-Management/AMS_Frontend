@@ -73,13 +73,7 @@ export default function TeacherProfilePage() {
   }
 
   if (loading) {
-    return (
-      <div className="main-page">
-        <div className="p-6 text-[14px] text-[#4a5567]">
-          Loading teacher profile…
-        </div>
-      </div>
-    );
+    return null;
   }
 
   if (error || !teacher) {

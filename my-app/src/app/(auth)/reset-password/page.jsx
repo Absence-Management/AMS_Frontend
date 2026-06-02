@@ -8,7 +8,7 @@ import { Suspense } from "react";
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="login-form px-20">Loading...</div>}>
+    <Suspense fallback={null}>
       <ResetPasswordForm />
     </Suspense>
   );

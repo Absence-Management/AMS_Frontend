@@ -660,11 +660,7 @@ export default function AdministratorsPage() {
       {error && <div className="error-message">{error}</div>}
 
       {/* ── Loading ── */}
-      {loading ? (
-        <div style={{ padding: 24, color: "#4a5567", fontSize: 14 }}>
-          Loading administrators…
-        </div>
-      ) : admins.length === 0 ? (
+      {loading ? null : admins.length === 0 ? (
         <div
           style={{
             padding: 48,

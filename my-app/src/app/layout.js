@@ -1,5 +1,8 @@
 import "./globals.css";
+import { Suspense } from "react";
 import { ToastProvider } from "@/components/shared/ToastProvider";
+import { LoadingProvider } from "@/components/shared/LoadingProvider";
+import NavigationLoader from "@/components/shared/NavigationLoader";
 
 export const metadata = {
   title: "AMS",
@@ -15,7 +18,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <ToastProvider>{children}</ToastProvider>
+        <LoadingProvider>
+          <Suspense fallback={null}>
+            <NavigationLoader />
+          </Suspense>
+          <ToastProvider>{children}</ToastProvider>
+        </LoadingProvider>
       </body>
     </html>
   );

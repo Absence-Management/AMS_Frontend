@@ -215,9 +215,7 @@ export default function TimetablePage() {
         </button>
       </div>
 
-      {loading ? (
-        <div className="timetable-page-state">Loading timetable...</div>
-      ) : error ? (
+      {loading ? null : error ? (
         <div className="timetable-page-state" style={{ color: "#dc2626" }}>
           Failed to load timetable data. Please try again later.
         </div>

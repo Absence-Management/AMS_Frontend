@@ -1,5 +1,8 @@
 "use client";
 
+import React from "react";
+import PencilLoader from "@/components/shared/PencilLoader";
+
 function getSessionStatus(session) {
   if (session.not_recorded) {
     return { label: "Not recorded", className: "student-history-status--pending" };
@@ -56,7 +59,7 @@ export default function StudentHistoryModal({
         </div>
 
         <div className="export-modal-body">
-          {loading && <div className="student-history-state">Loading history...</div>}
+          {loading && <div className="flex justify-center my-4"><PencilLoader width="40px" height="40px" /></div>}
           {!loading && error && <div className="student-history-error">{error}</div>}
 
           {!loading && !error && history && (

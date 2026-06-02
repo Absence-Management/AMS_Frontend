@@ -1,5 +1,7 @@
 "use client";
 
+import PencilLoader from "@/components/shared/PencilLoader";
+
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
@@ -27,7 +29,7 @@ export default function GoogleCallbackPage() {
   return (
     <div className="auth-callback-page">
       <div className="auth-callback-card" role="status" aria-live="polite">
-        <div className="auth-callback-spinner" aria-hidden="true" />
+        <div className="flex justify-center mb-[1.25rem]"><PencilLoader width="48px" height="48px" /></div>
         <h1 className="auth-callback-title">Signing you in...</h1>
         <p className="auth-callback-subtitle">
           Please wait while we finish your Google sign-in.

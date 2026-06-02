@@ -5,6 +5,7 @@
 
 "use client";
 
+import { useState } from "react";
 import {
   LineChart,
   Line,
@@ -13,10 +14,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Dot,
 } from "recharts";
-
-// ── Default data (replace with real API data via props) ───────────────────────
 
 // ── Calendar icon ─────────────────────────────────────────────────────────────
 const CalendarIcon = () => (
@@ -58,57 +56,143 @@ const CustomTooltip = ({ active, payload, label }) => {
 // ── Component ─────────────────────────────────────────────────────────────────
 /**
  * Props:
- *   data   { month: string, absences: number }[]  – chart data
- *   year   string | number                        – year shown top-right
+ *   data          { month: string, absences: number }[]  – chart data
+ *   selectedYear  number                                 – controlled year for selector
+ *   onYearChange  (year: number) => void                 – fires when user picks a year
+ *   loading       bool                                   – dims chart while fetching
  */
-export function MonthlyTrendChart({ data = DEFAULT_DATA, year = 2026 }) {
+export function MonthlyTrendChart({
+  data = [],
+  selectedYear,
+  onYearChange,
+  loading = false,
+}) {
+  const [open, setOpen] = useState(false);
+  const CURRENT_YEAR = new Date().getFullYear();
+  const YEAR_OPTIONS = Array.from({ length: 5 }, (_, i) => CURRENT_YEAR - i);
+  const displayYear = selectedYear ?? CURRENT_YEAR;
+
+  const handleSelect = (y) => {
+    setOpen(false);
+    if (onYearChange && y !== displayYear) onYearChange(y);
+  };
+
+  // Dynamic Y-axis domain — round up to nearest 20 above max value
+  const maxAbsences = data.length ? Math.max(...data.map((d) => d.absences)) : 80;
+  const yMax = Math.ceil(Math.max(maxAbsences, 20) / 20) * 20;
+  const yTicks = Array.from({ length: yMax / 20 + 1 }, (_, i) => i * 20);
+
   return (
     <div className="chart-card">
 
       {/* Header */}
       <div className="chart-header">
         <h3 className="chart-title">Monthly Absence Trends</h3>
-        <div className="chart-year">
-          <span>{year}</span>
-          <CalendarIcon />
+
+        {/* Year selector */}
+        <div style={{ position: "relative" }}>
+          <button
+            id="line-chart-year-btn"
+            className="chart-year"
+            onClick={() => setOpen((v) => !v)}
+            aria-haspopup="listbox"
+            aria-expanded={open}
+            style={{ background: "none", border: "none", padding: 0, display: "flex", alignItems: "center", cursor: "pointer" }}
+          >
+            <span>{displayYear - 1}–{displayYear}</span>
+            <CalendarIcon />
+            {/* Tiny chevron */}
+            <svg
+              width="8" height="5" viewBox="0 0 8 5" fill="none"
+              style={{ marginLeft: 4, transition: "transform 0.15s", transform: open ? "rotate(180deg)" : "none" }}
+            >
+              <path d="M1 1l3 3 3-3" stroke="#6f6f6f" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+
+          {open && (
+            <ul
+              role="listbox"
+              aria-label="Select academic year"
+              style={{
+                position: "absolute",
+                top: "calc(100% + 6px)",
+                right: 0,
+                zIndex: 50,
+                minWidth: 100,
+                margin: 0,
+                padding: "4px 0",
+                listStyle: "none",
+                background: "#fff",
+                border: "1px solid #e3e8ef",
+                borderRadius: 8,
+                boxShadow: "0 4px 16px rgba(0,0,0,0.10)",
+              }}
+            >
+              {YEAR_OPTIONS.map((y) => (
+                <li
+                  key={y}
+                  role="option"
+                  aria-selected={y === displayYear}
+                  onClick={() => handleSelect(y)}
+                  style={{
+                    padding: "6px 14px",
+                    fontSize: "0.75rem",
+                    fontWeight: y === displayYear ? 600 : 400,
+                    color: y === displayYear ? "#143888" : "#374151",
+                    background: y === displayYear ? "#eaf0ff" : "transparent",
+                    cursor: "pointer",
+                    whiteSpace: "nowrap",
+                    transition: "background 0.1s",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (y !== displayYear) e.currentTarget.style.background = "#f5f7ff";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = y === displayYear ? "#eaf0ff" : "transparent";
+                  }}
+                >
+                  {y - 1}–{y}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
 
       {/* Chart */}
-      <ResponsiveContainer width="100%" height={260}>
-        <LineChart
-          data={data}
-          margin={{ top: 8, right: 8, left: -18, bottom: 0 }}
-        >
-          <CartesianGrid
-            vertical={false}
-            stroke="#f0f0f0"
-            strokeDasharray=""
-          />
-          <XAxis
-            dataKey="month"
-            axisLine={false}
-            tickLine={false}
-            tick={{ fontFamily: "Inter, sans-serif", fontSize: 12, fill: "#000" }}
-          />
-          <YAxis
-            axisLine={false}
-            tickLine={false}
-            tick={{ fontFamily: "Inter, sans-serif", fontSize: 12, fill: "#000" }}
-            domain={[0, 80]}
-            ticks={[0, 20, 40, 60, 80]}
-          />
-          <Tooltip content={<CustomTooltip />} />
-          <Line
-            type="monotone"
-            dataKey="absences"
-            stroke="#e0161a"
-            strokeWidth={2}
-            dot={<CustomDot />}
-            activeDot={{ r: 6, fill: "#e0161a", stroke: "#fff", strokeWidth: 2 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <div style={{ opacity: loading ? 0.45 : 1, transition: "opacity 0.2s" }}>
+        <ResponsiveContainer width="100%" height={260}>
+          <LineChart
+            data={data}
+            margin={{ top: 8, right: 8, left: -18, bottom: 0 }}
+          >
+            <CartesianGrid vertical={false} stroke="#f0f0f0" strokeDasharray="" />
+            <XAxis
+              dataKey="month"
+              axisLine={false}
+              tickLine={false}
+              tick={{ fontFamily: "Inter, sans-serif", fontSize: 12, fill: "#000" }}
+            />
+            <YAxis
+              axisLine={false}
+              tickLine={false}
+              tick={{ fontFamily: "Inter, sans-serif", fontSize: 12, fill: "#000" }}
+              domain={[0, yMax]}
+              ticks={yTicks}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Line
+              type="monotone"
+              dataKey="absences"
+              stroke="#e0161a"
+              strokeWidth={2}
+              dot={<CustomDot />}
+              activeDot={{ r: 6, fill: "#e0161a", stroke: "#fff", strokeWidth: 2 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
 
     </div>
   );

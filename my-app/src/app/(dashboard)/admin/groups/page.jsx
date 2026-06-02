@@ -25,9 +25,6 @@ export default function GroupsPage() {
     fetchGroups();
   }, []);
 
-  if (loading) return <div>Loading groups…</div>;
-  if (error) return <div>{error}</div>;
-
   return (
     <div className="main-page groups-page">
       <div className="main-header">
@@ -36,7 +33,12 @@ export default function GroupsPage() {
           <p className="main-subtitle">View and manage groups</p>
         </div>
       </div>
-      <AdminGroupsTable groups={groups} />
+      
+      {loading ? null : error ? (
+        <div className="error-message mt-4">{error}</div>
+      ) : (
+        <AdminGroupsTable groups={groups} />
+      )}
     </div>
   );
 }

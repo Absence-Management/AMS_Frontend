@@ -99,7 +99,7 @@ export default function TimetablePage() {
           Reset
         </button>
       </div>
-            {loading && <p>Loading...</p>}
+            {loading && null}
             {error && <p>Error loading timetable.</p>}
             {!loading && !error && (
                 <TimetableGrid

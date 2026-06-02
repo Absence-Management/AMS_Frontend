@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SessionCard from "@/components/session/SessionCard";
@@ -101,7 +102,7 @@ export default function Page() {
       </div>
 
       <div className="sessions-page__grid">
-        {loading && <div>Loading sessions...</div>}
+        {loading && null}
         {error && <div className="text-red-500">{error}</div>}
         {!loading && !error && sessions.length === 0 && (
           <div>No sessions found for today.</div>

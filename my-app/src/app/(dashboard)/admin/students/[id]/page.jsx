@@ -124,13 +124,7 @@ export default function StudentProfilePage() {
   }
 
   if (loading) {
-    return (
-      <div className="main-page">
-        <div style={{ padding: 24, color: "#4a5567", fontSize: 14 }}>
-          Loading student profile…
-        </div>
-      </div>
-    );
+    return null;
   }
 
   if (error || !student) {

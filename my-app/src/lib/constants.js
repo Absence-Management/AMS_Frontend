@@ -120,6 +120,6 @@ export const API_ENDPOINTS = {
   MY_SCHEDULE: "/v1/planning/my-schedule",
   TEACHER_MY_GROUPS: "/v1/teachers/my-groups",
   TEACHER_BY_MATRICULE: "/v1/accounts/teachers",
-  ADMIN_BY_ID: "/v1/accounts/admins",
+  ADMIN_BY_ID: "/v1/accounts/administrators",
   JUSTIFICATIONS: "/v1/justifications",
 };

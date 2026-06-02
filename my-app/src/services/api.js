@@ -5,6 +5,7 @@
 
 import axios from "axios";
 import { CONFIG, API_ENDPOINTS } from "@/lib/constants";
+import { apiLoadingStart, apiLoadingStop } from "@/lib/loadingBus";
 
 const api = axios.create({
   baseURL: "/api", // ← was CONFIG.API_URL or the env var
@@ -30,23 +31,21 @@ api.interceptors.request.use((config) => {
     }
   }
 
+  if (typeof window !== "undefined") {
+    config.metadata = { ...(config.metadata || {}), startedAt: Date.now() };
+    apiLoadingStart();
+  }
+
   return config;
 });
-const processQueue = (error) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve();
-    }
-  });
-  failedQueue = [];
-};
 
 api.interceptors.response.use(
-  (response) => response,
-
+  (response) => {
+    if (typeof window !== "undefined") apiLoadingStop();
+    return response;
+  },
   async (error) => {
+    if (typeof window !== "undefined") apiLoadingStop();
     const originalRequest = error.config;
     const requestUrl = originalRequest?.url || "";
     const shouldSkipRefresh =
@@ -93,5 +92,16 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+function processQueue(error) {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve();
+    }
+  });
+  failedQueue = [];
+}
 
 export default api;

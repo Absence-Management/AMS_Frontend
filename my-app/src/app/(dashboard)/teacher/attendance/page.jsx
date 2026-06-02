@@ -54,7 +54,7 @@ export default function TeacherAttendancePage() {
       </div>
 
       <div className="mt-6">
-        {loading && <div className="text-[#4a5567] p-4 text-center">Loading your groups...</div>}
+        {loading && null}
         {!loading && error && <div className="text-red-600 p-4 text-center">{error}</div>}
         {!loading && !error && <TeacherGroupsGrid groups={groups} />}
       </div>

@@ -7,7 +7,7 @@ import AdminTeachersTable from "@/components/dashboard/AdminTeachersTable";
 import AddTeacherModal from "@/components/dashboard/AddTeacherModal";
 import EditTeacherModal from "@/components/dashboard/EditTeacherModal";
 import AccountImportPanel from "@/components/dashboard/AccountImportPanel";
-import ExportSelectionModal from "@/components/dashboard/ExportSelectionModal";
+import ExportDropdown from "@/components/dashboard/ExportDropdown";
 
 function TeachersPage() {
   // ── State ─────────────────────────────────────
@@ -20,7 +20,6 @@ function TeachersPage() {
   const [showImportPanel, setShowImportPanel] = useState(false);
   const [isExportingCSV, setIsExportingCSV] = useState(false);
   const [isExportingPDF, setIsExportingPDF] = useState(false);
-  const [showExportModal, setShowExportModal] = useState(false);
 
   // ── Fetch Teachers ───────────────────────────────
   const fetchTeachers = async () => {
@@ -45,7 +44,6 @@ function TeachersPage() {
     setIsExportingCSV(true);
     try {
       await downloadTeachersCSV({}, "teachers.csv");
-      setShowExportModal(false);
     } catch (error) {
       console.error("Failed to export teachers CSV", error);
       alert("Failed to export teachers. Please try again.");
@@ -58,7 +56,6 @@ function TeachersPage() {
     setIsExportingPDF(true);
     try {
       await downloadTeachersPDF({}, "teachers.pdf");
-      setShowExportModal(false);
     } catch (error) {
       console.error("Failed to export teachers PDF", error);
       alert("Failed to export teachers. Please try again.");
@@ -116,38 +113,12 @@ function TeachersPage() {
               />
             </svg>
           </button>
-          <button
-            className="main-export-btn"
-            onClick={() => setShowExportModal(true)}
-          >
-            Export data
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <polyline
-                points="7 10 12 15 17 10"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <line
-                x1="12"
-                y1="15"
-                x2="12"
-                y2="3"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
+          <ExportDropdown
+            onExportCSV={handleExportCSV}
+            onExportPDF={handleExportPDF}
+            isExportingCSV={isExportingCSV}
+            isExportingPDF={isExportingPDF}
+          />
           <button
             className="main-export-btn"
             onClick={() => setShowImportPanel((current) => !current)}
@@ -187,11 +158,7 @@ function TeachersPage() {
       )}
 
       {/* Teachers Table */}
-      {loading ? (
-        <div className="border border-[#e3e8ef] rounded-xl px-4 py-6 text-[14px] text-[#4a5567] bg-white">
-          Loading teachers...
-        </div>
-      ) : (
+      {loading ? null : (
         <AdminTeachersTable teachers={teachers} onEditTeacher={openEditModal} />
       )}
 
@@ -206,16 +173,6 @@ function TeachersPage() {
         onClose={closeEditModal}
         onUpdated={fetchTeachers}
         teacher={selectedTeacher}
-      />
-
-      <ExportSelectionModal
-        isOpen={showExportModal}
-        onClose={() => setShowExportModal(false)}
-        onExportCSV={handleExportCSV}
-        onExportPDF={handleExportPDF}
-        isExportingCSV={isExportingCSV}
-        isExportingPDF={isExportingPDF}
-        entityName="teachers"
       />
     </div>
   );

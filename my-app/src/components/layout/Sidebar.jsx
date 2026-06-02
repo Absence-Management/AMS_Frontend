@@ -456,11 +456,6 @@ const ADMIN_SECTIONS = [
   {
     title: "System",
     links: [
-      {
-        label: "Notifications",
-        href: "/admin/notifications",
-        icon: "notifications",
-      },
       { label: "Settings", href: "/admin/settings", icon: "settings" },
       {
         label: "Manage data",

@@ -2,7 +2,14 @@
 
 import { useState, useEffect, useCallback } from "react";
 import AdminJustificationsTable from "@/components/dashboard/AdminJustificationsTable";
-import { fetchJustifications, bulkApproveJustifications, bulkRejectJustifications, approveJustification } from "@/services/justificationService";
+import {
+  fetchJustifications,
+  bulkApproveJustifications,
+  bulkRejectJustifications,
+  approveJustification,
+  rejectJustification,
+} from "@/services/justificationService";
+
 
 export default function JustificationPage() {
   const [data, setData] = useState([]);
@@ -15,6 +22,10 @@ export default function JustificationPage() {
   const [pageSize, setPageSize] = useState(7);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
+  const [scopeType, setScopeType] = useState("");
+  const [sortBy, setSortBy] = useState("date");
+  const [sortOrder, setSortOrder] = useState("desc");
+
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -24,6 +35,9 @@ export default function JustificationPage() {
         page_size: pageSize,
         search: search || undefined,
         status: status || undefined,
+        scope_type: scopeType || undefined,
+        sort_by: sortBy,
+        sort_order: sortOrder,
       });
       setData(res?.data || []);
       setTotal(res?.total || 0);
@@ -32,7 +46,8 @@ export default function JustificationPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize, search, status]);
+  }, [page, pageSize, search, status, scopeType, sortBy, sortOrder]);
+
 
   const handleApproveAll = async () => {
     setIsApproving(true);
@@ -143,18 +158,20 @@ export default function JustificationPage() {
         </div>
       </div>
 
-      <AdminJustificationsTable
-        justifications={data}
-        totalCount={total}
-        page={page}
-        pageSize={pageSize}
-        onPageChange={setPage}
-        searchQuery={search}
-        onSearch={setSearch}
-        loading={loading}
-        onApprove={handleApprove}
-        onReject={handleReject}
-      />
+      {loading ? null : (
+        <AdminJustificationsTable
+          justifications={data}
+          totalCount={total}
+          page={page}
+          pageSize={pageSize}
+          onPageChange={setPage}
+          searchQuery={search}
+          onSearch={setSearch}
+          loading={loading}
+          onApprove={handleApprove}
+          onReject={handleReject}
+        />
+      )}
     </div>
   );
 }

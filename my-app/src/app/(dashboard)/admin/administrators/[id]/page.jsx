@@ -193,11 +193,7 @@ export default function AdminProfilePage() {
   }, [accountId, fetchAdmin]);
 
   if (loading) {
-    return (
-      <div className="main-page">
-        <div className="p-6 text-[14px] text-[#4a5567]">Loading admin profile\u2026</div>
-      </div>
-    );
+    return null;
   }
 
   if (error || !admin) {
@@ -320,7 +316,7 @@ export default function AdminProfilePage() {
         <EditAdminModal
           admin={admin}
           onClose={() => setShowEdit(false)}
-          onSaved={load}
+          onSaved={fetchAdmin}
         />
       )}
     </div>
