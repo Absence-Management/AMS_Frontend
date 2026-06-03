@@ -67,26 +67,27 @@ export function Navbar() {
         <NotificationDropdown />
         <div className="navbar-user">
           <div className="navbar-user-info flex flex-col items-end">
-          <span className="navbar-name font-medium text-gray-900">
-            {fullName}
-          </span>
-          <span className="navbar-role text-xs text-gray-500 mt-0.5">
-            {role === ROLES.ADMIN ? "Admin" : "Teacher"}
-          </span>
-        </div>
-        <div className="navbar-avatar ml-2" aria-hidden="true">
-          {!imgError ? (
-            <Image
-              src="/profile.png"
-              width={48}
-              height={48}
-              alt={fullName || "Profile"}
-              onError={() => setImgError(true)}
-            />
-          ) : (
-            <span className="navbar-avatar-initials">{initials || "U"}</span>
-          )}
-        </div>
+            <span className="navbar-name font-medium text-gray-900">
+              {fullName}
+            </span>
+            <span className="navbar-role text-xs text-gray-500 mt-0.5">
+              {role === ROLES.ADMIN ? "Admin" : "Teacher"}
+            </span>
+          </div>
+          <div className="navbar-avatar ml-2" aria-hidden="true">
+            {!imgError ? (
+              <Image
+                src="/keskes-nabil-1.png"
+                width={48}
+                height={48}
+                alt={fullName || "Profile photo"}
+                className="h-full w-full object-cover"
+                onError={() => setImgError(true)}
+              />
+            ) : (
+              <span className="navbar-avatar-initials">{initials || "U"}</span>
+            )}
+          </div>
         </div>
       </div>
     </header>
