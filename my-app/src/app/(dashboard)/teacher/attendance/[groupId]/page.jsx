@@ -1,5 +1,6 @@
 "use client";
 
+import PencilLoader from "@/components/shared/PencilLoader";
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import TeacherStudentsTable from "@/components/dashboard/TeacherStudentsTable";
@@ -100,6 +101,14 @@ export default function GroupDetailsPage({ params }) {
     }
   }
 
+  if (loading) {
+    return (
+      <div className="main-page flex items-center justify-center min-h-[50vh]">
+        <PencilLoader width="60px" height="60px" />
+      </div>
+    );
+  }
+
   return (
     <div className="main-page">
       <div className="main-header">
@@ -128,9 +137,8 @@ export default function GroupDetailsPage({ params }) {
       </div>
 
       <div className="mt-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-        {loading && null}
-        {!loading && error && <div className="text-red-600 p-4 text-center">{error}</div>}
-        {!loading && !error && (
+        {error && <div className="text-red-600 p-4 text-center">{error}</div>}
+        {!error && (
           <TeacherStudentsTable
             students={students}
             onViewHistory={handleViewHistory}

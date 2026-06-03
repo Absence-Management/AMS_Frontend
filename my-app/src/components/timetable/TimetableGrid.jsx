@@ -81,6 +81,13 @@ function TimetableSessionChip({ session, subjectColorMap }) {
     teacherNames = session.teacher;
   }
 
+  const sectionOrSpeciality =
+    session.speciality && session.speciality.trim()
+      ? session.speciality.trim()
+      : session.section && session.section.trim()
+        ? `Section ${session.section.trim()}`
+        : null;
+
   return (
     <div
       style={{
@@ -93,7 +100,18 @@ function TimetableSessionChip({ session, subjectColorMap }) {
         lineHeight: 1.4,
       }}
       >
-      <div className="px-2 py-1 bg-neutral-100 w-fit rounded-full">{session.year}</div>
+      <div className="flex flex-wrap gap-1 mb-1">
+        {session.year && (
+          <span className="px-2 py-0.5 bg-white/60 text-neutral-700 rounded-full text-[10px] font-medium border border-black/5">
+            {session.year}
+          </span>
+        )}
+        {sectionOrSpeciality && (
+          <span className="px-2 py-0.5 bg-white/60 text-neutral-700 rounded-full text-[10px] font-medium border border-black/5">
+            {sectionOrSpeciality}
+          </span>
+        )}
+      </div>
       <div style={{ color: colors.text, opacity: 1 }}>{label}</div>
       <div style={{ fontWeight: 600, color: colors.text, fontSize: 11 }}>
         {session.subject}

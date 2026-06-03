@@ -7,14 +7,22 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { previewAbsences, downloadAbsencesCSV, downloadAbsencesPDF } from "@/services/exportService";
+import {
+  previewAbsences,
+  downloadAbsencesCSV,
+  downloadAbsencesPDF,
+} from "@/services/exportService";
 
 const EMPTY_FILTERS = {
-  filiere: "",
-  code_module: "",
-  date_from: "",
-  date_to: "",
-  matricule_etudiant: "",
+  year: "",
+  semester: "",
+  month: "",
+  week: "",
+  day: "",
+  module: "",
+  group: "",
+  teacher_id: "",
+  student_id: "",
 };
 
 const PAGE_SIZE = 10;
@@ -90,10 +98,15 @@ export function useExport() {
     try {
       // Build a descriptive filename from active filters
       const parts = ["absences"];
-      if (filters.filiere) parts.push(filters.filiere);
-      if (filters.code_module) parts.push(filters.code_module);
-      if (filters.date_from) parts.push(`from-${filters.date_from}`);
-      if (filters.date_to) parts.push(`to-${filters.date_to}`);
+      if (filters.year) parts.push(`year-${filters.year}`);
+      if (filters.semester) parts.push(`semester-${filters.semester}`);
+      if (filters.month) parts.push(`month-${filters.month}`);
+      if (filters.week) parts.push(`week-${filters.week}`);
+      if (filters.day) parts.push(`day-${filters.day}`);
+      if (filters.module) parts.push(`module-${filters.module}`);
+      if (filters.group) parts.push(`group-${filters.group}`);
+      if (filters.teacher_id) parts.push(`teacher-${filters.teacher_id}`);
+      if (filters.student_id) parts.push(`student-${filters.student_id}`);
       const filename = `${parts.join("_")}.csv`;
 
       await downloadAbsencesCSV(filters, filename);
@@ -113,26 +126,18 @@ export function useExport() {
     try {
       // Build a descriptive filename from active filters
       const parts = ["absences"];
-      if (filters.filiere) parts.push(filters.filiere);
-      if (filters.code_module) parts.push(filters.code_module);
-      if (filters.date_from) parts.push(`from-${filters.date_from}`);
-      if (filters.date_to) parts.push(`to-${filters.date_to}`);
+      if (filters.year) parts.push(`year-${filters.year}`);
+      if (filters.semester) parts.push(`semester-${filters.semester}`);
+      if (filters.month) parts.push(`month-${filters.month}`);
+      if (filters.week) parts.push(`week-${filters.week}`);
+      if (filters.day) parts.push(`day-${filters.day}`);
+      if (filters.module) parts.push(`module-${filters.module}`);
+      if (filters.group) parts.push(`group-${filters.group}`);
+      if (filters.teacher_id) parts.push(`teacher-${filters.teacher_id}`);
+      if (filters.student_id) parts.push(`student-${filters.student_id}`);
       const filename = `${parts.join("_")}.pdf`;
 
-      // Map existing export filters to PDF API filters
-      const pdfFilters = {
-        module: filters.code_module,
-        student_id: filters.matricule_etudiant,
-        // Optional additions if the UI is updated later:
-        // year, semester, month, week, day, group, teacher_id
-      };
-
-      // Add mapped fields dynamically so buildParams works
-      Object.keys(pdfFilters).forEach(key => {
-        if (pdfFilters[key] === undefined) delete pdfFilters[key];
-      });
-
-      await downloadAbsencesPDF(pdfFilters, filename);
+      await downloadAbsencesPDF(filters, filename);
       return true;
     } catch (err) {
       console.error("[useExport] PDF download failed:", err);

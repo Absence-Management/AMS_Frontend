@@ -1,5 +1,6 @@
 "use client";
 
+import PencilLoader from "@/components/shared/PencilLoader";
 import { useState, useEffect } from "react";
 import ExportAbsencesButton from "@/components/dashboard/ExportAbsencesButton";
 import TeacherGroupsGrid from "@/components/dashboard/TeacherGroupsGrid";
@@ -40,6 +41,14 @@ export default function TeacherAttendancePage() {
     };
   }, []);
 
+  if (loading) {
+    return (
+      <div className="main-page flex items-center justify-center min-h-[50vh]">
+        <PencilLoader width="60px" height="60px" />
+      </div>
+    );
+  }
+
   return (
     <div className="main-page">
       <div className="main-header">
@@ -54,9 +63,8 @@ export default function TeacherAttendancePage() {
       </div>
 
       <div className="mt-6">
-        {loading && null}
-        {!loading && error && <div className="text-red-600 p-4 text-center">{error}</div>}
-        {!loading && !error && <TeacherGroupsGrid groups={groups} />}
+        {error && <div className="text-red-600 p-4 text-center">{error}</div>}
+        {!error && <TeacherGroupsGrid groups={groups} />}
       </div>
     </div>
   );

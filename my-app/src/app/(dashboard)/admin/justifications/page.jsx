@@ -1,5 +1,6 @@
 "use client";
 
+import PencilLoader from "@/components/shared/PencilLoader";
 import { useState, useEffect, useCallback } from "react";
 import AdminJustificationsTable from "@/components/dashboard/AdminJustificationsTable";
 import {
@@ -102,6 +103,14 @@ export default function JustificationPage() {
     loadData();
   }, [loadData]);
 
+  if (loading) {
+    return (
+      <div className="main-page flex items-center justify-center min-h-[50vh]">
+        <PencilLoader width="60px" height="60px" />
+      </div>
+    );
+  }
+
   return (
     <div className="main-page">
       {/* ── Header row ── */}
@@ -158,20 +167,18 @@ export default function JustificationPage() {
         </div>
       </div>
 
-      {loading ? null : (
-        <AdminJustificationsTable
-          justifications={data}
-          totalCount={total}
-          page={page}
-          pageSize={pageSize}
-          onPageChange={setPage}
-          searchQuery={search}
-          onSearch={setSearch}
-          loading={loading}
-          onApprove={handleApprove}
-          onReject={handleReject}
-        />
-      )}
+      <AdminJustificationsTable
+        justifications={data}
+        totalCount={total}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        searchQuery={search}
+        onSearch={setSearch}
+        loading={loading}
+        onApprove={handleApprove}
+        onReject={handleReject}
+      />
     </div>
   );
 }

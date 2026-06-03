@@ -19,15 +19,7 @@ import Link from "next/link";
 import { useState, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const COLUMNS = [
-  "Name",
-  "Student ID",
-  "Year",
-  "Group",
-  "Absences",
-  "Status",
-  "Action",
-];
+const COLUMNS = ["Name", "Student ID", "Year", "Group", "Status", "Action"];
 const PAGE_SIZE = 10;
 
 function StudentActions({ student, onEdit }) {
@@ -136,10 +128,6 @@ function StudentRow({ student, onEditStudent }) {
 
       <div className="admin-data-table__cell admin-data-table__text-cell">
         {student.group || "—"}
-      </div>
-
-      <div className="admin-data-table__cell admin-data-table__text-cell">
-        {student.absencesCount ?? student.total_absences ?? 0}
       </div>
 
       <div className="admin-data-table__cell">

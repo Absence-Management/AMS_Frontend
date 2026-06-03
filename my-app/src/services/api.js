@@ -33,7 +33,9 @@ api.interceptors.request.use((config) => {
 
   if (typeof window !== "undefined") {
     config.metadata = { ...(config.metadata || {}), startedAt: Date.now() };
-    apiLoadingStart();
+    if (!config.skipGlobalLoader) {
+      apiLoadingStart();
+    }
   }
 
   return config;
@@ -41,11 +43,11 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => {
-    if (typeof window !== "undefined") apiLoadingStop();
+    if (typeof window !== "undefined" && !response.config?.skipGlobalLoader) apiLoadingStop();
     return response;
   },
   async (error) => {
-    if (typeof window !== "undefined") apiLoadingStop();
+    if (typeof window !== "undefined" && !error.config?.skipGlobalLoader) apiLoadingStop();
     const originalRequest = error.config;
     const requestUrl = originalRequest?.url || "";
     const shouldSkipRefresh =

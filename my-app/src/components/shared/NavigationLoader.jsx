@@ -9,13 +9,18 @@ const MIN_NAV_LOADER_MS = 350;
 export default function NavigationLoader() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const isFirst = useRef(true);
+  const lastRouteRef = useRef({ pathname: null, search: null });
 
   useEffect(() => {
-    if (isFirst.current) {
-      isFirst.current = false;
-      return;
-    }
+    const search = searchParams?.toString() ?? "";
+    const lastRoute = lastRouteRef.current;
+    const isFirstRun = lastRoute.pathname === null && lastRoute.search === null;
+    const hasChanged =
+      lastRoute.pathname !== pathname || lastRoute.search !== search;
+
+    lastRouteRef.current = { pathname, search };
+
+    if (isFirstRun || !hasChanged) return;
 
     apiLoadingStart();
     const startTime = Date.now();

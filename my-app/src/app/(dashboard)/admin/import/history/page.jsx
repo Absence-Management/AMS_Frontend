@@ -1,5 +1,6 @@
 "use client";
 
+import PencilLoader from "@/components/shared/PencilLoader";
 import { useCallback, useEffect, useState } from "react";
 import DataTable from "@/components/shared/DataTable";
 import { getImportExportHistory } from "@/services/importService";
@@ -96,6 +97,14 @@ export default function ImportHistoryPage() {
     loadHistory();
   }, [loadHistory]);
 
+  if (loading) {
+    return (
+      <div className="main-page flex items-center justify-center min-h-[50vh]">
+        <PencilLoader width="60px" height="60px" />
+      </div>
+    );
+  }
+
   return (
     <div className="main-page">
       <div className="main-header">
@@ -109,32 +118,26 @@ export default function ImportHistoryPage() {
 
       {error && <div className="error-message">{error}</div>}
 
-      {loading ? (
-        <div className="border border-[#e3e8ef] rounded-xl px-4 py-6 text-[14px] text-[#4a5567] bg-white">
-          Loading import history...
-        </div>
-      ) : (
-        <DataTable
-          title="Import history"
-          count={total}
-          showSearch={false}
-          showDefaultTools={false}
-          columns={COLUMNS}
-          tableClass="admin-import-history-table"
-          headerClass="admin-data-table__header-row admin-import-history-table__header-row"
-          footerClass="admin-import-history-table__footer"
-          emptyMessage="No import/export history found."
-          rowLabel="records"
-          page={page}
-          pageSize={PAGE_SIZE}
-          totalCount={total}
-          onPageChange={setPage}
-        >
-          {historyRows.map((row) => (
-            <ImportHistoryRow key={row.id} row={row} />
-          ))}
-        </DataTable>
-      )}
+      <DataTable
+        title="Import history"
+        count={total}
+        showSearch={false}
+        showDefaultTools={false}
+        columns={COLUMNS}
+        tableClass="admin-import-history-table"
+        headerClass="admin-data-table__header-row admin-import-history-table__header-row"
+        footerClass="admin-import-history-table__footer"
+        emptyMessage="No import/export history found."
+        rowLabel="records"
+        page={page}
+        pageSize={PAGE_SIZE}
+        totalCount={total}
+        onPageChange={setPage}
+      >
+        {historyRows.map((row) => (
+          <ImportHistoryRow key={row.id} row={row} />
+        ))}
+      </DataTable>
     </div>
   );
 }

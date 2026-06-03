@@ -1,5 +1,6 @@
 "use client";
 
+import PencilLoader from "@/components/shared/PencilLoader";
 import { useState, useEffect } from "react";
 import { fetchStudentsWithAbsenceCounts } from "@/services/accountsService";
 import { downloadStudentsCSV, downloadStudentsPDF } from "@/services/exportService";
@@ -83,6 +84,14 @@ function StudentsPage() {
     setSelectedStudent(null);
   };
 
+  if (loading) {
+    return (
+      <div className="main-page flex items-center justify-center min-h-[50vh]">
+        <PencilLoader width="60px" height="60px" />
+      </div>
+    );
+  }
+
   return (
     <div className="main-page">
       {/* ── Header row ── */}
@@ -156,9 +165,7 @@ function StudentsPage() {
       )}
 
       {/* Students Table */}
-      {loading ? null : (
-        <AdminStudentsTable students={students} onEditStudent={openEditModal} />
-      )}
+      <AdminStudentsTable students={students} onEditStudent={openEditModal} />
 
       <AddStudentModal
         isOpen={showModal}

@@ -11,6 +11,7 @@ const postImportFile = async (endpoint, file) => {
     headers: {
       "Content-Type": "multipart/form-data",
     },
+    skipGlobalLoader: true,
     validateStatus: (status) => IMPORT_RESPONSE_STATUS.has(status),
   });
 

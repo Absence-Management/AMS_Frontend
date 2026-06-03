@@ -1,5 +1,6 @@
 "use client";
 
+import PencilLoader from "@/components/shared/PencilLoader";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SessionCard from "@/components/session/SessionCard";
@@ -90,6 +91,14 @@ export default function Page() {
     setRescheduleTarget(null);
   };
 
+  if (loading) {
+    return (
+      <div className="main-page flex items-center justify-center min-h-[50vh]">
+        <PencilLoader width="60px" height="60px" />
+      </div>
+    );
+  }
+
   return (
     <div className="main-page">
       <div className="main-header">
@@ -102,9 +111,8 @@ export default function Page() {
       </div>
 
       <div className="sessions-page__grid">
-        {loading && null}
         {error && <div className="text-red-500">{error}</div>}
-        {!loading && !error && sessions.length === 0 && (
+        {!error && sessions.length === 0 && (
           <div>No sessions found for today.</div>
         )}
 

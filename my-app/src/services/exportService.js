@@ -51,8 +51,8 @@ export const downloadAbsencesCSV = async (
   filters,
   filename = "absences.csv",
 ) => {
-  const response = await api.get(API_ENDPOINTS.EXPORT_ABSENCES, {
-    params: buildParams(filters, { page: 1, page_size: EXPORT_MAX_ROWS }),
+  const response = await api.get(API_ENDPOINTS.EXPORT_ABSENCES_CSV, {
+    params: buildParams(filters),
     headers: { Accept: "text/csv" },
     responseType: "blob",
   });
@@ -81,7 +81,7 @@ export const downloadAbsencesPDF = async (
   filters,
   filename = "absences.pdf",
 ) => {
-  const response = await api.get(`${API_ENDPOINTS.EXPORT_ABSENCES}/pdf`, {
+  const response = await api.get(API_ENDPOINTS.EXPORT_ABSENCES_PDF, {
     params: buildParams(filters),
     headers: { Accept: "application/pdf" },
     responseType: "blob",

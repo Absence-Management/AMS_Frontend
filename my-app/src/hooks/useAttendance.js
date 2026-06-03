@@ -135,5 +135,6 @@ export function useAttendance(sessionId, initialMockData = null) {
     saveAttendance,
     addStudent,
     addGroup,
+    fetchStudents,
   };
 }

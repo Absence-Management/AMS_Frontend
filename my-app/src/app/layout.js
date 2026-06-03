@@ -2,8 +2,6 @@ import "./globals.css";
 import { Suspense } from "react";
 import { ToastProvider } from "@/components/shared/ToastProvider";
 import { LoadingProvider } from "@/components/shared/LoadingProvider";
-import NavigationLoader from "@/components/shared/NavigationLoader";
-
 export const metadata = {
   title: "AMS",
   description: "Absence Management System",
@@ -19,9 +17,6 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <LoadingProvider>
-          <Suspense fallback={null}>
-            <NavigationLoader />
-          </Suspense>
           <ToastProvider>{children}</ToastProvider>
         </LoadingProvider>
       </body>

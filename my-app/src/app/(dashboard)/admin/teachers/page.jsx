@@ -1,5 +1,6 @@
 "use client";
 
+import PencilLoader from "@/components/shared/PencilLoader";
 import { useState, useEffect } from "react";
 import { fetchTeachers as fetchTeachersList } from "@/services/accountsService";
 import { downloadTeachersCSV, downloadTeachersPDF } from "@/services/exportService";
@@ -86,6 +87,14 @@ function TeachersPage() {
     setSelectedTeacher(null);
   };
 
+  if (loading) {
+    return (
+      <div className="main-page flex items-center justify-center min-h-[50vh]">
+        <PencilLoader width="60px" height="60px" />
+      </div>
+    );
+  }
+
   return (
     <div className="main-page">
       {/* ── Header row ── */}
@@ -158,9 +167,7 @@ function TeachersPage() {
       )}
 
       {/* Teachers Table */}
-      {loading ? null : (
-        <AdminTeachersTable teachers={teachers} onEditTeacher={openEditModal} />
-      )}
+      <AdminTeachersTable teachers={teachers} onEditTeacher={openEditModal} />
 
       <AddTeacherModal
         isOpen={showModal}

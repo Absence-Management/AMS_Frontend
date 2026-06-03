@@ -117,9 +117,12 @@ export const API_ENDPOINTS = {
   IMPORT_TIMETABLE: "/v1/import/planning",
   IMPORT_EXPORT_HISTORY: "/v1/import-export/history",
   EXPORT_ABSENCES: "/v1/export/absences",
+  EXPORT_ABSENCES_CSV: "/v1/export/absences/csv",
+  EXPORT_ABSENCES_PDF: "/v1/export/absences/pdf",
   MY_SCHEDULE: "/v1/planning/my-schedule",
   TEACHER_MY_GROUPS: "/v1/teachers/my-groups",
   TEACHER_BY_MATRICULE: "/v1/accounts/teachers",
   ADMIN_BY_ID: "/v1/accounts/administrators",
   JUSTIFICATIONS: "/v1/justifications",
+  COMPENSATION_REQUESTS: "/v1/compensation-requests",
 };

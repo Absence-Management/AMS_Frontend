@@ -57,3 +57,16 @@ export async function addGroupToSession(sessionId, group_name) {
   const response = await api.post(`/v1/sessions/${sessionId}/groups`, { group_name });
   return response.data;
 }
+
+/**
+ * Fetches (or auto-generates) the current QR nonce for a session.
+ * Endpoint: GET /api/v1/sessions/{session_id}/qr-code
+ * Response: { session_id, nonce, expires_at, ttl_seconds }
+ *
+ * Teacher only — cookie auth is sent automatically.
+ * Call this every ~25 s and re-render the QR code with the returned payload.
+ */
+export async function getSessionQRNonce(sessionId) {
+  const response = await api.get(`/v1/sessions/${sessionId}/qr-code`);
+  return response.data; // { session_id, nonce, expires_at, ttl_seconds }
+}

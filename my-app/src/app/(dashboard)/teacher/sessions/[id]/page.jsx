@@ -1,5 +1,6 @@
 "use client";
 
+import PencilLoader from "@/components/shared/PencilLoader";
 import { use, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SessionDetailsHeader from "@/components/session/SessionDetailsHeader";
@@ -99,7 +100,7 @@ export default function SessionDetailsPage({ params }) {
   }
 
   // Use the hook to fetch from API
-  const { students, handleTogglePresent, saveAttendance, addStudent, addGroup } = useAttendance(sessionId);
+  const { students, handleTogglePresent, saveAttendance, addStudent, addGroup, fetchStudents } = useAttendance(sessionId);
   const { summary: liveSummary } = useAttendanceSummary(sessionId);
   const router = useRouter();
 
@@ -124,7 +125,11 @@ export default function SessionDetailsPage({ params }) {
   const absenceRate = students.length > 0 ? ((absentCount / students.length) * 100).toFixed(1) : "0.0";
 
   if (isLoadingSession) {
-    return null;
+    return (
+      <div className="main-page flex items-center justify-center min-h-[50vh]">
+        <PencilLoader width="60px" height="60px" />
+      </div>
+    );
   }
 
   if (!session) {
@@ -138,12 +143,9 @@ export default function SessionDetailsPage({ params }) {
     );
   }
 
-  // Compensation API not yet provided
-  const sessionRequests = [];
-
   return (
     <div className="main-page">
-      <SessionDetailsHeader session={session} />
+      <SessionDetailsHeader session={session} onQrClose={fetchStudents} />
       <SessionDetailsStats
         session={session}
         presentCount={presentCount}
@@ -163,7 +165,7 @@ export default function SessionDetailsPage({ params }) {
           />
         </div>
         <div className="w-95 shrink-0">
-          <CompensationRequests requests={sessionRequests} />
+          <CompensationRequests sessionId={sessionId} />
         </div>
       </div>
 

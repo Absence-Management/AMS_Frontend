@@ -1,5 +1,6 @@
 "use client";
 
+import PencilLoader from "@/components/shared/PencilLoader";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getAllAdmins, createAdmin } from "@/services/accountsService";
@@ -624,6 +625,14 @@ export default function AdministratorsPage() {
     rows.push(admins.slice(i, i + 3));
   }
 
+  if (loading) {
+    return (
+      <div className="main-page flex items-center justify-center min-h-[50vh]">
+        <PencilLoader width="60px" height="60px" />
+      </div>
+    );
+  }
+
   return (
     <div className="main-page">
       {/* ── Header ── */}
@@ -659,8 +668,8 @@ export default function AdministratorsPage() {
       {/* ── Error ── */}
       {error && <div className="error-message">{error}</div>}
 
-      {/* ── Loading ── */}
-      {loading ? null : admins.length === 0 ? (
+      {/* ── Content ── */}
+      {admins.length === 0 ? (
         <div
           style={{
             padding: 48,

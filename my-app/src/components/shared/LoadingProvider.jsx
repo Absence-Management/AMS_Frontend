@@ -61,19 +61,7 @@ export function LoadingProvider({ children }) {
   const value = useMemo(() => ({ isLoading }), [isLoading]);
 
   return (
-    <LoadingContext.Provider value={value}>
-      {children}
-      {visible ? (
-        <div
-          className={`ams-global-loader ${showDelayed ? "ams-global-loader--visible" : ""}`}
-          role="status"
-          aria-live="polite"
-          aria-busy="true"
-        >
-          <PencilLoader />
-        </div>
-      ) : null}
-    </LoadingContext.Provider>
+    <LoadingContext.Provider value={value}>{children}</LoadingContext.Provider>
   );
 }
 

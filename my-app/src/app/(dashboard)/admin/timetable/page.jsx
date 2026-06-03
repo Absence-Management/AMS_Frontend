@@ -1,5 +1,6 @@
 "use client";
 
+import PencilLoader from "@/components/shared/PencilLoader";
 import { useEffect, useState } from "react";
 import { TimetableGrid } from "@/components/timetable/TimetableGrid";
 import { getTimetable } from "@/services/timetableService";
@@ -77,6 +78,14 @@ export default function TimetablePage() {
       setIsExportingPDF(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="main-page flex items-center justify-center min-h-[50vh]">
+        <PencilLoader width="60px" height="60px" />
+      </div>
+    );
+  }
 
   return (
     <div className="main-page">
@@ -215,7 +224,7 @@ export default function TimetablePage() {
         </button>
       </div>
 
-      {loading ? null : error ? (
+      {error ? (
         <div className="timetable-page-state" style={{ color: "#dc2626" }}>
           Failed to load timetable data. Please try again later.
         </div>

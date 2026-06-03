@@ -121,73 +121,131 @@ export default function ExportAbsencesButton() {
             <div className="export-modal-body">
               <div className="export-modal-grid">
                 <div className="export-modal-field">
-                  <label className="export-modal-label" htmlFor="em-filiere">
-                    Filière
+                  <label className="export-modal-label" htmlFor="em-year">
+                    Year
                   </label>
                   <input
-                    id="em-filiere"
+                    id="em-year"
                     type="text"
                     className="export-modal-input"
-                    placeholder="e.g. INF, SIQ…"
-                    value={filters.filiere}
-                    onChange={(e) => setFilter("filiere", e.target.value)}
+                    placeholder="e.g. 2025"
+                    value={filters.year}
+                    onChange={(e) => setFilter("year", e.target.value)}
                   />
                 </div>
 
                 <div className="export-modal-field">
+                  <label className="export-modal-label" htmlFor="em-semester">
+                    Semester
+                  </label>
+                  <input
+                    id="em-semester"
+                    type="text"
+                    className="export-modal-input"
+                    placeholder="e.g. S1"
+                    value={filters.semester}
+                    onChange={(e) => setFilter("semester", e.target.value)}
+                  />
+                </div>
+
+                <div className="export-modal-field export-modal-field--full">
                   <label className="export-modal-label" htmlFor="em-module">
-                    Module code
+                    Module
                   </label>
                   <input
                     id="em-module"
                     type="text"
                     className="export-modal-input"
                     placeholder="e.g. ALGO01"
-                    value={filters.code_module}
-                    onChange={(e) => setFilter("code_module", e.target.value)}
+                    value={filters.module}
+                    onChange={(e) => setFilter("module", e.target.value)}
                   />
                 </div>
 
-                <div className="export-modal-field export-modal-field--full">
-                  <label className="export-modal-label" htmlFor="em-matricule">
-                    Matricule étudiant
+                <div className="export-modal-field">
+                  <label className="export-modal-label" htmlFor="em-group">
+                    Group
                   </label>
                   <input
-                    id="em-matricule"
+                    id="em-group"
+                    type="text"
+                    className="export-modal-input"
+                    placeholder="e.g. 2"
+                    value={filters.group}
+                    onChange={(e) => setFilter("group", e.target.value)}
+                  />
+                </div>
+
+                <div className="export-modal-field">
+                  <label className="export-modal-label" htmlFor="em-month">
+                    Month
+                  </label>
+                  <input
+                    id="em-month"
+                    type="number"
+                    className="export-modal-input"
+                    min={1}
+                    max={12}
+                    placeholder="1-12"
+                    value={filters.month}
+                    onChange={(e) => setFilter("month", e.target.value)}
+                  />
+                </div>
+
+                <div className="export-modal-field">
+                  <label className="export-modal-label" htmlFor="em-week">
+                    Week
+                  </label>
+                  <input
+                    id="em-week"
+                    type="number"
+                    className="export-modal-input"
+                    min={1}
+                    max={53}
+                    placeholder="1-53"
+                    value={filters.week}
+                    onChange={(e) => setFilter("week", e.target.value)}
+                  />
+                </div>
+
+                <div className="export-modal-field">
+                  <label className="export-modal-label" htmlFor="em-day">
+                    Day
+                  </label>
+                  <input
+                    id="em-day"
+                    type="date"
+                    className="export-modal-input"
+                    value={filters.day}
+                    onChange={(e) => setFilter("day", e.target.value)}
+                  />
+                </div>
+
+                <div className="export-modal-field">
+                  <label className="export-modal-label" htmlFor="em-teacher">
+                    Teacher ID
+                  </label>
+                  <input
+                    id="em-teacher"
+                    type="text"
+                    className="export-modal-input"
+                    placeholder="e.g. T-102"
+                    value={filters.teacher_id}
+                    onChange={(e) => setFilter("teacher_id", e.target.value)}
+                  />
+                </div>
+
+                <div className="export-modal-field">
+                  <label className="export-modal-label" htmlFor="em-student">
+                    Student ID
+                  </label>
+                  <input
+                    id="em-student"
                     type="text"
                     className="export-modal-input"
                     placeholder="e.g. 231234"
-                    value={filters.matricule_etudiant}
-                    onChange={(e) =>
-                      setFilter("matricule_etudiant", e.target.value)
-                    }
-                  />
-                </div>
-
-                <div className="export-modal-field">
-                  <label className="export-modal-label" htmlFor="em-date-from">
-                    From date
-                  </label>
-                  <input
-                    id="em-date-from"
-                    type="date"
-                    className="export-modal-input"
-                    value={filters.date_from}
-                    onChange={(e) => setFilter("date_from", e.target.value)}
-                  />
-                </div>
-
-                <div className="export-modal-field">
-                  <label className="export-modal-label" htmlFor="em-date-to">
-                    To date
-                  </label>
-                  <input
-                    id="em-date-to"
-                    type="date"
-                    className="export-modal-input"
-                    value={filters.date_to}
-                    min={filters.date_from || undefined}
-                    onChange={(e) => setFilter("date_to", e.target.value)}
+                    value={filters.student_id}
+                    onChange={(e) => setFilter("student_id", e.target.value)}
                   />
                 </div>
               </div>
@@ -195,9 +253,7 @@ export default function ExportAbsencesButton() {
               <div className="export-modal-info">
                 <span className="export-modal-info-label">CSV columns:</span>
                 <span className="export-modal-info-value">
-                  matricule · nom · prénom · filière · groupe · code_module ·
-                  nom_module · type_séance · date · heure_début · heure_fin ·
-                  statut_justificatif
+                  Defined by the backend export response.
                 </span>
               </div>
 
